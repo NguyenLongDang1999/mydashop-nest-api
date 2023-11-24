@@ -44,7 +44,7 @@ export class AuthController {
         try {
             const response: AuthResponse = await this.authService.signIn(data)
 
-            return res
+            return (res as Response)
                 .cookie('ELRT', response.refreshToken, {
                     httpOnly: process.env.NODE_ENV === 'production',
                     sameSite: process.env.NODE_ENV === 'production',
@@ -71,7 +71,7 @@ export class AuthController {
     @UseGuards(AccessTokenGuard)
     signOut(@Res() res: Response, @Req() req: Request) {
         try {
-            res.clearCookie('ELRT', {
+            (res as Response).clearCookie('ELRT', {
                 sameSite: process.env.NODE_ENV === 'production',
                 secure: process.env.NODE_ENV === 'production'
             }).send()
@@ -89,7 +89,7 @@ export class AuthController {
         try {
             const response: AuthResponse = await this.authService.refreshTokens(req.user['sub'], req.cookies['ELRT'])
 
-            return res
+            return (res as Response)
                 .cookie('ELRT', response.refreshToken, {
                     httpOnly: process.env.NODE_ENV === 'production',
                     sameSite: process.env.NODE_ENV === 'production',
