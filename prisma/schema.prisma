@@ -1,0 +1,218 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id                 Int                 @id @default(autoincrement())
+  name               String              @db.VarChar
+  slug               String              @unique @db.VarChar
+  image_uri          String?             @db.VarChar
+  description        String?             @db.VarChar
+  parent_id          Int?
+  status             Int?                @default(20) @db.SmallInt
+  popular            Int?                @default(20) @db.SmallInt
+  meta_title         String?             @db.VarChar
+  meta_description   String?             @db.VarChar
+  created_at         DateTime            @default(now())
+  updated_at         DateTime            @updatedAt
+  deleted_flg        Boolean             @default(false)
+  parent             Category?           @relation("CategoryToCategory", fields: [parent_id], references: [id], onDelete: Cascade)
+  children           Category[]          @relation("CategoryToCategory")
+  category_brand     CategoryBrand[]
+  category_attribute CategoryAttribute[]
+  Product            Product[]
+
+  @@index([status, popular, parent_id])
+}
+
+model Brand {
+  id               Int             @id @default(autoincrement())
+  name             String          @db.VarChar
+  slug             String          @unique @db.VarChar
+  image_uri        String?         @db.VarChar
+  description      String?         @db.VarChar
+  status           Int?            @default(20) @db.SmallInt
+  popular          Int?            @default(20) @db.SmallInt
+  meta_title       String?         @db.VarChar
+  meta_description String?         @db.VarChar
+  created_at       DateTime        @default(now())
+  updated_at       DateTime        @updatedAt
+  deleted_flg      Boolean         @default(false)
+  categories       CategoryBrand[]
+  Product          Product[]
+
+  @@index([status, popular])
+}
+
+model CategoryBrand {
+  category_id Int
+  brand_id    Int
+  brand       Brand    @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+  category    Category @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@unique([category_id, brand_id])
+}
+
+model Attribute {
+  id               Int                 @id @default(autoincrement())
+  name             String              @db.VarChar
+  slug             String              @unique @db.VarChar
+  description      String?             @db.VarChar
+  status           Int?                @default(20) @db.SmallInt
+  created_at       DateTime            @default(now())
+  updated_at       DateTime            @updatedAt
+  deleted_flg      Boolean             @default(false)
+  attributeValues  AttributeValues[]
+  categories       CategoryAttribute[]
+  ProductAttribute ProductAttribute[]
+
+  @@index([status])
+}
+
+model AttributeValues {
+  id                     Int                      @id @default(autoincrement())
+  value                  String                   @db.VarChar
+  attribute_id           Int
+  created_at             DateTime                 @default(now())
+  updated_at             DateTime                 @updatedAt
+  deleted_flg            Boolean                  @default(false)
+  attribute              Attribute                @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
+  ProductAttributeValues ProductAttributeValues[]
+}
+
+model CategoryAttribute {
+  category_id  Int
+  attribute_id Int
+  attribute    Attribute @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
+  category     Category  @relation(fields: [category_id], references: [id], onDelete: Cascade)
+
+  @@unique([category_id, attribute_id])
+}
+
+model Product {
+  id                       Int                @id @default(autoincrement())
+  sku                      String             @db.VarChar
+  name                     String             @db.VarChar
+  slug                     String             @unique @db.VarChar
+  image_uri                String?            @db.VarChar
+  short_description        String?            @db.VarChar
+  description              String?
+  technical_specifications Json?              @db.Json
+  category_id              Int
+  brand_id                 Int?
+  status                   Int?               @default(20) @db.SmallInt
+  popular                  Int?               @default(20) @db.SmallInt
+  price                    Decimal            @default(0) @db.Decimal(18, 0)
+  special_price            Decimal?           @default(0) @db.Decimal(18, 0)
+  special_price_type       Int?               @db.SmallInt
+  selling_price            Decimal            @default(0) @db.Decimal(18, 0)
+  quantity                 Int?               @db.SmallInt
+  in_stock                 Int?               @default(20) @db.SmallInt
+  meta_title               String?            @db.VarChar
+  meta_description         String?            @db.VarChar
+  created_at               DateTime           @default(now())
+  updated_at               DateTime           @updatedAt
+  deleted_flg              Boolean            @default(false)
+  total_rating             Float?
+  brand                    Brand?             @relation(fields: [brand_id], references: [id], onDelete: Cascade)
+  category                 Category           @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  productAttributes        ProductAttribute[]
+  relatedProducts          ProductRelated[]   @relation("RelatedProduct")
+  upsellProducts           ProductUpSell[]    @relation("UpSellProduct")
+  crossSellProducts        ProductCrossSell[] @relation("CrossSellProduct")
+  mainRelatedProducts      ProductRelated[]   @relation("MainRelatedProduct")
+  mainUpsellProducts       ProductUpSell[]    @relation("MainUpSellProduct")
+  mainCrossSellProducts    ProductCrossSell[] @relation("MainCrossSellProduct")
+
+  @@index([status, popular, brand_id, category_id])
+}
+
+model ProductAttribute {
+  id                     Int                      @id @default(autoincrement())
+  product_id             Int
+  attribute_id           Int
+  attribute              Attribute                @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
+  product                Product                  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  productAttributeValues ProductAttributeValues[]
+
+  @@unique([product_id, attribute_id])
+}
+
+model ProductAttributeValues {
+  id                   Int              @id @default(autoincrement())
+  product_attribute_id Int
+  attribute_value_id   Int
+  productAttribute     ProductAttribute @relation(fields: [product_attribute_id], references: [id], onDelete: Cascade)
+  attributeValues      AttributeValues  @relation(fields: [attribute_value_id], references: [id], onDelete: Cascade)
+
+  @@unique([product_attribute_id, attribute_value_id])
+}
+
+model ProductRelated {
+  related_product_id Int
+  product_id         Int
+  mainRelatedProduct Product @relation("MainRelatedProduct", fields: [product_id], references: [id], onDelete: Cascade)
+  relatedProduct     Product @relation("RelatedProduct", fields: [related_product_id], references: [id], onDelete: Cascade)
+
+  @@unique([related_product_id, product_id])
+}
+
+model ProductUpSell {
+  up_sell_product_id Int
+  product_id         Int
+  mainUpSellProduct  Product @relation("MainUpSellProduct", fields: [product_id], references: [id], onDelete: Cascade)
+  upSellProduct      Product @relation("UpSellProduct", fields: [up_sell_product_id], references: [id], onDelete: Cascade)
+
+  @@unique([up_sell_product_id, product_id])
+}
+
+model ProductCrossSell {
+  cross_sell_product_id Int
+  product_id            Int
+  mainCrossSellProduct  Product @relation("MainCrossSellProduct", fields: [product_id], references: [id], onDelete: Cascade)
+  crossSellProduct      Product @relation("CrossSellProduct", fields: [cross_sell_product_id], references: [id], onDelete: Cascade)
+
+  @@unique([cross_sell_product_id, product_id])
+}
+
+model Slider {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar
+  url         String   @unique @db.VarChar
+  image_uri   String?  @db.VarChar
+  description String?  @db.VarChar
+  status      Int?     @default(2) @db.SmallInt
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  deleted_flg Boolean  @default(false)
+
+  @@index([status])
+}
+
+model Admins {
+  id            Int      @id @default(autoincrement())
+  name          String   @db.VarChar
+  email         String   @db.VarChar
+  password      String   @db.VarChar
+  phone         String   @db.VarChar
+  job           String?  @db.VarChar
+  gender        Int?     @db.SmallInt
+  address       String?  @db.VarChar
+  refresh_token String?  @db.VarChar
+  role          Int      @db.SmallInt
+  image_uri     String?  @db.VarChar
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  deleted_flg   Boolean  @default(false)
+
+  @@unique([email, phone])
+  @@index([role, gender])
+}

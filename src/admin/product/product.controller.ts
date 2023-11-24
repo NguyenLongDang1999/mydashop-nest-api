@@ -1,0 +1,82 @@
+// ** NestJS Imports
+import { Controller, Get, Post, Body, Patch, Param, Query, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common'
+import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { FileInterceptor } from '@nestjs/platform-express'
+
+// ** Service Imports
+import { ProductService } from './product.service'
+import { BunnyService } from 'src/bunny/bunny.service'
+
+// ** DTO Imports
+import { CreateProductDto } from './dto/create-product.dto'
+import { UpdateProductDto } from './dto/update-product.dto'
+
+// ** Express Imports
+import { Express } from 'express'
+
+// ** Types Imports
+import { IProductSearch } from './product.interface'
+
+// ** Guard Imports
+import { AccessTokenGuard } from '../common/guards/accessToken.guard'
+
+// ** Utils Imports
+import { PATH } from 'src/utils/enums'
+import { fileExtensionURL } from 'src/utils'
+
+@Controller('/')
+@ApiTags('Product')
+@UseGuards(AccessTokenGuard)
+export class ProductController {
+    private readonly path = PATH.PRODUCT
+
+    constructor(
+        private readonly bunnyService: BunnyService,
+        private readonly productService: ProductService,
+    ) {}
+
+    @Post()
+    @ApiCreatedResponse()
+    @UseInterceptors(FileInterceptor('image_uri'))
+    async create(@UploadedFile() image_uri: Express.Multer.File, @Body() createProductDto: CreateProductDto) {
+        if (image_uri) {
+            createProductDto['image_uri'] = fileExtensionURL(image_uri.originalname, createProductDto['slug'])
+            await this.bunnyService.uploadFile(`${this.path}/${createProductDto['image_uri']}`, image_uri.buffer)
+        }
+
+        return this.productService.create(createProductDto)
+    }
+
+    @Get()
+    @ApiOkResponse()
+    getTableList(@Query() params: IProductSearch) {
+        return this.productService.getTableList({
+            ...params,
+            page: (params.page - 1) * params.pageSize
+        })
+    }
+
+    @Get('data-list')
+    @ApiOkResponse()
+    getDataList() {
+        return this.productService.getDataList()
+    }
+
+    @Get(':id')
+    @ApiOkResponse()
+    getDetail(@Param('id') id: string) {
+        return this.productService.getDetail(+id)
+    }
+
+    @Patch(':id')
+    @ApiNoContentResponse()
+    update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+        return this.productService.update(+id, updateProductDto)
+    }
+
+    @Patch('remove/:id')
+    @ApiNoContentResponse()
+    remove(@Param('id') id: string) {
+        return this.productService.remove(+id)
+    }
+}
