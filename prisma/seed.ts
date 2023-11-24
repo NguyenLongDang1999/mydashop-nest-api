@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { faker } from '@faker-js/faker'
 
 // ** Argon2 Imports
-import * as argon2 from 'argon2'
+import argon2 from 'argon2'
 
 const prisma = new PrismaClient()
 

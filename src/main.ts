@@ -4,7 +4,7 @@ import { ValidationPipe } from '@nestjs/common'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 
 // ** Cookie Imports
-import * as cookieParser from 'cookie-parser'
+import cookieParser from 'cookie-parser'
 
 // ** Modules Imports
 import { AppModule } from './app.module'

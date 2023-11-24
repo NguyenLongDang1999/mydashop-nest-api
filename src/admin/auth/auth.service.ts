@@ -13,7 +13,7 @@ import { ConfigService } from '@nestjs/config'
 import { CreateAuthDto } from './dto/create-auth.dto'
 
 // ** Argon2 Imports
-import * as argon2 from 'argon2'
+import argon2 from 'argon2'
 
 // ** Prisma Imports
 import { PrismaService } from 'src/prisma/prisma.service'
