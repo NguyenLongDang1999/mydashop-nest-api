@@ -44,17 +44,31 @@ export class AuthController {
         try {
             const response: AuthResponse = await this.authService.signIn(data)
 
-            return (res as Response<any, Record<string, any>>)
+            res
                 .cookie('ELRT', response.refreshToken, {
                     httpOnly: process.env.NODE_ENV === 'production',
                     sameSite: process.env.NODE_ENV === 'production',
                     secure: process.env.NODE_ENV === 'production',
                     maxAge: AUTH._7_DAYS
                 })
+
+            return res
                 .json({
                     admins: response.admins,
                     accessToken: response.accessToken
                 })
+
+            // return (res as Response<any, Record<string, any>>)
+            //     .cookie('ELRT', response.refreshToken, {
+            //         httpOnly: process.env.NODE_ENV === 'production',
+            //         sameSite: process.env.NODE_ENV === 'production',
+            //         secure: process.env.NODE_ENV === 'production',
+            //         maxAge: AUTH._7_DAYS
+            //     })
+            //     .json({
+            //         admins: response.admins,
+            //         accessToken: response.accessToken
+            //     })
         } catch (error) {
             if (error instanceof NotFoundException) {
                 throw new NotFoundException(error.message)
@@ -71,10 +85,10 @@ export class AuthController {
     @UseGuards(AccessTokenGuard)
     signOut(@Res() res: Response, @Req() req: Request) {
         try {
-            (res as Response<any, Record<string, any>>).clearCookie('ELRT', {
-                sameSite: process.env.NODE_ENV === 'production',
-                secure: process.env.NODE_ENV === 'production'
-            }).send()
+            // (res as Response<any, Record<string, any>>).clearCookie('ELRT', {
+            //     sameSite: process.env.NODE_ENV === 'production',
+            //     secure: process.env.NODE_ENV === 'production'
+            // }).send()
 
             return this.authService.logout(req.user['sub'])
         } catch (error) {
@@ -90,12 +104,12 @@ export class AuthController {
             const response: AuthResponse = await this.authService.refreshTokens(req.user['sub'], req.cookies['ELRT'])
 
             return (res as Response<any, Record<string, any>>)
-                .cookie('ELRT', response.refreshToken, {
-                    httpOnly: process.env.NODE_ENV === 'production',
-                    sameSite: process.env.NODE_ENV === 'production',
-                    secure: process.env.NODE_ENV === 'production',
-                    maxAge: AUTH._7_DAYS
-                })
+                // .cookie('ELRT', response.refreshToken, {
+                //     httpOnly: process.env.NODE_ENV === 'production',
+                //     sameSite: process.env.NODE_ENV === 'production',
+                //     secure: process.env.NODE_ENV === 'production',
+                //     maxAge: AUTH._7_DAYS
+                // })
                 .json({ accessToken: response.accessToken })
         } catch (error) {
             if (error instanceof ForbiddenException) {
