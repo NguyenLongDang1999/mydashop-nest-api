@@ -1,14 +1,14 @@
 dev:
-	pnpm run start:dev
+	bun run start:dev
 
 db:
-	pnpm prisma db push
+	bun prisma db push
 
 std:
-	pnpm prisma studio
+	bun prisma studio
 
 seed:
-	pnpm prisma db seed
+	bun prisma db seed
 
 format:
-	pnpm format && pnpm lint
+	bun format && bun lint
