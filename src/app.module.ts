@@ -9,15 +9,21 @@ import { AppService } from './app.service'
 
 // ** Module Imports
 import { AdminModule } from './admin/admin.module'
+import { UserModule } from './user/user.module'
 
 @Module({
     imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         AdminModule,
+        UserModule,
         RouterModule.register([
             {
                 path: 'admin',
                 module: AdminModule
+            },
+            {
+                path: 'user',
+                module: UserModule
             }
         ])
     ],

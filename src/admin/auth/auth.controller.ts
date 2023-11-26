@@ -71,10 +71,12 @@ export class AuthController {
     @UseGuards(AccessTokenGuard)
     signOut(@Res() res: Response, @Req() req: Request) {
         try {
-            (res as Response<any, Record<string, any>>).clearCookie('ELRT', {
-                sameSite: process.env.NODE_ENV === 'production',
-                secure: process.env.NODE_ENV === 'production'
-            }).send()
+            ;(res as Response<any, Record<string, any>>)
+                .clearCookie('ELRT', {
+                    sameSite: process.env.NODE_ENV === 'production',
+                    secure: process.env.NODE_ENV === 'production'
+                })
+                .send()
 
             return this.authService.logout(req.user['sub'])
         } catch (error) {
