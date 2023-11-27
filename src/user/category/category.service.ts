@@ -207,15 +207,17 @@ export class CategoryService {
                 deleted_flg: false,
                 status: STATUS.ACTIVE
             },
-            productAttributes: {
-                some: {
-                    productAttributeValues: {
-                        some: {
-                            attribute_value_id: { in: getNormalizedList(query.attribute) }
+            ...(query.attribute && {
+                productAttributes: {
+                    some: {
+                        productAttributeValues: {
+                            some: {
+                                attribute_value_id: { in: getNormalizedList(query.attribute) }
+                            }
                         }
                     }
                 }
-            }
+            })
         }
 
         const data = await this.prisma.product.findMany({
@@ -236,6 +238,7 @@ export class CategoryService {
                 short_description: true,
                 special_price_type: true,
                 total_rating: true,
+                productAttributes: true,
                 category: {
                     select: {
                         id: true,
@@ -251,11 +254,9 @@ export class CategoryService {
             }
         })
 
-        const aggregations = await this.prisma.product.count({ where: search })
-
         return {
             data,
-            aggregations
+            aggregations: await this.prisma.product.count({ where: search })
         }
     }
 

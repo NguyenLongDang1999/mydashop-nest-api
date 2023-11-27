@@ -86,6 +86,8 @@ export class ProductService {
                                     special_price: true,
                                     selling_price: true,
                                     special_price_type: true,
+                                    total_rating: true,
+                                    productAttributes: true,
                                     category: {
                                         select: {
                                             id: true,
@@ -111,6 +113,8 @@ export class ProductService {
                                     special_price: true,
                                     selling_price: true,
                                     special_price_type: true,
+                                    total_rating: true,
+                                    productAttributes: true,
                                     category: {
                                         select: {
                                             id: true,

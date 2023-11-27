@@ -36,7 +36,7 @@ export class ProductService {
                     data: {
                         ...productData,
                         productAttributes: {
-                            create: attributes.map((attributeItem) => ({
+                            create: attributes && attributes.map((attributeItem) => ({
                                 attribute: {
                                     connect: { id: attributeItem.id }
                                 },
@@ -270,7 +270,7 @@ export class ProductService {
                         ...productData,
                         productAttributes: {
                             deleteMany: {},
-                            create: attributes.map((attributeItem) => ({
+                            create: attributes && attributes.map((attributeItem) => ({
                                 attribute: {
                                     connect: { id: attributeItem.id }
                                 },

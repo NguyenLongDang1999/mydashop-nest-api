@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "../node_modules/.prisma/client"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -132,6 +132,7 @@ model Product {
   mainRelatedProducts      ProductRelated[]   @relation("MainRelatedProduct")
   mainUpsellProducts       ProductUpSell[]    @relation("MainUpSellProduct")
   mainCrossSellProducts    ProductCrossSell[] @relation("MainCrossSellProduct")
+  FlashSaleProduct         FlashSaleProduct[]
 
   @@index([status, popular, brand_id, category_id])
 }
@@ -182,6 +183,26 @@ model ProductCrossSell {
   crossSellProduct      Product @relation("CrossSellProduct", fields: [cross_sell_product_id], references: [id], onDelete: Cascade)
 
   @@unique([cross_sell_product_id, product_id])
+}
+
+model FlashSale {
+  id               Int                @id @default(autoincrement())
+  campaign_name    String             @db.VarChar
+  startDate        DateTime
+  endDate          DateTime
+  discount         Int
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  FlashSaleProduct FlashSaleProduct[]
+}
+
+model FlashSaleProduct {
+  flash_sale_id Int
+  product_id    Int
+  flashSale     FlashSale @relation(fields: [flash_sale_id], references: [id], onDelete: Cascade)
+  product       Product   @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@unique([flash_sale_id, product_id])
 }
 
 model Slider {
