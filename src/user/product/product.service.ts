@@ -71,78 +71,63 @@ export class ProductService {
                             name: true,
                             image_uri: true
                         }
+                    },
+                    upsellProducts: {
+                        take: 12,
+                        select: {
+                            mainUpSellProduct: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    slug: true,
+                                    image_uri: true,
+                                    price: true,
+                                    in_stock: true,
+                                    special_price: true,
+                                    selling_price: true,
+                                    special_price_type: true,
+                                    category: {
+                                        select: {
+                                            id: true,
+                                            slug: true,
+                                            name: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    relatedProducts: {
+                        take: 12,
+                        select: {
+                            mainRelatedProduct: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    slug: true,
+                                    image_uri: true,
+                                    price: true,
+                                    in_stock: true,
+                                    special_price: true,
+                                    selling_price: true,
+                                    special_price_type: true,
+                                    category: {
+                                        select: {
+                                            id: true,
+                                            slug: true,
+                                            name: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-                    // upsellProducts: {
-                    //     take: 12,
-                    //     select: {
-                    //         mainUpSellProduct: {
-                    //             select: {
-                    //                 id: true,
-                    //                 sku: true,
-                    //                 name: true,
-                    //                 slug: true,
-                    //                 status: true,
-                    //                 image_uri: true,
-                    //                 price: true,
-                    //                 in_stock: true,
-                    //                 special_price: true,
-                    //                 selling_price: true,
-                    //                 short_description: true,
-                    //                 special_price_type: true,
-                    //                 Category: {
-                    //                     select: {
-                    //                         id: true,
-                    //                         slug: true,
-                    //                         name: true
-                    //                     }
-                    //                 },
-                    //                 Brand: {
-                    //                     select: {
-                    //                         name: true
-                    //                     }
-                    //                 }
-                    //             }
-                    //         }
-                    //     }
-                    // },
-                    // RelatedProducts: {
-                    //     take: 12,
-                    //     select: {
-                    //         MainRelatedProduct: {
-                    //             select: {
-                    //                 id: true,
-                    //                 sku: true,
-                    //                 name: true,
-                    //                 slug: true,
-                    //                 status: true,
-                    //                 image_uri: true,
-                    //                 price: true,
-                    //                 in_stock: true,
-                    //                 special_price: true,
-                    //                 selling_price: true,
-                    //                 short_description: true,
-                    //                 special_price_type: true,
-                    //                 Category: {
-                    //                     select: {
-                    //                         id: true,
-                    //                         slug: true,
-                    //                         name: true
-                    //                     }
-                    //                 },
-                    //                 Brand: {
-                    //                     select: {
-                    //                         name: true
-                    //                     }
-                    //                 }
-                    //             }
-                    //         }
-                    //     }
-                    // }
                 }
             })
 
             return {
                 ...product,
+                relatedProducts: product.relatedProducts.map(_item => ({ ..._item.mainRelatedProduct })),
                 product_attributes: product.productAttributes.map(_item => ({
                     ..._item,
                     attribute: _item.attribute,
