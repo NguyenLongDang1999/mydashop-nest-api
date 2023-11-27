@@ -131,11 +131,11 @@ export class ProductService {
 
             return {
                 ...product,
-                relatedProducts: product.relatedProducts.map(_item => ({ ..._item.mainRelatedProduct })),
-                product_attributes: product.productAttributes.map(_item => ({
+                relatedProducts: product.relatedProducts.map((_item) => ({ ..._item.mainRelatedProduct })),
+                product_attributes: product.productAttributes.map((_item) => ({
                     ..._item,
                     attribute: _item.attribute,
-                    product_attribute_values: _item.productAttributeValues.map(_values => ({
+                    product_attribute_values: _item.productAttributeValues.map((_values) => ({
                         ..._values,
                         attribute_values: _values.attributeValues
                     }))

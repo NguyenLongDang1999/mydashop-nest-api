@@ -9,6 +9,7 @@ import { AttributeModule } from './attribute/attribute.module'
 import { ProductModule } from './product/product.module'
 import { AuthModule } from './auth/auth.module'
 import { SliderModule } from './slider/slider.module'
+import { FlashSaleModule } from './flash-sale/flash-sale.module'
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { SliderModule } from './slider/slider.module'
         ProductModule,
         AuthModule,
         SliderModule,
+        FlashSaleModule,
         RouterModule.register([
             {
                 path: 'admin',
@@ -37,6 +39,10 @@ import { SliderModule } from './slider/slider.module'
                     {
                         path: 'attribute',
                         module: AttributeModule
+                    },
+                    {
+                        path: 'flash-sale',
+                        module: FlashSaleModule
                     },
                     {
                         path: 'product',

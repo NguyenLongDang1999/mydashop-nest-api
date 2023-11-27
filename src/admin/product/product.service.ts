@@ -21,7 +21,13 @@ export class ProductService {
 
     async create(createProductDto: CreateProductDto) {
         try {
-            const { attributes, product_cross_sell, product_upsell, product_related, ...productData } = createProductDto
+            const {
+                attributes,
+                product_cross_sell,
+                product_upsell,
+                product_related,
+                ...productData
+            } = createProductDto
 
             if (productData['special_price_type']) {
                 productData['selling_price'] = this.getSellingPrice(
@@ -35,19 +41,29 @@ export class ProductService {
                 return await prisma.product.create({
                     data: {
                         ...productData,
+                        ProductPrice: {
+                            create: {
+                                price: productData['price'],
+                                special_price: productData['special_price'],
+                                selling_price: productData['selling_price'],
+                                special_price_type: productData['special_price_type']
+                            }
+                        },
                         productAttributes: {
-                            create: attributes && attributes.map((attributeItem) => ({
-                                attribute: {
-                                    connect: { id: attributeItem.id }
-                                },
-                                productAttributeValues: {
-                                    create: attributeItem.attribute_value_id.map((valueId) => ({
-                                        attributeValues: {
-                                            connect: { id: valueId }
-                                        }
-                                    }))
-                                }
-                            }))
+                            create:
+                                attributes &&
+                                attributes.map((attributeItem) => ({
+                                    attribute: {
+                                        connect: { id: attributeItem.id }
+                                    },
+                                    productAttributeValues: {
+                                        create: attributeItem.attribute_value_id.map((valueId) => ({
+                                            attributeValues: {
+                                                connect: { id: valueId }
+                                            }
+                                        }))
+                                    }
+                                }))
                         },
                         mainRelatedProducts: {
                             createMany: {
@@ -130,11 +146,14 @@ export class ProductService {
                         status: true,
                         popular: true,
                         image_uri: true,
-                        price: true,
-                        special_price: true,
-                        special_price_type: true,
-                        selling_price: true,
-                        created_at: true,
+                        ProductPrice: {
+                            select: {
+                                price: true,
+                                special_price: true,
+                                special_price_type: true,
+                                selling_price: true
+                            }
+                        },
                         category: {
                             select: {
                                 id: true,
@@ -154,7 +173,14 @@ export class ProductService {
                 this.prisma.product.count({ where: search })
             ])
 
-            return { data, aggregations: count }
+            const formattedData = data.map((item) => {
+                return {
+                    ...item,
+                    ...item.ProductPrice
+                }
+            })
+
+            return { data: formattedData, aggregations: count }
         } catch (error) {
             throw new InternalServerErrorException()
         }
@@ -268,20 +294,30 @@ export class ProductService {
                     where: { id },
                     data: {
                         ...productData,
+                        ProductPrice: {
+                            update: {
+                                price: productData['price'],
+                                special_price: productData['special_price'],
+                                selling_price: productData['selling_price'],
+                                special_price_type: productData['special_price_type']
+                            }
+                        },
                         productAttributes: {
                             deleteMany: {},
-                            create: attributes && attributes.map((attributeItem) => ({
-                                attribute: {
-                                    connect: { id: attributeItem.id }
-                                },
-                                productAttributeValues: {
-                                    create: attributeItem.attribute_value_id.map((valueId) => ({
-                                        attributeValues: {
-                                            connect: { id: valueId }
-                                        }
-                                    }))
-                                }
-                            }))
+                            create:
+                                attributes &&
+                                attributes.map((attributeItem) => ({
+                                    attribute: {
+                                        connect: { id: attributeItem.id }
+                                    },
+                                    productAttributeValues: {
+                                        create: attributeItem.attribute_value_id.map((valueId) => ({
+                                            attributeValues: {
+                                                connect: { id: valueId }
+                                            }
+                                        }))
+                                    }
+                                }))
                         },
                         mainRelatedProducts: {
                             deleteMany: {},

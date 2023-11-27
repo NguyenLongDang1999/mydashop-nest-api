@@ -52,7 +52,7 @@ export class CreateProductDto {
     brand_id?: number
 
     @IsOptional()
-    @Transform(({ value }) => JSON.parse(value))
+    @Transform(({ value }) => (typeof value === 'string') ? JSON.parse(value) : undefined)
     @ApiProperty({ required: false })
     attributes?: AttributesDto[]
 

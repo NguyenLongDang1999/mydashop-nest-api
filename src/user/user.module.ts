@@ -7,7 +7,7 @@ import { SliderModule } from './slider/slider.module'
 import { CategoryModule } from './category/category.module'
 import { BrandModule } from './brand/brand.module'
 import { ProductModule } from './product/product.module'
-import { FlashSaleModule } from './flash-sale/flash-sale.module';
+import { FlashSaleModule } from './flash-sale/flash-sale.module'
 
 @Module({
     imports: [

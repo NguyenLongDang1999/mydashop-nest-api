@@ -133,8 +133,19 @@ model Product {
   mainUpsellProducts       ProductUpSell[]    @relation("MainUpSellProduct")
   mainCrossSellProducts    ProductCrossSell[] @relation("MainCrossSellProduct")
   FlashSaleProduct         FlashSaleProduct[]
+  ProductPrice             ProductPrice?
 
   @@index([status, popular, brand_id, category_id])
+}
+
+model ProductPrice {
+  id                 Int      @id @default(autoincrement())
+  product_id         Int      @unique
+  price              Decimal  @default(0) @db.Decimal(18, 0)
+  special_price      Decimal? @default(0) @db.Decimal(18, 0)
+  special_price_type Int?     @db.SmallInt
+  selling_price      Decimal  @default(0) @db.Decimal(18, 0)
+  product            Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 model ProductAttribute {
@@ -188,8 +199,8 @@ model ProductCrossSell {
 model FlashSale {
   id               Int                @id @default(autoincrement())
   campaign_name    String             @db.VarChar
-  startDate        DateTime
-  endDate          DateTime
+  start_date       DateTime
+  end_date         DateTime
   discount         Int
   created_at       DateTime           @default(now())
   updated_at       DateTime           @updatedAt
