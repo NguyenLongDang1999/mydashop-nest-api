@@ -3,3 +3,20 @@ export const fileExtensionURL = (fileName: string, slug: string) => {
 
     return `${slug}.${fileExtension}`
 }
+
+export const getProductOrderBy = (orderBy: number) => {
+    const sortConditions = {
+        1: { created_at: 'desc' },
+        2: { created_at: 'asc' },
+        3: { name: 'asc' },
+        4: { name: 'desc' },
+        5: { selling_price: 'asc' },
+        6: { selling_price: 'desc' }
+    }
+
+    return sortConditions[orderBy]
+}
+
+export const getNormalizedList = (value: string | number[]) => {
+    return Array.isArray(value) ? value.map((_v) => Number(_v)) : value ? [Number(value)] : undefined
+}
