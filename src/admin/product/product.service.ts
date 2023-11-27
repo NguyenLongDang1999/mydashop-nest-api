@@ -151,7 +151,8 @@ export class ProductService {
                                 price: true,
                                 special_price: true,
                                 special_price_type: true,
-                                selling_price: true
+                                selling_price: true,
+                                discount: true
                             }
                         },
                         category: {

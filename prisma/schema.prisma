@@ -144,6 +144,7 @@ model ProductPrice {
   price              Decimal  @default(0) @db.Decimal(18, 0)
   special_price      Decimal? @default(0) @db.Decimal(18, 0)
   special_price_type Int?     @db.SmallInt
+  discount           Int?     @db.SmallInt
   selling_price      Decimal  @default(0) @db.Decimal(18, 0)
   product            Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
@@ -201,7 +202,7 @@ model FlashSale {
   campaign_name    String             @db.VarChar
   start_date       DateTime
   end_date         DateTime
-  discount         Int
+  discount         Int                @db.SmallInt
   created_at       DateTime           @default(now())
   updated_at       DateTime           @updatedAt
   FlashSaleProduct FlashSaleProduct[]
