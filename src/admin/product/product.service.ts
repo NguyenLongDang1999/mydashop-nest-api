@@ -21,13 +21,7 @@ export class ProductService {
 
     async create(createProductDto: CreateProductDto) {
         try {
-            const {
-                attributes,
-                product_cross_sell,
-                product_upsell,
-                product_related,
-                ...productData
-            } = createProductDto
+            const { attributes, product_cross_sell, product_upsell, product_related, ...productData } = createProductDto
 
             if (productData['special_price_type']) {
                 productData['selling_price'] = this.getSellingPrice(
@@ -275,7 +269,7 @@ export class ProductService {
     }
 
     async update(id: number, updateProductDto: UpdateProductDto) {
-        try {
+        // try {
             const { attributes, product_cross_sell, product_upsell, product_related, ...productData } = updateProductDto
 
             const specialPriceType = productData['special_price_type']
@@ -287,10 +281,6 @@ export class ProductService {
             }
 
             return await this.prisma.$transaction(async (prisma) => {
-                await this.prisma.productAttribute.deleteMany({
-                    where: { product_id: id }
-                })
-
                 return await prisma.product.update({
                     where: { id },
                     data: {
@@ -323,27 +313,33 @@ export class ProductService {
                         mainRelatedProducts: {
                             deleteMany: {},
                             createMany: {
-                                data: product_related.map((categoryItem) => ({
-                                    related_product_id: categoryItem
-                                })),
+                                data:
+                                    product_related &&
+                                    product_related.map((categoryItem) => ({
+                                        related_product_id: categoryItem
+                                    })),
                                 skipDuplicates: true
                             }
                         },
                         mainCrossSellProducts: {
                             deleteMany: {},
                             createMany: {
-                                data: product_cross_sell.map((categoryItem) => ({
-                                    cross_sell_product_id: categoryItem
-                                })),
+                                data:
+                                    product_cross_sell &&
+                                    product_cross_sell.map((categoryItem) => ({
+                                        cross_sell_product_id: categoryItem
+                                    })),
                                 skipDuplicates: true
                             }
                         },
                         mainUpsellProducts: {
                             deleteMany: {},
                             createMany: {
-                                data: product_upsell.map((categoryItem) => ({
-                                    up_sell_product_id: categoryItem
-                                })),
+                                data:
+                                    product_upsell &&
+                                    product_upsell.map((categoryItem) => ({
+                                        up_sell_product_id: categoryItem
+                                    })),
                                 skipDuplicates: true
                             }
                         }
@@ -351,13 +347,13 @@ export class ProductService {
                     select: { id: true }
                 })
             })
-        } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
-            }
+        // } catch (error) {
+        //     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        //         throw new ConflictException()
+        //     }
 
-            throw new InternalServerErrorException()
-        }
+        //     throw new InternalServerErrorException()
+        // }
     }
 
     async remove(id: number) {

@@ -1,14 +1,5 @@
 // ** NestJS Imports
-import {
-    Controller,
-    Get,
-    Post,
-    Body,
-    Patch,
-    Param,
-    UseGuards,
-    Query
-} from '@nestjs/common'
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Query } from '@nestjs/common'
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 // ** Service Imports
@@ -47,10 +38,7 @@ export class FlashSaleController {
 
     @Patch(':id')
     @ApiNoContentResponse()
-    update(
-        @Param('id') id: string,
-        @Body() updateFlashSaleDto: UpdateFlashSaleDto
-    ) {
+    update(@Param('id') id: string, @Body() updateFlashSaleDto: UpdateFlashSaleDto) {
         return this.flashSaleService.update(+id, updateFlashSaleDto)
     }
 

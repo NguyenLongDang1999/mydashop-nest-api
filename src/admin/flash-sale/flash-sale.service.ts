@@ -1,8 +1,5 @@
 // ** NestJS Imports
-import {
-    Injectable,
-    InternalServerErrorException
-} from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 
 // ** DTO Imports
 import { CreateFlashSaleDto } from './dto/create-flash-sale.dto'
@@ -23,49 +20,44 @@ export class FlashSaleService {
         try {
             const { product_id, ...productData } = createFlashSaleDto
 
-            const data = await this.prisma.flashSale.create({
-                data: {
-                    ...productData,
-                    FlashSaleProduct: {
-                        createMany: {
-                            data: product_id.map((productItem) => ({
-                                product_id: productItem
-                            })),
-                            skipDuplicates: true
+            return await this.prisma.$transaction(async (prisma) => {
+                const data = await prisma.flashSale.create({
+                    data: {
+                        ...productData,
+                        FlashSaleProduct: {
+                            createMany: {
+                                data: product_id.map((productItem) => ({
+                                    product_id: productItem
+                                })),
+                                skipDuplicates: true
+                            }
                         }
+                    },
+                    select: {
+                        id: true,
+                        discount: true
                     }
-                },
-                select: {
-                    id: true,
-                    discount: true
-                }
-            })
+                })
 
-            const products = await this.prisma.product.findMany({
-                where: {
-                    id: {
-                        in: product_id
+                for (const productId of product_id) {
+                    const productPrice = await prisma.productPrice.findFirst({
+                        where: { product_id: productId },
+                        select: { price: true }
+                    })
+
+                    if (productPrice) {
+                        await prisma.productPrice.update({
+                            where: { product_id: productId },
+                            data: {
+                                discount: data.discount,
+                                selling_price: Number(productPrice.price) - ((Number(productPrice.price) / 100) * data.discount)
+                            }
+                        })
                     }
-                },
-                select: {
-                    id: true,
-                    selling_price: true
                 }
+
+                return data
             })
-
-            const productPriceUpdates = products.map((product) => ({
-                where: { product_id: product.id },
-                data: {
-                    discount: data.discount,
-                    selling_price: (Number(product.selling_price) / 100) * data.discount
-                }
-            }))
-
-            await this.prisma.productPrice.updateMany({
-                data: productPriceUpdates
-            })
-
-            return data
         } catch (error) {
             throw new InternalServerErrorException()
         }
@@ -113,57 +105,52 @@ export class FlashSaleService {
     }
 
     async update(id: number, updateFlashSaleDto: UpdateFlashSaleDto) {
-        // try {
+        try {
             const { product_id, ...productData } = updateFlashSaleDto
 
-            const data = await this.prisma.flashSale.update({
-                data: {
-                    ...productData,
-                    FlashSaleProduct: {
-                        deleteMany: {},
-                        createMany: {
-                            data: product_id.map((productItem) => ({
-                                product_id: productItem
-                            })),
-                            skipDuplicates: true
+            return await this.prisma.$transaction(async (prisma) => {
+                const data = await prisma.flashSale.update({
+                    data: {
+                        ...productData,
+                        FlashSaleProduct: {
+                            deleteMany: {},
+                            createMany: {
+                                data: product_id.map((productItem) => ({
+                                    product_id: productItem
+                                })),
+                                skipDuplicates: true
+                            }
                         }
+                    },
+                    where: { id },
+                    select: {
+                        id: true,
+                        discount: true
                     }
-                },
-                where: { id },
-                select: {
-                    id: true,
-                    discount: true
-                }
-            })
+                })
 
-            const products = await this.prisma.product.findMany({
-                where: {
-                    id: {
-                        in: product_id
+                for (const productId of product_id) {
+                    const productPrice = await prisma.productPrice.findFirst({
+                        where: { product_id: productId },
+                        select: { price: true }
+                    })
+
+                    if (productPrice) {
+                        await prisma.productPrice.update({
+                            where: { product_id: productId },
+                            data: {
+                                discount: data.discount,
+                                selling_price: Number(productPrice.price) - ((Number(productPrice.price) / 100) * data.discount)
+                            }
+                        })
                     }
-                },
-                select: {
-                    id: true,
-                    selling_price: true
                 }
+
+                return data
             })
-
-            const productPriceUpdates = products.map((product) => ({
-                where: { product_id: product.id },
-                data: {
-                    discount: data.discount,
-                    selling_price: (Number(product.selling_price) / 100) * data.discount
-                }
-            }))
-
-            await this.prisma.productPrice.updateMany({
-                data: productPriceUpdates
-            })
-
-            return data
-        // } catch (error) {
-        //     throw new InternalServerErrorException()
-        // }
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
     }
 
     async remove(id: number) {

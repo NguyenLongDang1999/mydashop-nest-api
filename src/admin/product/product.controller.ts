@@ -81,7 +81,17 @@ export class ProductController {
 
     @Patch(':id')
     @ApiNoContentResponse()
-    update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
+    @UseInterceptors(FileInterceptor('image_uri'))
+    async update(
+        @Param('id') id: string,
+        @UploadedFile() image_uri: Express.Multer.File,
+        @Body() updateProductDto: UpdateProductDto,
+    ) {
+        if (image_uri) {
+            updateProductDto['image_uri'] = fileExtensionURL(image_uri.originalname, updateProductDto['slug'])
+            await this.bunnyService.uploadFile(`${this.path}/${updateProductDto['image_uri']}`, image_uri.buffer)
+        }
+
         return this.productService.update(+id, updateProductDto)
     }
 

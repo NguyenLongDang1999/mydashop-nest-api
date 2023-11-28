@@ -72,8 +72,6 @@ export class BrandService {
                         status: true,
                         popular: true,
                         image_uri: true,
-                        created_at: true,
-                        updated_at: true,
                         categories: {
                             where: {
                                 category: { deleted_flg: false }

@@ -52,22 +52,22 @@ export class CreateProductDto {
     brand_id?: number
 
     @IsOptional()
-    @Transform(({ value }) => (typeof value === 'string') ? JSON.parse(value) : undefined)
+    @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value) : undefined))
     @ApiProperty({ required: false })
     attributes?: AttributesDto[]
 
     @IsOptional()
-    @Transform(({ value }) => JSON.parse(value).map(Number))
+    @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
     product_cross_sell: number[]
 
     @IsOptional()
-    @Transform(({ value }) => JSON.parse(value).map(Number))
+    @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
     product_upsell: number[]
 
     @IsOptional()
-    @Transform(({ value }) => JSON.parse(value).map(Number))
+    @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
     product_related: number[]
 
@@ -97,6 +97,7 @@ export class CreateProductDto {
 
     @IsOptional()
     @IsNumber()
+    @Transform(({ value }) => Number(value))
     @ApiProperty({ required: false, default: INVENTORY_STATUS.OUT_OF_STOCK })
     in_stock = INVENTORY_STATUS.OUT_OF_STOCK
 
