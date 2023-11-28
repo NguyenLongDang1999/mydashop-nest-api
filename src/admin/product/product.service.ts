@@ -12,9 +12,6 @@ import { PrismaService } from 'src/prisma/prisma.service'
 // ** Types Imports
 import { IProductSearch } from './product.interface'
 
-// ** Utils Imports
-import { SPECIAL_PRICE } from 'src/utils/enums'
-
 @Injectable()
 export class ProductService {
     constructor(private prisma: PrismaService) {}
@@ -23,19 +20,11 @@ export class ProductService {
         try {
             const { attributes, product_cross_sell, product_upsell, product_related, ...productData } = createProductDto
 
-            if (productData['special_price_type']) {
-                productData['selling_price'] = this.getSellingPrice(
-                    productData['special_price_type'],
-                    productData['price'],
-                    productData['special_price'],
-                )
-            }
-
             return await this.prisma.$transaction(async (prisma) => {
                 return await prisma.product.create({
                     data: {
                         ...productData,
-                        ProductPrice: {
+                        productPrice: {
                             create: {
                                 price: productData['price'],
                                 special_price: productData['special_price'],
@@ -140,7 +129,7 @@ export class ProductService {
                         status: true,
                         popular: true,
                         image_uri: true,
-                        ProductPrice: {
+                        productPrice: {
                             select: {
                                 price: true,
                                 special_price: true,
@@ -171,7 +160,7 @@ export class ProductService {
             const formattedData = data.map((item) => {
                 return {
                     ...item,
-                    ...item.ProductPrice
+                    ...item.productPrice
                 }
             })
 
@@ -181,25 +170,25 @@ export class ProductService {
         }
     }
 
-    getSellingPrice(specialPriceType: number, price: number, specialPrice: number) {
-        let discount = 0
-
-        if (specialPriceType === SPECIAL_PRICE.PERCENT) {
-            discount = (price / 100) * specialPrice
-        }
-
-        if (specialPriceType === SPECIAL_PRICE.PRICE) {
-            discount = specialPrice
-        }
-
-        return price - discount
-    }
-
     async getDetail(id: number) {
         try {
             const product = await this.prisma.product.findFirstOrThrow({
                 where: { id, deleted_flg: false },
                 include: {
+                    productPrice: {
+                        select: {
+                            price: true,
+                            discount: true,
+                            selling_price: true,
+                            special_price: true,
+                            special_price_type: true
+                        }
+                    },
+                    flashSaleProduct: {
+                        select: {
+                            flash_sale_id: true
+                        }
+                    },
                     productAttributes: {
                         select: {
                             attribute: true,
@@ -252,6 +241,7 @@ export class ProductService {
 
             return {
                 ...product,
+                ...product.productPrice,
                 attributes: Object.values(attributes),
                 technical_specifications:
                     typeof product.technical_specifications === 'string'
@@ -269,23 +259,15 @@ export class ProductService {
     }
 
     async update(id: number, updateProductDto: UpdateProductDto) {
-        // try {
+        try {
             const { attributes, product_cross_sell, product_upsell, product_related, ...productData } = updateProductDto
-
-            const specialPriceType = productData['special_price_type']
-            const specialPrice = productData['special_price']
-            const price = productData['price']
-
-            if (specialPriceType) {
-                productData['selling_price'] = this.getSellingPrice(specialPriceType, price, specialPrice)
-            }
 
             return await this.prisma.$transaction(async (prisma) => {
                 return await prisma.product.update({
                     where: { id },
                     data: {
                         ...productData,
-                        ProductPrice: {
+                        productPrice: {
                             update: {
                                 price: productData['price'],
                                 special_price: productData['special_price'],
@@ -347,13 +329,13 @@ export class ProductService {
                     select: { id: true }
                 })
             })
-        // } catch (error) {
-        //     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        //         throw new ConflictException()
-        //     }
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+                throw new ConflictException()
+            }
 
-        //     throw new InternalServerErrorException()
-        // }
+            throw new InternalServerErrorException()
+        }
     }
 
     async remove(id: number) {

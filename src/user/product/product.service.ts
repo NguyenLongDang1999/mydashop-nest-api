@@ -28,10 +28,10 @@ export class ProductService {
                     short_description: true,
                     description: true,
                     in_stock: true,
-                    price: true,
-                    selling_price: true,
-                    special_price: true,
-                    special_price_type: true,
+                    // price: true,
+                    // selling_price: true,
+                    // special_price: true,
+                    // special_price_type: true,
                     meta_title: true,
                     meta_description: true,
                     total_rating: true,
@@ -81,11 +81,11 @@ export class ProductService {
                                     name: true,
                                     slug: true,
                                     image_uri: true,
-                                    price: true,
+                                    // price: true,
                                     in_stock: true,
-                                    special_price: true,
-                                    selling_price: true,
-                                    special_price_type: true,
+                                    // special_price: true,
+                                    // selling_price: true,
+                                    // special_price_type: true,
                                     total_rating: true,
                                     productAttributes: true,
                                     category: {
@@ -108,11 +108,11 @@ export class ProductService {
                                     name: true,
                                     slug: true,
                                     image_uri: true,
-                                    price: true,
+                                    // price: true,
                                     in_stock: true,
-                                    special_price: true,
-                                    selling_price: true,
-                                    special_price_type: true,
+                                    // special_price: true,
+                                    // selling_price: true,
+                                    // special_price_type: true,
                                     total_rating: true,
                                     productAttributes: true,
                                     category: {
@@ -130,16 +130,16 @@ export class ProductService {
             })
 
             return {
-                ...product,
-                relatedProducts: product.relatedProducts.map((_item) => ({ ..._item.mainRelatedProduct })),
-                product_attributes: product.productAttributes.map((_item) => ({
-                    ..._item,
-                    attribute: _item.attribute,
-                    product_attribute_values: _item.productAttributeValues.map((_values) => ({
-                        ..._values,
-                        attribute_values: _values.attributeValues
-                    }))
-                }))
+                ...product
+                // relatedProducts: product.relatedProducts.map((_item) => ({ ..._item.mainRelatedProduct })),
+                // product_attributes: product.productAttributes.map((_item) => ({
+                //     ..._item,
+                //     attribute: _item.attribute,
+                //     product_attribute_values: _item.productAttributeValues.map((_values) => ({
+                //         ..._values,
+                //         attribute_values: _values.attributeValues
+                //     }))
+                // }))
             }
         } catch (error) {
             throw new InternalServerErrorException()

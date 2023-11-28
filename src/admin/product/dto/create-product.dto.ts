@@ -59,17 +59,17 @@ export class CreateProductDto {
     @IsOptional()
     @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
-    product_cross_sell: number[]
+    product_cross_sell?: number[]
 
     @IsOptional()
     @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
-    product_upsell: number[]
+    product_upsell?: number[]
 
     @IsOptional()
     @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
-    product_related: number[]
+    product_related?: number[]
 
     @IsOptional()
     @IsNumber()
@@ -88,6 +88,12 @@ export class CreateProductDto {
     @Transform(({ value }) => Number(value))
     @ApiProperty({ required: false, default: SPECIAL_PRICE.PRICE })
     special_price_type = SPECIAL_PRICE.PRICE
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: 0 })
+    selling_price = 0
 
     @IsOptional()
     @IsNumber()

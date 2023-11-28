@@ -111,10 +111,6 @@ model Product {
   brand_id                 Int?
   status                   Int?               @default(20) @db.SmallInt
   popular                  Int?               @default(20) @db.SmallInt
-  price                    Decimal            @default(0) @db.Decimal(18, 0)
-  special_price            Decimal?           @default(0) @db.Decimal(18, 0)
-  special_price_type       Int?               @db.SmallInt
-  selling_price            Decimal            @default(0) @db.Decimal(18, 0)
   quantity                 Int?               @db.SmallInt
   in_stock                 Int?               @default(20) @db.SmallInt
   meta_title               String?            @db.VarChar
@@ -132,8 +128,8 @@ model Product {
   mainRelatedProducts      ProductRelated[]   @relation("MainRelatedProduct")
   mainUpsellProducts       ProductUpSell[]    @relation("MainUpSellProduct")
   mainCrossSellProducts    ProductCrossSell[] @relation("MainCrossSellProduct")
-  FlashSaleProduct         FlashSaleProduct[]
-  ProductPrice             ProductPrice?
+  flashSaleProduct         FlashSaleProduct[]
+  productPrice             ProductPrice?
 
   @@index([status, popular, brand_id, category_id])
 }
