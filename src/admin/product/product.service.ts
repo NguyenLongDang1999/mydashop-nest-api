@@ -18,7 +18,17 @@ export class ProductService {
 
     async create(createProductDto: CreateProductDto) {
         try {
-            const { attributes, product_cross_sell, product_upsell, product_related, ...productData } = createProductDto
+            const {
+                attributes,
+                product_cross_sell,
+                product_upsell,
+                product_related,
+                price,
+                special_price,
+                selling_price,
+                special_price_type,
+                ...productData
+            } = createProductDto
 
             return await this.prisma.$transaction(async (prisma) => {
                 return await prisma.product.create({
@@ -26,10 +36,10 @@ export class ProductService {
                         ...productData,
                         productPrice: {
                             create: {
-                                price: productData['price'],
-                                special_price: productData['special_price'],
-                                selling_price: productData['selling_price'],
-                                special_price_type: productData['special_price_type']
+                                price,
+                                special_price,
+                                selling_price,
+                                special_price_type
                             }
                         },
                         productAttributes: {
@@ -260,7 +270,17 @@ export class ProductService {
 
     async update(id: number, updateProductDto: UpdateProductDto) {
         try {
-            const { attributes, product_cross_sell, product_upsell, product_related, ...productData } = updateProductDto
+            const {
+                attributes,
+                product_cross_sell,
+                product_upsell,
+                product_related,
+                price,
+                special_price,
+                selling_price,
+                special_price_type,
+                ...productData
+            } = updateProductDto
 
             return await this.prisma.$transaction(async (prisma) => {
                 return await prisma.product.update({
@@ -269,10 +289,10 @@ export class ProductService {
                         ...productData,
                         productPrice: {
                             update: {
-                                price: productData['price'],
-                                special_price: productData['special_price'],
-                                selling_price: productData['selling_price'],
-                                special_price_type: productData['special_price_type']
+                                price,
+                                special_price,
+                                selling_price,
+                                special_price_type
                             }
                         },
                         productAttributes: {

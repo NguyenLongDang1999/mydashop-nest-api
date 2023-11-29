@@ -12,6 +12,9 @@ import { PrismaService } from 'src/prisma/prisma.service'
 // ** Types Imports
 import { IFlashSaleSearch } from './flash-sale.interface'
 
+// ** Utils Imports
+import { SPECIAL_PRICE } from 'src/utils/enums'
+
 @Injectable()
 export class FlashSaleService {
     constructor(private prisma: PrismaService) {}
@@ -155,11 +158,53 @@ export class FlashSaleService {
 
     async remove(id: number) {
         try {
-            return await this.prisma.flashSale.delete({
-                where: { id }
+            return await this.prisma.$transaction(async (prisma) => {
+                const data = await prisma.flashSaleProduct.findMany({
+                    where: { flash_sale_id: id },
+                    select: { product_id: true }
+                })
+
+                for (const product of data) {
+                    const productPrice = await prisma.productPrice.findFirst({
+                        where: { product_id: product.product_id },
+                        select: {
+                            price: true,
+                            special_price: true,
+                            special_price_type: true
+                        }
+                    })
+
+                    if (productPrice) {
+                        await prisma.productPrice.update({
+                            where: { product_id: product.product_id },
+                            data: {
+                                discount: null,
+                                selling_price: this.getSellingPrice(productPrice.special_price_type, Number(productPrice.price), Number(productPrice.special_price))
+                            }
+                        })
+                    }
+                }
+
+                await this.prisma.flashSale.delete({
+                    where: { id }
+                })
             })
         } catch (error) {
             throw new InternalServerErrorException()
         }
+    }
+
+    getSellingPrice(specialPriceType: number, price: number, specialPrice: number) {
+        let discount = 0
+
+        if (specialPriceType === SPECIAL_PRICE.PERCENT) {
+            discount = (price / 100) * specialPrice
+        }
+
+        if (specialPriceType === SPECIAL_PRICE.PRICE) {
+            discount = specialPrice
+        }
+
+        return price - discount
     }
 }
