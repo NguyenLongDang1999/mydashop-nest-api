@@ -69,8 +69,8 @@ export class ProductController {
 
     @Get('data-list')
     @ApiOkResponse()
-    getDataList() {
-        return this.productService.getDataList()
+    getDataList(@Query() params: { q: string }) {
+        return this.productService.getDataList(params)
     }
 
     @Get(':id')

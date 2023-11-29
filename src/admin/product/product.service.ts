@@ -95,11 +95,18 @@ export class ProductService {
         }
     }
 
-    async getDataList() {
+    async getDataList(params: { q: string }) {
         try {
             return await this.prisma.product.findMany({
                 orderBy: { created_at: 'desc' },
-                where: { deleted_flg: false },
+                where: {
+                    deleted_flg: false,
+                    OR: [{
+                        sku: { contains: params.q || undefined, mode: 'insensitive' }
+                    }, {
+                        name: { contains: params.q || undefined, mode: 'insensitive' }
+                    }]
+                },
                 select: {
                     id: true,
                     name: true,
