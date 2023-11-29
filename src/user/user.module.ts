@@ -7,6 +7,7 @@ import { SliderModule } from './slider/slider.module'
 import { CategoryModule } from './category/category.module'
 import { BrandModule } from './brand/brand.module'
 import { ProductModule } from './product/product.module'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
     imports: [
@@ -14,6 +15,7 @@ import { ProductModule } from './product/product.module'
         CategoryModule,
         BrandModule,
         ProductModule,
+        AuthModule,
         RouterModule.register([
             {
                 path: 'user',
@@ -33,6 +35,10 @@ import { ProductModule } from './product/product.module'
                     {
                         path: 'product',
                         module: ProductModule
+                    },
+                    {
+                        path: 'auth',
+                        module: AuthModule
                     }
                 ]
             }

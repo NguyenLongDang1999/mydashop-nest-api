@@ -53,7 +53,8 @@ export class FlashSaleService {
                             where: { product_id: productId },
                             data: {
                                 discount: data.discount,
-                                selling_price: Number(productPrice.price) - ((Number(productPrice.price) / 100) * data.discount)
+                                selling_price:
+                                    Number(productPrice.price) - (Number(productPrice.price) / 100) * data.discount
                             }
                         })
                     }
@@ -143,7 +144,8 @@ export class FlashSaleService {
                             where: { product_id: productId },
                             data: {
                                 discount: data.discount,
-                                selling_price: Number(productPrice.price) - ((Number(productPrice.price) / 100) * data.discount)
+                                selling_price:
+                                    Number(productPrice.price) - (Number(productPrice.price) / 100) * data.discount
                             }
                         })
                     }
@@ -179,7 +181,11 @@ export class FlashSaleService {
                             where: { product_id: product.product_id },
                             data: {
                                 discount: null,
-                                selling_price: this.getSellingPrice(productPrice.special_price_type, Number(productPrice.price), Number(productPrice.special_price))
+                                selling_price: this.getSellingPrice(
+                                    productPrice.special_price_type,
+                                    Number(productPrice.price),
+                                    Number(productPrice.special_price),
+                                )
                             }
                         })
                     }

@@ -61,7 +61,7 @@ export class ProductService {
             const formattedData = data.map((item) => {
                 return {
                     ...item,
-                    Product: item.Product.map(_p => _p.productPrice)
+                    Product: item.Product.map((_p) => _p.productPrice)
                 }
             })
 
@@ -310,7 +310,10 @@ export class ProductService {
             return {
                 ...product,
                 ...product.productPrice,
-                relatedProducts: product.relatedProducts.map((_item) => ({ ..._item.mainRelatedProduct, ..._item.mainRelatedProduct.productPrice })),
+                relatedProducts: product.relatedProducts.map((_item) => ({
+                    ..._item.mainRelatedProduct,
+                    ..._item.mainRelatedProduct.productPrice
+                })),
                 product_attributes: product.productAttributes.map((_item) => ({
                     ..._item,
                     attribute: _item.attribute,
