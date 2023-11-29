@@ -58,8 +58,6 @@ export class ProductService {
                 }
             })
 
-            console.log(data)
-
             const formattedData = data.map((item) => {
                 return {
                     ...item,
@@ -68,6 +66,112 @@ export class ProductService {
             })
 
             return formattedData
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async getListProductFlashSale() {
+        try {
+            const data = await this.prisma.flashSale.findFirstOrThrow({
+                orderBy: { created_at: 'desc' },
+                where: {
+                    start_date: { lte: new Date() },
+                    end_date: { gte: new Date() }
+                },
+                select: {
+                    campaign_name: true,
+                    FlashSaleProduct: {
+                        where: {
+                            product: {
+                                deleted_flg: false,
+                                status: STATUS.ACTIVE
+                            }
+                        },
+                        select: {
+                            product: {
+                                select: {
+                                    id: true,
+                                    sku: true,
+                                    slug: true,
+                                    name: true,
+                                    image_uri: true,
+                                    technical_specifications: true,
+                                    short_description: true,
+                                    description: true,
+                                    in_stock: true,
+                                    meta_title: true,
+                                    meta_description: true,
+                                    total_rating: true,
+                                    productPrice: {
+                                        select: {
+                                            price: true,
+                                            selling_price: true,
+                                            special_price: true,
+                                            special_price_type: true
+                                        }
+                                    },
+                                    productAttributes: {
+                                        select: {
+                                            attribute: {
+                                                select: {
+                                                    id: true,
+                                                    name: true
+                                                }
+                                            },
+                                            productAttributeValues: {
+                                                select: {
+                                                    attribute_value_id: true,
+                                                    attributeValues: true
+                                                }
+                                            }
+                                        }
+                                    },
+                                    category: {
+                                        select: {
+                                            id: true,
+                                            slug: true,
+                                            name: true,
+                                            parent: {
+                                                select: {
+                                                    id: true,
+                                                    slug: true,
+                                                    name: true
+                                                }
+                                            }
+                                        }
+                                    },
+                                    brand: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            image_uri: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+
+            const formattedData = data.FlashSaleProduct.map((item) => {
+                return {
+                    campaign_name: data.campaign_name,
+                    ...item.product,
+                    ...item.product.productPrice,
+                    product_attributes: item.product.productAttributes.map((_item) => ({
+                        ..._item,
+                        attribute: _item.attribute,
+                        product_attribute_values: _item.productAttributeValues.map((_values) => ({
+                            ..._values,
+                            attribute_values: _values.attributeValues
+                        }))
+                    }))
+                }
+            })
+
+            return { ...data, FlashSaleProduct: formattedData }
         } catch (error) {
             throw new InternalServerErrorException()
         }

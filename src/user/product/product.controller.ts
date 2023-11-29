@@ -16,6 +16,12 @@ export class ProductController {
         return this.productService.getListProductHome()
     }
 
+    @Get('data-list-flash-sale')
+    @ApiOkResponse()
+    getListProductFlashSale() {
+        return this.productService.getListProductFlashSale()
+    }
+
     @Get(':slug')
     @ApiOkResponse()
     getDetail(@Param('slug') slug: string) {
