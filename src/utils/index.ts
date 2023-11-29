@@ -10,8 +10,8 @@ export const getProductOrderBy = (orderBy: number) => {
         2: { created_at: 'asc' },
         3: { name: 'asc' },
         4: { name: 'desc' },
-        5: { selling_price: 'asc' },
-        6: { selling_price: 'desc' }
+        5: { productPrice: { selling_price: 'asc' } },
+        6: { productPrice: { selling_price: 'desc' } }
     }
 
     return sortConditions[orderBy]

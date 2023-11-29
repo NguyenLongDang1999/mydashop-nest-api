@@ -231,14 +231,18 @@ export class CategoryService {
                 name: true,
                 slug: true,
                 image_uri: true,
-                // price: true,
                 in_stock: true,
-                // special_price: true,
-                // selling_price: true,
                 short_description: true,
-                // special_price_type: true,
                 total_rating: true,
                 productAttributes: true,
+                productPrice: {
+                    select: {
+                        price: true,
+                        selling_price: true,
+                        special_price: true,
+                        special_price_type: true
+                    }
+                },
                 category: {
                     select: {
                         id: true,
@@ -254,8 +258,15 @@ export class CategoryService {
             }
         })
 
+        const formattedData = data.map((item) => {
+            return {
+                ...item,
+                ...item.productPrice
+            }
+        })
+
         return {
-            data,
+            data: formattedData,
             aggregations: await this.prisma.product.count({ where: search })
         }
     }

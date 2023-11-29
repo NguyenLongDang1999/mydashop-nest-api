@@ -15,6 +15,7 @@ import { FlashSaleModule } from './flash-sale/flash-sale.module'
         CategoryModule,
         BrandModule,
         ProductModule,
+        FlashSaleModule,
         RouterModule.register([
             {
                 path: 'user',
@@ -37,8 +38,7 @@ import { FlashSaleModule } from './flash-sale/flash-sale.module'
                     }
                 ]
             }
-        ]),
-        FlashSaleModule
+        ])
     ]
 })
 export class UserModule {}

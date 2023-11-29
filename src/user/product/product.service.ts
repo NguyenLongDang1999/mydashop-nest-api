@@ -11,6 +11,68 @@ import { STATUS } from 'src/utils/enums'
 export class ProductService {
     constructor(private prisma: PrismaService) {}
 
+    async getListProductHome() {
+        try {
+            const data = await this.prisma.category.findMany({
+                take: 3,
+                orderBy: { created_at: 'desc' },
+                where: {
+                    deleted_flg: false,
+                    status: STATUS.ACTIVE,
+                    parent_id: null
+                },
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    Product: {
+                        orderBy: { created_at: 'desc' },
+                        where: {
+                            deleted_flg: false,
+                            status: STATUS.ACTIVE
+                        },
+                        take: 10,
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            image_uri: true,
+                            in_stock: true,
+                            category: {
+                                select: {
+                                    id: true,
+                                    slug: true,
+                                    name: true
+                                }
+                            },
+                            productPrice: {
+                                select: {
+                                    price: true,
+                                    selling_price: true,
+                                    special_price: true,
+                                    special_price_type: true
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+
+            console.log(data)
+
+            const formattedData = data.map((item) => {
+                return {
+                    ...item,
+                    Product: item.Product.map(_p => _p.productPrice)
+                }
+            })
+
+            return formattedData
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
     async getDetail(slug: string) {
         try {
             const product = await this.prisma.product.findFirstOrThrow({
@@ -28,13 +90,17 @@ export class ProductService {
                     short_description: true,
                     description: true,
                     in_stock: true,
-                    // price: true,
-                    // selling_price: true,
-                    // special_price: true,
-                    // special_price_type: true,
                     meta_title: true,
                     meta_description: true,
                     total_rating: true,
+                    productPrice: {
+                        select: {
+                            price: true,
+                            selling_price: true,
+                            special_price: true,
+                            special_price_type: true
+                        }
+                    },
                     productAttributes: {
                         select: {
                             attribute: {
@@ -81,11 +147,7 @@ export class ProductService {
                                     name: true,
                                     slug: true,
                                     image_uri: true,
-                                    // price: true,
                                     in_stock: true,
-                                    // special_price: true,
-                                    // selling_price: true,
-                                    // special_price_type: true,
                                     total_rating: true,
                                     productAttributes: true,
                                     category: {
@@ -93,6 +155,14 @@ export class ProductService {
                                             id: true,
                                             slug: true,
                                             name: true
+                                        }
+                                    },
+                                    productPrice: {
+                                        select: {
+                                            price: true,
+                                            selling_price: true,
+                                            special_price: true,
+                                            special_price_type: true
                                         }
                                     }
                                 }
@@ -108,11 +178,7 @@ export class ProductService {
                                     name: true,
                                     slug: true,
                                     image_uri: true,
-                                    // price: true,
                                     in_stock: true,
-                                    // special_price: true,
-                                    // selling_price: true,
-                                    // special_price_type: true,
                                     total_rating: true,
                                     productAttributes: true,
                                     category: {
@@ -120,6 +186,14 @@ export class ProductService {
                                             id: true,
                                             slug: true,
                                             name: true
+                                        }
+                                    },
+                                    productPrice: {
+                                        select: {
+                                            price: true,
+                                            selling_price: true,
+                                            special_price: true,
+                                            special_price_type: true
                                         }
                                     }
                                 }
@@ -130,16 +204,17 @@ export class ProductService {
             })
 
             return {
-                ...product
-                // relatedProducts: product.relatedProducts.map((_item) => ({ ..._item.mainRelatedProduct })),
-                // product_attributes: product.productAttributes.map((_item) => ({
-                //     ..._item,
-                //     attribute: _item.attribute,
-                //     product_attribute_values: _item.productAttributeValues.map((_values) => ({
-                //         ..._values,
-                //         attribute_values: _values.attributeValues
-                //     }))
-                // }))
+                ...product,
+                ...product.productPrice,
+                relatedProducts: product.relatedProducts.map((_item) => ({ ..._item.mainRelatedProduct, ..._item.mainRelatedProduct.productPrice })),
+                product_attributes: product.productAttributes.map((_item) => ({
+                    ..._item,
+                    attribute: _item.attribute,
+                    product_attribute_values: _item.productAttributeValues.map((_values) => ({
+                        ..._values,
+                        attribute_values: _values.attributeValues
+                    }))
+                }))
             }
         } catch (error) {
             throw new InternalServerErrorException()
