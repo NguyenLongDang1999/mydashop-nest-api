@@ -20,9 +20,9 @@ export class ProductService {
         try {
             const {
                 attributes,
-                product_cross_sell,
-                product_upsell,
-                product_related,
+                cross_sell_products,
+                upsell_products,
+                related_products,
                 price,
                 special_price,
                 selling_price,
@@ -60,7 +60,7 @@ export class ProductService {
                         },
                         mainRelatedProducts: {
                             createMany: {
-                                data: product_related.map((categoryItem) => ({
+                                data: related_products.map((categoryItem) => ({
                                     related_product_id: categoryItem
                                 })),
                                 skipDuplicates: true
@@ -68,7 +68,7 @@ export class ProductService {
                         },
                         mainCrossSellProducts: {
                             createMany: {
-                                data: product_cross_sell.map((categoryItem) => ({
+                                data: cross_sell_products.map((categoryItem) => ({
                                     cross_sell_product_id: categoryItem
                                 })),
                                 skipDuplicates: true
@@ -76,7 +76,7 @@ export class ProductService {
                         },
                         mainUpsellProducts: {
                             createMany: {
-                                data: product_upsell.map((categoryItem) => ({
+                                data: upsell_products.map((categoryItem) => ({
                                     up_sell_product_id: categoryItem
                                 })),
                                 skipDuplicates: true
@@ -279,9 +279,9 @@ export class ProductService {
         try {
             const {
                 attributes,
-                product_cross_sell,
-                product_upsell,
-                product_related,
+                cross_sell_products,
+                upsell_products,
+                related_products,
                 price,
                 special_price,
                 selling_price,
@@ -323,8 +323,8 @@ export class ProductService {
                             deleteMany: {},
                             createMany: {
                                 data:
-                                    product_related &&
-                                    product_related.map((categoryItem) => ({
+                                    related_products &&
+                                    related_products.map((categoryItem) => ({
                                         related_product_id: categoryItem
                                     })),
                                 skipDuplicates: true
@@ -334,8 +334,8 @@ export class ProductService {
                             deleteMany: {},
                             createMany: {
                                 data:
-                                    product_cross_sell &&
-                                    product_cross_sell.map((categoryItem) => ({
+                                    cross_sell_products &&
+                                    cross_sell_products.map((categoryItem) => ({
                                         cross_sell_product_id: categoryItem
                                     })),
                                 skipDuplicates: true
@@ -345,8 +345,8 @@ export class ProductService {
                             deleteMany: {},
                             createMany: {
                                 data:
-                                    product_upsell &&
-                                    product_upsell.map((categoryItem) => ({
+                                    upsell_products &&
+                                    upsell_products.map((categoryItem) => ({
                                         up_sell_product_id: categoryItem
                                     })),
                                 skipDuplicates: true

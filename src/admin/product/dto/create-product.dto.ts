@@ -59,17 +59,17 @@ export class CreateProductDto {
     @IsOptional()
     @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
-    product_cross_sell?: number[]
+    cross_sell_products?: number[]
 
     @IsOptional()
     @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
-    product_upsell?: number[]
+    upsell_products?: number[]
 
     @IsOptional()
     @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
-    product_related?: number[]
+    related_products?: number[]
 
     @IsOptional()
     @IsNumber()
