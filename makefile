@@ -1,6 +1,9 @@
 dev:
 	bun run start:dev
 
+g:
+	bun prisma generate
+
 db:
 	bun prisma db push
 

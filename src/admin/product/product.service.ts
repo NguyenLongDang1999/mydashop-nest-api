@@ -352,23 +352,23 @@ export class ProductService {
                                 special_price_type
                             }
                         },
-                        productAttributes: {
-                            deleteMany: {},
-                            create:
-                                attributes &&
-                                attributes.map((attributeItem) => ({
-                                    attribute: {
-                                        connect: { id: attributeItem.id }
-                                    },
-                                    productAttributeValues: {
-                                        create: attributeItem.attribute_value_id.map((valueId) => ({
-                                            attributeValues: {
-                                                connect: { id: valueId }
-                                            }
-                                        }))
-                                    }
-                                }))
-                        },
+                        productAttributes: attributes
+                            ? {
+                                  deleteMany: {},
+                                  create: attributes.map((attributeItem) => ({
+                                      attribute: {
+                                          connect: { id: attributeItem.id }
+                                      },
+                                      productAttributeValues: {
+                                          create: attributeItem.attribute_value_id.map((valueId) => ({
+                                              attributeValues: {
+                                                  connect: { id: valueId }
+                                              }
+                                          }))
+                                      }
+                                  }))
+                              }
+                            : {},
                         mainRelatedProducts: related_products
                             ? {
                                   deleteMany: {},

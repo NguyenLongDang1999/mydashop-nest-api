@@ -102,7 +102,7 @@ export class ProductController {
     async createProductUpload(
         @Param('id') id: string,
         @UploadedFile() image_uri: Express.Multer.File,
-        @Body() uploadProductDto: UploadProductDto
+        @Body() uploadProductDto: UploadProductDto,
     ) {
         const fileName = fileExtensionURL(image_uri.originalname, uploadProductDto['slug'])
         await this.bunnyService.uploadFile(`${this.path}/${fileName}`, image_uri.buffer)
@@ -118,7 +118,7 @@ export class ProductController {
     async updateProductUpload(
         @Param('image_id') image_id: string,
         @UploadedFile() image_uri: Express.Multer.File,
-        @Body() uploadProductDto: UploadProductDto
+        @Body() uploadProductDto: UploadProductDto,
     ) {
         const fileName = fileExtensionURL(image_uri.originalname, uploadProductDto['slug'])
         await this.bunnyService.uploadFile(`${this.path}/${fileName}`, image_uri.buffer)
