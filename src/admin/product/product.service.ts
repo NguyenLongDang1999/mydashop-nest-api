@@ -58,30 +58,36 @@ export class ProductService {
                                     }
                                 }))
                         },
-                        mainRelatedProducts: {
-                            createMany: {
-                                data: related_products.map((categoryItem) => ({
-                                    related_product_id: categoryItem
-                                })),
-                                skipDuplicates: true
-                            }
-                        },
-                        mainCrossSellProducts: {
-                            createMany: {
-                                data: cross_sell_products.map((categoryItem) => ({
-                                    cross_sell_product_id: categoryItem
-                                })),
-                                skipDuplicates: true
-                            }
-                        },
-                        mainUpsellProducts: {
-                            createMany: {
-                                data: upsell_products.map((categoryItem) => ({
-                                    up_sell_product_id: categoryItem
-                                })),
-                                skipDuplicates: true
-                            }
-                        }
+                        mainRelatedProducts: related_products
+                            ? {
+                                  createMany: {
+                                      data: related_products.map((categoryItem) => ({
+                                          related_product_id: categoryItem
+                                      })),
+                                      skipDuplicates: true
+                                  }
+                              }
+                            : {},
+                        mainCrossSellProducts: cross_sell_products
+                            ? {
+                                  createMany: {
+                                      data: cross_sell_products.map((categoryItem) => ({
+                                          cross_sell_product_id: categoryItem
+                                      })),
+                                      skipDuplicates: true
+                                  }
+                              }
+                            : {},
+                        mainUpsellProducts: upsell_products
+                            ? {
+                                  createMany: {
+                                      data: upsell_products.map((categoryItem) => ({
+                                          up_sell_product_id: categoryItem
+                                      })),
+                                      skipDuplicates: true
+                                  }
+                              }
+                            : {}
                     },
                     select: { id: true }
                 })
