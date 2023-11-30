@@ -130,8 +130,19 @@ model Product {
   mainCrossSellProducts    ProductCrossSell[] @relation("MainCrossSellProduct")
   flashSaleProduct         FlashSaleProduct[]
   productPrice             ProductPrice?
+  productImage             ProductImage[]
 
   @@index([status, popular, brand_id, category_id])
+}
+
+model ProductImage {
+  id         Int      @id @default(autoincrement())
+  product_id Int
+  image_uri  String   @db.VarChar
+  index      Int      @db.SmallInt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 model ProductPrice {

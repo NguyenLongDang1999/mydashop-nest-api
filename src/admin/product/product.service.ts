@@ -3,6 +3,7 @@ import { Injectable, ConflictException, InternalServerErrorException } from '@ne
 
 // ** DTO Imports
 import { CreateProductDto } from './dto/create-product.dto'
+import { UploadProductDto } from './dto/upload-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
 
 // ** Prisma Imports
@@ -97,6 +98,39 @@ export class ProductService {
                 throw new ConflictException()
             }
 
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async createProductUpload(id: number, uploadProductDto: UploadProductDto) {
+        try {
+            return await this.prisma.$transaction(async (prisma) => {
+                return await prisma.productImage.create({
+                    data: {
+                        product_id: id,
+                        index: uploadProductDto.index,
+                        image_uri: uploadProductDto.image_uri as string
+                    },
+                    select: { id: true }
+                })
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async updateProductUpload(id: number, uploadProductDto: UploadProductDto) {
+        try {
+            return await this.prisma.$transaction(async (prisma) => {
+                return await prisma.productImage.update({
+                    where: { id },
+                    data: {
+                        image_uri: uploadProductDto.image_uri as string
+                    },
+                    select: { id: true }
+                })
+            })
+        } catch (error) {
             throw new InternalServerErrorException()
         }
     }
@@ -208,6 +242,13 @@ export class ProductService {
                             selling_price: true,
                             special_price: true,
                             special_price_type: true
+                        }
+                    },
+                    productImage: {
+                        orderBy: { index: 'asc' },
+                        select: {
+                            id: true,
+                            image_uri: true
                         }
                     },
                     flashSaleProduct: {

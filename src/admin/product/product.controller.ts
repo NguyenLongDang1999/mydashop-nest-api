@@ -20,6 +20,7 @@ import { BunnyService } from 'src/bunny/bunny.service'
 
 // ** DTO Imports
 import { CreateProductDto } from './dto/create-product.dto'
+import { UploadProductDto } from './dto/upload-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
 
 // ** Express Imports
@@ -93,6 +94,38 @@ export class ProductController {
         }
 
         return this.productService.update(+id, updateProductDto)
+    }
+
+    @Post(':id/upload')
+    @ApiNoContentResponse()
+    @UseInterceptors(FileInterceptor('image_uri'))
+    async createProductUpload(
+        @Param('id') id: string,
+        @UploadedFile() image_uri: Express.Multer.File,
+        @Body() uploadProductDto: UploadProductDto
+    ) {
+        const fileName = fileExtensionURL(image_uri.originalname, uploadProductDto['slug'])
+        await this.bunnyService.uploadFile(`${this.path}/${fileName}`, image_uri.buffer)
+
+        uploadProductDto['image_uri'] = fileName
+
+        return this.productService.createProductUpload(+id, uploadProductDto)
+    }
+
+    @Patch(':id/upload/:image_id')
+    @ApiNoContentResponse()
+    @UseInterceptors(FileInterceptor('image_uri'))
+    async updateProductUpload(
+        @Param('image_id') image_id: string,
+        @UploadedFile() image_uri: Express.Multer.File,
+        @Body() uploadProductDto: UploadProductDto
+    ) {
+        const fileName = fileExtensionURL(image_uri.originalname, uploadProductDto['slug'])
+        await this.bunnyService.uploadFile(`${this.path}/${fileName}`, image_uri.buffer)
+
+        uploadProductDto['image_uri'] = fileName
+
+        return this.productService.updateProductUpload(+image_id, uploadProductDto)
     }
 
     @Patch('remove/:id')
