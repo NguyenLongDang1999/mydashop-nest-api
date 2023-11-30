@@ -101,11 +101,14 @@ export class ProductService {
                 orderBy: { created_at: 'desc' },
                 where: {
                     deleted_flg: false,
-                    OR: [{
-                        sku: { contains: params.q || undefined, mode: 'insensitive' }
-                    }, {
-                        name: { contains: params.q || undefined, mode: 'insensitive' }
-                    }]
+                    OR: [
+                        {
+                            sku: { contains: params.q || undefined, mode: 'insensitive' }
+                        },
+                        {
+                            name: { contains: params.q || undefined, mode: 'insensitive' }
+                        }
+                    ]
                 },
                 select: {
                     id: true,
@@ -319,39 +322,39 @@ export class ProductService {
                                     }
                                 }))
                         },
-                        mainRelatedProducts: {
-                            deleteMany: {},
-                            createMany: {
-                                data:
-                                    related_products &&
-                                    related_products.map((categoryItem) => ({
-                                        related_product_id: categoryItem
-                                    })),
-                                skipDuplicates: true
-                            }
-                        },
-                        mainCrossSellProducts: {
-                            deleteMany: {},
-                            createMany: {
-                                data:
-                                    cross_sell_products &&
-                                    cross_sell_products.map((categoryItem) => ({
-                                        cross_sell_product_id: categoryItem
-                                    })),
-                                skipDuplicates: true
-                            }
-                        },
-                        mainUpsellProducts: {
-                            deleteMany: {},
-                            createMany: {
-                                data:
-                                    upsell_products &&
-                                    upsell_products.map((categoryItem) => ({
-                                        up_sell_product_id: categoryItem
-                                    })),
-                                skipDuplicates: true
-                            }
-                        }
+                        mainRelatedProducts: related_products
+                            ? {
+                                  deleteMany: {},
+                                  createMany: {
+                                      data: related_products.map((categoryItem) => ({
+                                          related_product_id: categoryItem
+                                      })),
+                                      skipDuplicates: true
+                                  }
+                              }
+                            : {},
+                        mainCrossSellProducts: cross_sell_products
+                            ? {
+                                  deleteMany: {},
+                                  createMany: {
+                                      data: cross_sell_products.map((categoryItem) => ({
+                                          cross_sell_product_id: categoryItem
+                                      })),
+                                      skipDuplicates: true
+                                  }
+                              }
+                            : {},
+                        mainUpsellProducts: upsell_products
+                            ? {
+                                  deleteMany: {},
+                                  createMany: {
+                                      data: upsell_products.map((categoryItem) => ({
+                                          up_sell_product_id: categoryItem
+                                      })),
+                                      skipDuplicates: true
+                                  }
+                              }
+                            : {}
                     },
                     select: { id: true }
                 })

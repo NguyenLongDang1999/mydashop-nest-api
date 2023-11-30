@@ -31,5 +31,4 @@ import { AUTH } from 'src/utils/enums'
 @ApiTags('User Auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
-
 }
