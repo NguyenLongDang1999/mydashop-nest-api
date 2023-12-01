@@ -134,6 +134,7 @@ export class CategoryService {
                     popular: true,
                     parent_id: true,
                     image_uri: true,
+                    show_product: true,
                     description: true,
                     meta_title: true,
                     meta_description: true

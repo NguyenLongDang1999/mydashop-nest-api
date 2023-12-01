@@ -6,7 +6,7 @@ import { IsNotEmpty, IsString, IsNumber, MaxLength, IsOptional } from 'class-val
 import { Transform } from 'class-transformer'
 
 // ** Utils Imports
-import { POPULAR, STATUS } from 'src/utils/enums'
+import { POPULAR, SHOW_PRODUCT, STATUS } from 'src/utils/enums'
 
 export class CreateCategoryDto {
     @IsNotEmpty()
@@ -34,6 +34,12 @@ export class CreateCategoryDto {
     @IsOptional()
     @ApiProperty({ required: false })
     image_uri?: string
+
+    @IsNumber()
+    @IsOptional()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: SHOW_PRODUCT.NOT_SHOW })
+    show_product = SHOW_PRODUCT.NOT_SHOW
 
     @IsNumber()
     @IsOptional()
