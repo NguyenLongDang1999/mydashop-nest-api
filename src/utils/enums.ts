@@ -31,6 +31,7 @@ export enum SPECIAL_PRICE {
 }
 
 export enum AUTH {
+    _1_HOURS = 1 * 60 * 60 * 1000,
     _7_DAYS = 7 * 24 * 60 * 60 * 1000,
     _30_DAYS = 30 * 24 * 60 * 60 * 1000,
 }

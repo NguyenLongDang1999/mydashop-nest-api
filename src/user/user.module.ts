@@ -8,6 +8,7 @@ import { CategoryModule } from './category/category.module'
 import { BrandModule } from './brand/brand.module'
 import { ProductModule } from './product/product.module'
 import { AuthModule } from './auth/auth.module'
+import { ProductCommentModule } from './product-comment/product-comment.module'
 
 @Module({
     imports: [
@@ -16,6 +17,7 @@ import { AuthModule } from './auth/auth.module'
         BrandModule,
         ProductModule,
         AuthModule,
+        ProductCommentModule,
         RouterModule.register([
             {
                 path: 'user',
@@ -39,6 +41,10 @@ import { AuthModule } from './auth/auth.module'
                     {
                         path: 'auth',
                         module: AuthModule
+                    },
+                    {
+                        path: 'product-comment',
+                        module: ProductCommentModule
                     }
                 ]
             }

@@ -132,8 +132,23 @@ model Product {
   flashSaleProduct         FlashSaleProduct[]
   productPrice             ProductPrice?
   productImage             ProductImage[]
+  ProductComments          ProductComments[]
 
   @@index([status, popular, brand_id, category_id])
+}
+
+model ProductComments {
+  id          Int      @id @default(autoincrement())
+  product_id  Int
+  user_id     Int
+  rating      Float
+  content     String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  deleted_flg Boolean  @default(false)
+  status      Int?     @default(1) @db.SmallInt
+  Product     Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  Users       Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model ProductImage {
@@ -237,6 +252,22 @@ model Slider {
   deleted_flg Boolean  @default(false)
 
   @@index([status])
+}
+
+model Users {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar
+  email           String            @unique @db.VarChar
+  password        String            @db.VarChar
+  phone           String            @db.VarChar
+  gender          Int?              @db.SmallInt
+  address         String?           @db.VarChar
+  refresh_token   String?           @db.VarChar
+  image_uri       String?           @db.VarChar
+  created_at      DateTime          @default(now())
+  updated_at      DateTime          @updatedAt
+  deleted_flg     Boolean           @default(false)
+  ProductComments ProductComments[]
 }
 
 model Admins {

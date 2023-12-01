@@ -202,6 +202,12 @@ export class ProductService {
                     meta_title: true,
                     meta_description: true,
                     total_rating: true,
+                    productImage: {
+                        orderBy: { index: 'asc' },
+                        select: {
+                            image_uri: true
+                        }
+                    },
                     productPrice: {
                         select: {
                             price: true,
