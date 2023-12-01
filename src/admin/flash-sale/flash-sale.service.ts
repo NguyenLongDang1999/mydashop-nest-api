@@ -91,18 +91,40 @@ export class FlashSaleService {
                         campaign_name: true,
                         start_date: true,
                         end_date: true,
-                        discount: true,
-                        FlashSaleProduct: {
-                            select: {
-                                product_id: true
-                            }
-                        }
+                        discount: true
                     }
                 }),
                 this.prisma.flashSale.count({ where: search })
             ])
 
             return { data, aggregations: count }
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async getDetail(id: number) {
+        try {
+            const data = await this.prisma.flashSale.findFirstOrThrow({
+                where: { id },
+                select: {
+                    id: true,
+                    campaign_name: true,
+                    discount: true,
+                    start_date: true,
+                    end_date: true,
+                    FlashSaleProduct: {
+                        select: {
+                            product_id: true
+                        }
+                    }
+                }
+            })
+
+            return {
+                ...data,
+                product_id: data.FlashSaleProduct.map(_p => _p.product_id)
+            }
         } catch (error) {
             throw new InternalServerErrorException()
         }

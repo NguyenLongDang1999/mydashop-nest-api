@@ -36,6 +36,12 @@ export class FlashSaleController {
         })
     }
 
+    @Get(':id')
+    @ApiOkResponse()
+    getDetail(@Param('id') id: string) {
+        return this.flashSaleService.getDetail(+id)
+    }
+
     @Patch(':id')
     @ApiNoContentResponse()
     update(@Param('id') id: string, @Body() updateFlashSaleDto: UpdateFlashSaleDto) {
