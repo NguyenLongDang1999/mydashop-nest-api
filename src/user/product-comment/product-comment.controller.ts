@@ -29,7 +29,7 @@ import { Pagination } from 'src/user/types/core.type'
 @Controller('/')
 @ApiTags('User Product Comment')
 export class ProductCommentController {
-  constructor(private readonly productCommentService: ProductCommentService) {}
+    constructor(private readonly productCommentService: ProductCommentService) {}
 
     @Post()
     @UseGuards(AccessTokenGuard)
@@ -40,10 +40,7 @@ export class ProductCommentController {
 
     @Get(':id')
     @ApiOkResponse()
-    async getList(
-        @Param('id') id: string,
-        @Query() params?: Pagination
-    ) {
+    async getList(@Param('id') id: string, @Query() params?: Pagination) {
         const page = Number(params.page) || 1
         const pageSize = Number(params.pageSize) || 8
 

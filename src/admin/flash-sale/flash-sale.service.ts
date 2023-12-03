@@ -123,7 +123,7 @@ export class FlashSaleService {
 
             return {
                 ...data,
-                product_id: data.FlashSaleProduct.map(_p => _p.product_id)
+                product_id: data.FlashSaleProduct.map((_p) => _p.product_id)
             }
         } catch (error) {
             throw new InternalServerErrorException()

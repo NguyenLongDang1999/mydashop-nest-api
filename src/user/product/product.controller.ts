@@ -1,5 +1,5 @@
 // ** NestJS Imports
-import { Controller, Get, Param } from '@nestjs/common'
+import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 // ** Service Imports
@@ -14,6 +14,12 @@ export class ProductController {
     @ApiOkResponse()
     getListProductHome() {
         return this.productService.getListProductHome()
+    }
+
+    @Get('data-list-search')
+    @ApiOkResponse()
+    getDataListSearch(@Query() params: { q: string }) {
+        return this.productService.getDataListSearch(params)
     }
 
     @Get('data-list-flash-sale')

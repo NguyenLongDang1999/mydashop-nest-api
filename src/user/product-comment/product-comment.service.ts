@@ -1,8 +1,5 @@
 // ** NestJS Imports
-import {
-    Injectable,
-    InternalServerErrorException
-} from '@nestjs/common'
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
 
 // ** DTO Imports
 import { CreateProductCommentDto } from './dto/create-product-comment.dto'
@@ -15,8 +12,7 @@ import { Pagination } from 'src/user/types/core.type'
 
 @Injectable()
 export class ProductCommentService {
-    constructor(private prisma: PrismaService) {
-    }
+    constructor(private prisma: PrismaService) {}
 
     async updateTotalRating(productId: number) {
         try {
@@ -36,7 +32,6 @@ export class ProductCommentService {
                     data: { total_rating }
                 })
             }
-
         } catch (error) {
             throw new InternalServerErrorException()
         }
@@ -107,7 +102,7 @@ export class ProductCommentService {
                 5: 0
             }
 
-            comments.forEach(item => {
+            comments.forEach((item) => {
                 ratingStats[item.rating] = item._count.rating
             })
 
@@ -115,7 +110,7 @@ export class ProductCommentService {
             for (let i = 1; i <= 5; i++) {
                 ratingPercentages[i] = {
                     count: ratingStats[i],
-                    percent: ratingStats[i] / totalReviews * 100 || 0
+                    percent: (ratingStats[i] / totalReviews) * 100 || 0
                 }
             }
 

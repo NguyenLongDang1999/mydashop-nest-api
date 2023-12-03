@@ -76,6 +76,35 @@ export class ProductService {
         }
     }
 
+    async getDataListSearch(params: { q: string }) {
+        try {
+            return await this.prisma.product.findMany({
+                take: 5,
+                orderBy: { created_at: 'desc' },
+                where: {
+                    deleted_flg: false,
+                    status: STATUS.ACTIVE,
+                    OR: [
+                        {
+                            sku: { contains: params.q || undefined, mode: 'insensitive' }
+                        },
+                        {
+                            name: { contains: params.q || undefined, mode: 'insensitive' }
+                        }
+                    ]
+                },
+                select: {
+                    id: true,
+                    slug: true,
+                    name: true,
+                    image_uri: true
+                }
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
     async getListProductFlashSale() {
         try {
             const data = await this.prisma.flashSale.findFirstOrThrow({

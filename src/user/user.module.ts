@@ -9,6 +9,7 @@ import { BrandModule } from './brand/brand.module'
 import { ProductModule } from './product/product.module'
 import { AuthModule } from './auth/auth.module'
 import { ProductCommentModule } from './product-comment/product-comment.module'
+import { CartModule } from './cart/cart.module'
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { ProductCommentModule } from './product-comment/product-comment.module'
         ProductModule,
         AuthModule,
         ProductCommentModule,
+        CartModule,
         RouterModule.register([
             {
                 path: 'user',
@@ -45,6 +47,10 @@ import { ProductCommentModule } from './product-comment/product-comment.module'
                     {
                         path: 'product-comment',
                         module: ProductCommentModule
+                    },
+                    {
+                        path: 'cart',
+                        module: CartModule
                     }
                 ]
             }
