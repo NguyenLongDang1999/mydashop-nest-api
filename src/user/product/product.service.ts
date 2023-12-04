@@ -256,7 +256,12 @@ export class ProductService {
                             productAttributeValues: {
                                 select: {
                                     attribute_value_id: true,
-                                    attributeValues: true
+                                    attributeValues: {
+                                        select: {
+                                            id: true,
+                                            value: true
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -357,8 +362,10 @@ export class ProductService {
                 product_attributes: product.productAttributes.map((_item) => ({
                     ..._item,
                     attribute: _item.attribute,
+                    productAttributeValues: undefined,
                     product_attribute_values: _item.productAttributeValues.map((_values) => ({
                         ..._values,
+                        attributeValues: undefined,
                         attribute_values: _values.attributeValues
                     }))
                 }))

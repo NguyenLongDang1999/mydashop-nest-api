@@ -75,7 +75,6 @@ model Attribute {
   attributeValues  AttributeValues[]
   categories       CategoryAttribute[]
   ProductAttribute ProductAttribute[]
-  CartItem         CartItem[]
 
   @@index([status])
 }
@@ -89,7 +88,6 @@ model AttributeValues {
   deleted_flg            Boolean                  @default(false)
   attribute              Attribute                @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
   ProductAttributeValues ProductAttributeValues[]
-  CartItem               CartItem[]
 }
 
 model CategoryAttribute {
@@ -295,7 +293,8 @@ model Admins {
 
 model Carts {
   id         Int        @id @default(autoincrement())
-  user_id    Int        @unique
+  user_id    Int?       @unique
+  session_id String     @unique @db.VarChar
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
   CartItem   CartItem[]
@@ -305,15 +304,12 @@ model CartItem {
   id                 Int              @id @default(autoincrement())
   cart_id            Int
   product_id         Int
-  attribute_id       Int?
-  attribute_value_id Int?
+  attributes         String?
   quantity           Int              @db.SmallInt
   created_at         DateTime         @default(now())
   updated_at         DateTime         @updatedAt
   Carts              Carts            @relation(fields: [cart_id], references: [id], onDelete: Cascade)
   Product            Product          @relation(fields: [product_id], references: [id], onDelete: Cascade)
-  Attribute          Attribute?       @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
-  AttributeValues    AttributeValues? @relation(fields: [attribute_value_id], references: [id], onDelete: Cascade)
 
-  @@unique([cart_id, product_id, attribute_id, attribute_value_id])
+  @@unique([cart_id, product_id, attributes])
 }

@@ -10,9 +10,9 @@ import {
     Delete,
     Param,
     Patch,
-    UseGuards
+    Res
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 // ** DTO Imports
 import { CreateCartDto } from './dto/create-cart.dto'
@@ -22,10 +22,11 @@ import { UpdateCartDto } from './dto/update-cart.dto'
 import { CartService } from './cart.service'
 
 // ** ExpressJS Imports
-import { Request } from 'express'
+import { Request, Response } from 'express'
 
-// ** Guards Imports
-import { AccessTokenGuard } from '../common/guards/accessToken.guard'
+// ** Utils Imports
+import { generateUUIDv4 } from 'src/utils'
+import { AUTH } from 'src/utils/enums'
 
 @Controller('/')
 @ApiTags('User Cart')
@@ -34,21 +35,35 @@ export class CartController {
 
     @Get()
     @ApiOkResponse()
-    getDataList() {
+    getDataList(@Req() req: Request) {
+        const sessionId = req.cookies['session_id']
+
+        if (sessionId) {
+            return this.cartService.getDataList(sessionId)
+        }
+
         return []
-        // return this.cartService.getDataList(+id)
     }
 
-    // @Post()
-    // @UseGuards(AccessTokenGuard)
-    // @HttpCode(HttpStatus.CREATED)
-    // create(
-    //     @Req() req: Request,
-    //     @Body() createCartDto: CreateCartDto
-    // ) {
-    //     const userData = JSON.parse(req.cookies['userData'])
-    //     return this.cartService.create(createCartDto, userData.id)
-    // }
+    @Post()
+    @ApiCreatedResponse()
+    create(
+        @Req() req: Request,
+        @Res() res: Response,
+        @Body() createCartDto: CreateCartDto
+    ) {
+        const uuidv4 = req.cookies['session_id'] || generateUUIDv4()
+        const carts = this.cartService.create(createCartDto, uuidv4)
+
+        return (res as Response<any, Record<string, any>>)
+            .cookie('session_id', uuidv4, {
+                httpOnly: process.env.NODE_ENV === 'production',
+                sameSite: process.env.NODE_ENV === 'production',
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: AUTH._30_DAYS
+            })
+            .json(carts)
+    }
 
     // @Patch(':id')
     // @UseGuards(AccessTokenGuard)

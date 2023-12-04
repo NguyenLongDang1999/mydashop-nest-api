@@ -20,3 +20,11 @@ export const getProductOrderBy = (orderBy: number) => {
 export const getNormalizedList = (value: string | number[]) => {
     return Array.isArray(value) ? value.map((_v) => Number(_v)) : value ? [Number(value)] : undefined
 }
+
+export const generateUUIDv4 = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = (Math.random() * 16) | 0
+      const v = c === 'x' ? r : (r & 0x3) | 0x8
+      return v.toString(16)
+    })
+}

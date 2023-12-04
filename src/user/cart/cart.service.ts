@@ -12,11 +12,11 @@ import { PrismaService } from '../../prisma/prisma.service'
 export class CartService {
     constructor(private prisma: PrismaService) {}
 
-    async getDataList(user_id: number) {
+    async getDataList(session_id: string) {
         try {
-            if (user_id) {
+            if (session_id) {
                 const product = await this.prisma.carts.findFirst({
-                    where: { user_id },
+                    where: { session_id },
                     select: {
                         id: true,
                         CartItem: {
@@ -26,6 +26,7 @@ export class CartService {
                             select: {
                                 id: true,
                                 quantity: true,
+                                attributes: true,
                                 Product: {
                                     select: {
                                         id: true,
@@ -39,23 +40,15 @@ export class CartService {
                                                 slug: true,
                                                 name: true
                                             }
+                                        },
+                                        productPrice: {
+                                            select: {
+                                                price: true,
+                                                selling_price: true,
+                                                special_price: true,
+                                                special_price_type: true
+                                            }
                                         }
-                                        // ProductAttribute: {
-                                        //     select: {
-                                        //         AttributeValues: {
-                                        //             select: {
-                                        //                 id: true,
-                                        //                 value: true,
-                                        //                 Attribute: {
-                                        //                     select: {
-                                        //                         id: true,
-                                        //                         name: true
-                                        //                     }
-                                        //                 }
-                                        //             }
-                                        //         }
-                                        //     }
-                                        // }
                                     }
                                 }
                             }
@@ -63,7 +56,16 @@ export class CartService {
                     }
                 })
 
-                return product
+                return {
+                    ...product,
+                    CartItem: product.CartItem.map(_c => ({
+                        ..._c,
+                        Product: {
+                            ..._c.Product,
+                            ..._c.Product.productPrice
+                        }
+                    }))
+                }
             }
 
             return []
@@ -72,58 +74,40 @@ export class CartService {
         }
     }
 
-    // async create(createCartDto: CreateCartDto, user_id: number) {
-    //     try {
-    //         const { product_id, quantity, attribute_id } = createCartDto
+    async create(createCartDto: CreateCartDto, session_id: string) {
+        try {
+            const { product_id, quantity, attributes } = createCartDto
 
-    //         return await this.prisma.$transaction(async (prisma) => {
-    //             const attributes = attribute_id ? JSON.parse(attribute_id) : []
+            return await this.prisma.$transaction(async (prisma) => {
+                const carts = await prisma.carts.upsert({
+                    where: { session_id },
+                    update: {},
+                    create: { session_id },
+                    select: { id: true }
+                })
 
-    //             const carts = await prisma.carts.upsert({
-    //                 where: { user_id },
-    //                 update: {},
-    //                 create: { user_id },
-    //                 select: { id: true }
-    //             })
-
-    //             if (!attributes.length) {
-    //                 return await prisma.cartItem.upsert({
-    //                     where: {
-    //                         cart_id_product_id: {
-    //                             cart_id: carts.id,
-    //                             product_id
-    //                         }
-    //                     },
-    //                     update: { quantity: { increment: quantity } },
-    //                     create: { cart_id: carts.id, product_id, quantity },
-    //                     select: { id: true }
-    //                 })
-    //             }
-
-    //             for (const item of attributes) {
-    //                 return await prisma.cartItem.upsert({
-    //                     where: {
-    //                         cart_id_product_id_attribute_id_attribute_value_id: {
-    //                             cart_id: carts.id,
-    //                             product_id,
-    //                             attribute_id: item?.attribute_id,
-    //                             attribute_value_id: item?.attribute_value_id
-    //                         }
-    //                     },
-    //                     update: { quantity: { increment: quantity } },
-    //                     create: {
-    //                         cart_id: carts.id, product_id, quantity,
-    //                         attribute_id: item?.attribute_id,
-    //                         attribute_value_id: item?.attribute_value_id
-    //                     },
-    //                     select: { id: true }
-    //                 })
-    //             }
-    //         })
-    //     } catch (error) {
-    //         throw new InternalServerErrorException()
-    //     }
-    // }
+                return prisma.cartItem.upsert({
+                    where: {
+                        cart_id_product_id_attributes: {
+                            cart_id: carts.id,
+                            product_id,
+                            attributes: attributes || ''
+                        }
+                    },
+                    update: { quantity: { increment: quantity } },
+                    create: {
+                        cart_id: carts.id,
+                        product_id,
+                        quantity,
+                        attributes: attributes || ''
+                    },
+                    select: { id: true }
+                })
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
 
     // async update(updateCartDto: UpdateCartDto, user_id: number) {
     //     try {
