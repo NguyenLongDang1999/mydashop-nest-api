@@ -138,13 +138,13 @@ export class CartService {
     //     }
     // }
 
-    // async delete(id: number) {
-    //     try {
-    //         return await this.prisma.cartItem.delete({
-    //             where: { id }
-    //         })
-    //     } catch (error) {
-    //         throw new InternalServerErrorException()
-    //     }
-    // }
+    async delete(id: number) {
+        try {
+            return await this.prisma.cartItem.delete({
+                where: { id }
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
 }

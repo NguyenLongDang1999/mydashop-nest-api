@@ -12,7 +12,7 @@ import {
     Patch,
     Res
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 // ** DTO Imports
 import { CreateCartDto } from './dto/create-cart.dto'
@@ -76,10 +76,9 @@ export class CartController {
     //     return this.cartService.update(updateCartDto, userData.id)
     // }
 
-    // @Delete(':id')
-    // @UseGuards(AccessTokenGuard)
-    // @HttpCode(HttpStatus.NO_CONTENT)
-    // delete(@Param('id') id: string) {
-    //     return this.cartService.delete(+id)
-    // }
+    @Delete(':id')
+    @ApiNoContentResponse()
+    delete(@Param('id') id: string) {
+        return this.cartService.delete(+id)
+    }
 }

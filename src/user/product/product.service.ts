@@ -34,6 +34,7 @@ export class ProductService {
                         take: 10,
                         select: {
                             id: true,
+                            sku: true,
                             name: true,
                             slug: true,
                             image_uri: true,
@@ -293,6 +294,7 @@ export class ProductService {
                             mainUpSellProduct: {
                                 select: {
                                     id: true,
+                                    sku: true,
                                     name: true,
                                     slug: true,
                                     image_uri: true,
@@ -324,6 +326,7 @@ export class ProductService {
                             mainRelatedProduct: {
                                 select: {
                                     id: true,
+                                    sku: true,
                                     name: true,
                                     slug: true,
                                     image_uri: true,
