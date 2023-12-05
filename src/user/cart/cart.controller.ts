@@ -65,16 +65,14 @@ export class CartController {
             .json(carts)
     }
 
-    // @Patch(':id')
-    // @UseGuards(AccessTokenGuard)
-    // @HttpCode(HttpStatus.NO_CONTENT)
-    // update(
-    //     @Req() req: Request,
-    //     @Body() updateCartDto: UpdateCartDto
-    // ) {
-    //     const userData = JSON.parse(req.cookies['userData'])
-    //     return this.cartService.update(updateCartDto, userData.id)
-    // }
+    @Patch(':id')
+    @ApiNoContentResponse()
+    update(
+        @Req() req: Request,
+        @Body() updateCartDto: UpdateCartDto
+    ) {
+        return this.cartService.update(updateCartDto, req.cookies['session_id'])
+    }
 
     @Delete(':id')
     @ApiNoContentResponse()

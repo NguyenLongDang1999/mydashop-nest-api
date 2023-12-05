@@ -109,34 +109,35 @@ export class CartService {
         }
     }
 
-    // async update(updateCartDto: UpdateCartDto, user_id: number) {
-    //     try {
-    //         const { product_id, quantity } = updateCartDto
+    async update(updateCartDto: UpdateCartDto, session_id: string) {
+        try {
+            const { product_id, quantity, attributes } = updateCartDto
 
-    //         return await this.prisma.$transaction(async (prisma) => {
-    //             const carts = await prisma.carts.upsert({
-    //                 where: { user_id },
-    //                 update: {},
-    //                 create: { user_id },
-    //                 select: { id: true }
-    //             })
+            return await this.prisma.$transaction(async (prisma) => {
+                const carts = await prisma.carts.upsert({
+                    where: { session_id },
+                    update: {},
+                    create: { session_id },
+                    select: { id: true }
+                })
 
-    //             return await prisma.cartItem.upsert({
-    //                 where: {
-    //                     cart_id_product_id: {
-    //                         cart_id: carts.id,
-    //                         product_id
-    //                     }
-    //                 },
-    //                 update: { quantity: quantity },
-    //                 create: { cart_id: carts.id, product_id, quantity },
-    //                 select: { id: true }
-    //             })
-    //         })
-    //     } catch (error) {
-    //         throw new InternalServerErrorException()
-    //     }
-    // }
+                return await prisma.cartItem.upsert({
+                    where: {
+                        cart_id_product_id_attributes: {
+                            cart_id: carts.id,
+                            product_id,
+                            attributes
+                        }
+                    },
+                    update: { quantity: quantity },
+                    create: { cart_id: carts.id, product_id, quantity },
+                    select: { id: true }
+                })
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
 
     async delete(id: number) {
         try {
