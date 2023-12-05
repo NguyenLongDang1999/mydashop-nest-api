@@ -58,13 +58,13 @@ export class CartService {
 
                 return {
                     ...product,
-                    CartItem: product.CartItem.map(_c => ({
+                    CartItem: product ? product.CartItem.map(_c => ({
                         ..._c,
                         Product: {
                             ..._c.Product,
                             ..._c.Product.productPrice
                         }
-                    }))
+                    })) : []
                 }
             }
 
@@ -142,6 +142,16 @@ export class CartService {
     async delete(id: number) {
         try {
             return await this.prisma.cartItem.delete({
+                where: { id }
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async purgeCart(id: number) {
+        try {
+            return await this.prisma.carts.delete({
                 where: { id }
             })
         } catch (error) {

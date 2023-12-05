@@ -79,4 +79,10 @@ export class CartController {
     delete(@Param('id') id: string) {
         return this.cartService.delete(+id)
     }
+
+    @Delete('purge-cart/:id')
+    @ApiNoContentResponse()
+    purgeCart(@Param('id') id: string) {
+        return this.cartService.purgeCart(+id)
+    }
 }
