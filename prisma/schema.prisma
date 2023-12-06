@@ -64,17 +64,18 @@ model CategoryBrand {
 }
 
 model Attribute {
-  id               Int                 @id @default(autoincrement())
-  name             String              @db.VarChar
-  slug             String              @unique @db.VarChar
-  description      String?             @db.VarChar
-  status           Int?                @default(20) @db.SmallInt
-  created_at       DateTime            @default(now())
-  updated_at       DateTime            @updatedAt
-  deleted_flg      Boolean             @default(false)
-  attributeValues  AttributeValues[]
-  categories       CategoryAttribute[]
-  ProductAttribute ProductAttribute[]
+  id                   Int                    @id @default(autoincrement())
+  name                 String                 @db.VarChar
+  slug                 String                 @unique @db.VarChar
+  description          String?                @db.VarChar
+  status               Int?                   @default(20) @db.SmallInt
+  created_at           DateTime               @default(now())
+  updated_at           DateTime               @updatedAt
+  deleted_flg          Boolean                @default(false)
+  attributeValues      AttributeValues[]
+  categories           CategoryAttribute[]
+  ProductAttribute     ProductAttribute[]
+  ProductVariantValues ProductVariantValues[]
 
   @@index([status])
 }
@@ -88,6 +89,7 @@ model AttributeValues {
   deleted_flg            Boolean                  @default(false)
   attribute              Attribute                @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
   ProductAttributeValues ProductAttributeValues[]
+  ProductVariantValues   ProductVariantValues[]
 }
 
 model CategoryAttribute {
@@ -134,6 +136,7 @@ model Product {
   productImage             ProductImage[]
   ProductComments          ProductComments[]
   CartItem                 CartItem[]
+  ProductVariant           ProductVariant[]
 
   @@index([status, popular, brand_id, category_id])
 }
@@ -192,6 +195,44 @@ model ProductAttributeValues {
   attributeValues      AttributeValues  @relation(fields: [attribute_value_id], references: [id], onDelete: Cascade)
 
   @@unique([product_attribute_id, attribute_value_id])
+}
+
+model ProductVariant {
+  id                   Int                    @id @default(autoincrement())
+  product_id           Int
+  sku                  String                 @db.VarChar
+  name                 String                 @db.VarChar
+  quantity             Int?                   @db.SmallInt
+  in_stock             Int?                   @default(20) @db.SmallInt
+  created_at           DateTime               @default(now())
+  updated_at           DateTime               @updatedAt
+  product              Product                @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  productVariantValues ProductVariantValues[]
+  ProductVariantPrice  ProductVariantPrice?
+}
+
+model ProductVariantPrice {
+  id                 Int            @id @default(autoincrement())
+  product_variant_id Int            @unique
+  price              Decimal        @default(0) @db.Decimal(18, 0)
+  special_price      Decimal?       @default(0) @db.Decimal(18, 0)
+  special_price_type Int?           @db.SmallInt
+  discount           Int?           @db.SmallInt
+  selling_price      Decimal        @default(0) @db.Decimal(18, 0)
+  productVariant     ProductVariant @relation(fields: [product_variant_id], references: [id], onDelete: Cascade)
+}
+
+model ProductVariantValues {
+  product_variant_id Int
+  attribute_id       Int
+  attribute_value_id Int
+  created_at         DateTime        @default(now())
+  updated_at         DateTime        @updatedAt
+  productVariant     ProductVariant  @relation(fields: [product_variant_id], references: [id], onDelete: Cascade)
+  attribute          Attribute       @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
+  attributeValues    AttributeValues @relation(fields: [attribute_value_id], references: [id], onDelete: Cascade)
+
+  @@unique([product_variant_id, attribute_id, attribute_value_id])
 }
 
 model ProductRelated {
@@ -301,15 +342,15 @@ model Carts {
 }
 
 model CartItem {
-  id                 Int              @id @default(autoincrement())
-  cart_id            Int
-  product_id         Int
-  attributes         String?
-  quantity           Int              @db.SmallInt
-  created_at         DateTime         @default(now())
-  updated_at         DateTime         @updatedAt
-  Carts              Carts            @relation(fields: [cart_id], references: [id], onDelete: Cascade)
-  Product            Product          @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  id         Int      @id @default(autoincrement())
+  cart_id    Int
+  product_id Int
+  attributes String?
+  quantity   Int      @db.SmallInt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Carts      Carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  Product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
   @@unique([cart_id, product_id, attributes])
 }
