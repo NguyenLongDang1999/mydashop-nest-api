@@ -235,12 +235,19 @@ export class CategoryService {
                 short_description: true,
                 total_rating: true,
                 productAttributes: true,
-                productPrice: {
+                productVariant: {
+                    take: 1,
+                    orderBy: { created_at: 'desc' },
+                    where: { is_default: true },
                     select: {
-                        price: true,
-                        selling_price: true,
-                        special_price: true,
-                        special_price_type: true
+                        productVariantPrice: {
+                            select: {
+                                price: true,
+                                special_price: true,
+                                special_price_type: true,
+                                selling_price: true
+                            }
+                        }
                     }
                 },
                 category: {
@@ -261,7 +268,7 @@ export class CategoryService {
         const formattedData = data.map((item) => {
             return {
                 ...item,
-                ...item.productPrice
+                ...item.productVariant[0]?.productVariantPrice
             }
         })
 

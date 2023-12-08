@@ -64,30 +64,30 @@ model CategoryBrand {
 }
 
 model Attribute {
-  id                      Int                       @id @default(autoincrement())
-  name                    String                    @db.VarChar
-  slug                    String                    @unique @db.VarChar
-  description             String?                   @db.VarChar
-  status                  Int?                      @default(20) @db.SmallInt
-  created_at              DateTime                  @default(now())
-  updated_at              DateTime                  @updatedAt
-  deleted_flg             Boolean                   @default(false)
-  attributeValues         AttributeValues[]
-  categories              CategoryAttribute[]
-  ProductAttribute        ProductAttribute[]
+  id               Int                 @id @default(autoincrement())
+  name             String              @db.VarChar
+  slug             String              @unique @db.VarChar
+  description      String?             @db.VarChar
+  status           Int?                @default(20) @db.SmallInt
+  created_at       DateTime            @default(now())
+  updated_at       DateTime            @updatedAt
+  deleted_flg      Boolean             @default(false)
+  attributeValues  AttributeValues[]
+  categories       CategoryAttribute[]
+  ProductAttribute ProductAttribute[]
 
   @@index([status])
 }
 
 model AttributeValues {
-  id                            Int                             @id @default(autoincrement())
-  value                         String                          @db.VarChar
-  attribute_id                  Int
-  created_at                    DateTime                        @default(now())
-  updated_at                    DateTime                        @updatedAt
-  deleted_flg                   Boolean                         @default(false)
-  attribute                     Attribute                       @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
-  ProductAttributeValues        ProductAttributeValues[]
+  id                     Int                      @id @default(autoincrement())
+  value                  String                   @db.VarChar
+  attribute_id           Int
+  created_at             DateTime                 @default(now())
+  updated_at             DateTime                 @updatedAt
+  deleted_flg            Boolean                  @default(false)
+  attribute              Attribute                @relation(fields: [attribute_id], references: [id], onDelete: Cascade)
+  ProductAttributeValues ProductAttributeValues[]
 }
 
 model CategoryAttribute {
@@ -130,7 +130,6 @@ model Product {
   mainUpsellProducts       ProductUpSell[]    @relation("MainUpSellProduct")
   mainCrossSellProducts    ProductCrossSell[] @relation("MainCrossSellProduct")
   flashSaleProduct         FlashSaleProduct[]
-  productPrice             ProductPrice?
   productImage             ProductImage[]
   productComments          ProductComments[]
   CartItem                 CartItem[]
@@ -185,17 +184,17 @@ model ProductAttributeValues {
 }
 
 model ProductVariant {
-  id                      Int                       @id @default(autoincrement())
-  product_id              Int
-  is_default              Boolean                   @default(false) @db.Boolean
-  sku                     String                    @db.VarChar
-  label                   String                    @db.VarChar
-  quantity                Int?                      @db.SmallInt
-  in_stock                Int?                      @default(20) @db.SmallInt
-  created_at              DateTime                  @default(now())
-  updated_at              DateTime                  @updatedAt
-  product                 Product                   @relation(fields: [product_id], references: [id], onDelete: Cascade)
-  productVariantPrice     ProductVariantPrice?
+  id                  Int                  @id @default(autoincrement())
+  product_id          Int
+  is_default          Boolean              @default(false) @db.Boolean
+  sku                 String               @db.VarChar
+  label               String               @db.VarChar
+  quantity            Int?                 @db.SmallInt
+  in_stock            Int?                 @default(20) @db.SmallInt
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @updatedAt
+  product             Product              @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  productVariantPrice ProductVariantPrice?
 }
 
 model ProductVariantPrice {

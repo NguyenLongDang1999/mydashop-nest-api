@@ -131,19 +131,23 @@ export class ProductService {
                                     slug: true,
                                     name: true,
                                     image_uri: true,
-                                    technical_specifications: true,
                                     short_description: true,
                                     description: true,
-                                    in_stock: true,
-                                    meta_title: true,
-                                    meta_description: true,
                                     total_rating: true,
-                                    productPrice: {
+                                    productVariant: {
+                                        orderBy: { created_at: 'desc' },
                                         select: {
-                                            price: true,
-                                            selling_price: true,
-                                            special_price: true,
-                                            special_price_type: true
+                                            sku: true,
+                                            label: true,
+                                            in_stock: true,
+                                            productVariantPrice: {
+                                                select: {
+                                                    price: true,
+                                                    special_price: true,
+                                                    special_price_type: true,
+                                                    selling_price: true
+                                                }
+                                            }
                                         }
                                     },
                                     productAttributes: {
@@ -194,7 +198,11 @@ export class ProductService {
                 return {
                     campaign_name: data.campaign_name,
                     ...item.product,
-                    ...item.product.productPrice,
+                    productVariant: item.product.productVariant.map(variant => ({
+                        ...variant,
+                        ...variant.productVariantPrice,
+                        productVariantPrice: undefined
+                    })),
                     product_attributes: item.product.productAttributes.map((_item) => ({
                         ..._item,
                         attribute: _item.attribute,
@@ -234,16 +242,22 @@ export class ProductService {
                     total_rating: true,
                     productImage: {
                         orderBy: { index: 'asc' },
-                        select: {
-                            image_uri: true
-                        }
+                        select: { image_uri: true }
                     },
-                    productPrice: {
+                    productVariant: {
+                        orderBy: { created_at: 'desc' },
                         select: {
-                            price: true,
-                            selling_price: true,
-                            special_price: true,
-                            special_price_type: true
+                            sku: true,
+                            label: true,
+                            in_stock: true,
+                            productVariantPrice: {
+                                select: {
+                                    price: true,
+                                    special_price: true,
+                                    special_price_type: true,
+                                    selling_price: true
+                                }
+                            }
                         }
                     },
                     productAttributes: {
@@ -357,7 +371,11 @@ export class ProductService {
 
             return {
                 ...product,
-                ...product.productPrice,
+                productVariant: product.productVariant.map(variant => ({
+                    ...variant,
+                    ...variant.productVariantPrice,
+                    productVariantPrice: undefined
+                })),
                 relatedProducts: product.relatedProducts.map((_item) => ({
                     ..._item.mainRelatedProduct,
                     ..._item.mainRelatedProduct.productPrice
