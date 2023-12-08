@@ -21,13 +21,10 @@ export class ProductService {
         try {
             const {
                 attributes,
+                variants,
                 cross_sell_products,
                 upsell_products,
                 related_products,
-                price,
-                special_price,
-                selling_price,
-                special_price_type,
                 ...productData
             } = createProductDto
 
@@ -35,13 +32,24 @@ export class ProductService {
                 return await prisma.product.create({
                     data: {
                         ...productData,
-                        productPrice: {
-                            create: {
-                                price,
-                                special_price,
-                                selling_price,
-                                special_price_type
-                            }
+                        productVariant: {
+                            create:
+                                variants &&
+                                variants.map((variantItem) => ({
+                                    sku: variantItem.sku,
+                                    label: variantItem.label,
+                                    quantity: variantItem.quantity,
+                                    in_stock: variantItem.in_stock,
+                                    is_default: variantItem.is_default,
+                                    productVariantPrice: {
+                                        create: {
+                                            price: variantItem.price,
+                                            special_price: variantItem.special_price,
+                                            selling_price: variantItem.selling_price,
+                                            special_price_type: variantItem.special_price_type
+                                        }
+                                    }
+                                }))
                         },
                         productAttributes: {
                             create:
@@ -189,13 +197,20 @@ export class ProductService {
                         status: true,
                         popular: true,
                         image_uri: true,
-                        productPrice: {
+                        productVariant: {
+                            take: 1,
+                            orderBy: { created_at: 'desc' },
+                            where: { is_default: true },
                             select: {
-                                price: true,
-                                special_price: true,
-                                special_price_type: true,
-                                selling_price: true,
-                                discount: true
+                                productVariantPrice: {
+                                    select: {
+                                        price: true,
+                                        special_price: true,
+                                        special_price_type: true,
+                                        selling_price: true,
+                                        discount: true
+                                    }
+                                }
                             }
                         },
                         category: {
@@ -220,7 +235,7 @@ export class ProductService {
             const formattedData = data.map((item) => {
                 return {
                     ...item,
-                    ...item.productPrice
+                    ...item.productVariant[0]?.productVariantPrice
                 }
             })
 
@@ -235,13 +250,15 @@ export class ProductService {
             const product = await this.prisma.product.findFirstOrThrow({
                 where: { id, deleted_flg: false },
                 include: {
-                    productPrice: {
+                    productVariant: {
                         select: {
-                            price: true,
-                            discount: true,
-                            selling_price: true,
-                            special_price: true,
-                            special_price_type: true
+                            id: true,
+                            is_default: true,
+                            in_stock: true,
+                            label: true,
+                            quantity: true,
+                            sku: true,
+                            productVariantPrice: true
                         }
                     },
                     productImage: {
@@ -308,7 +325,11 @@ export class ProductService {
 
             return {
                 ...product,
-                ...product.productPrice,
+                variants: product.productVariant.map(_p => ({
+                    ..._p,
+                    ..._p.productVariantPrice,
+                    productVariantPrice: undefined
+                })),
                 attributes: Object.values(attributes),
                 technical_specifications:
                     typeof product.technical_specifications === 'string'
@@ -329,13 +350,10 @@ export class ProductService {
         try {
             const {
                 attributes,
+                variants,
                 cross_sell_products,
                 upsell_products,
                 related_products,
-                price,
-                special_price,
-                selling_price,
-                special_price_type,
                 ...productData
             } = updateProductDto
 
@@ -344,14 +362,26 @@ export class ProductService {
                     where: { id },
                     data: {
                         ...productData,
-                        productPrice: {
-                            update: {
-                                price,
-                                special_price,
-                                selling_price,
-                                special_price_type
-                            }
-                        },
+                        productVariant: variants
+                            ? {
+                                deleteMany: {},
+                                create:
+                                    variants.map((variantItem) => ({
+                                        sku: variantItem.sku,
+                                        label: variantItem.label,
+                                        quantity: variantItem.quantity,
+                                        in_stock: variantItem.in_stock,
+                                        is_default: variantItem.is_default,
+                                        productVariantPrice: {
+                                            create: {
+                                                price: variantItem.price,
+                                                special_price: variantItem.special_price,
+                                                selling_price: variantItem.selling_price,
+                                                special_price_type: variantItem.special_price_type
+                                            }
+                                        }
+                                    }))
+                        } : {},
                         productAttributes: attributes
                             ? {
                                   deleteMany: {},

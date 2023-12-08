@@ -2,7 +2,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 // ** Validate Imports
-import { IsNotEmpty, IsString, IsNumber, MaxLength, IsOptional, IsArray, ArrayMinSize } from 'class-validator'
+import { IsNotEmpty, IsString, IsNumber, MaxLength, IsOptional, IsArray, ArrayMinSize, IsBoolean } from 'class-validator'
 import { Transform } from 'class-transformer'
 
 // ** Utils Imports
@@ -19,6 +19,60 @@ export class AttributesDto {
     @ArrayMinSize(1)
     @ApiProperty({ type: [Number] })
     attribute_value_id: number[]
+}
+
+export class VariantsDto {
+    @IsNotEmpty()
+    @IsString()
+    @ApiProperty()
+    label: string
+
+    @IsNotEmpty()
+    @IsBoolean()
+    @ApiProperty()
+    is_default: boolean
+
+    @IsNotEmpty()
+    @IsString()
+    @MaxLength(30)
+    @ApiProperty()
+    sku: string
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: 0 })
+    price = 0
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: 0 })
+    special_price = 0
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: SPECIAL_PRICE.PRICE })
+    special_price_type = SPECIAL_PRICE.PRICE
+
+    @IsNotEmpty()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: 0 })
+    selling_price = 0
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: 0 })
+    quantity = 0
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: INVENTORY_STATUS.OUT_OF_STOCK })
+    in_stock = INVENTORY_STATUS.OUT_OF_STOCK
 }
 
 export class CreateProductDto {
@@ -57,6 +111,11 @@ export class CreateProductDto {
     attributes?: AttributesDto[]
 
     @IsOptional()
+    @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value) : undefined))
+    @ApiProperty({ required: false })
+    variants?: VariantsDto[]
+
+    @IsOptional()
     @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value).map(Number) : undefined))
     @ApiProperty({ required: false })
     cross_sell_products?: number[]
@@ -71,41 +130,41 @@ export class CreateProductDto {
     @ApiProperty({ required: false })
     related_products?: number[]
 
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    @ApiProperty({ required: false, default: 0 })
-    price = 0
+    // @IsOptional()
+    // @IsNumber()
+    // @Transform(({ value }) => Number(value))
+    // @ApiProperty({ required: false, default: 0 })
+    // price = 0
 
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    @ApiProperty({ required: false, default: 0 })
-    special_price = 0
+    // @IsOptional()
+    // @IsNumber()
+    // @Transform(({ value }) => Number(value))
+    // @ApiProperty({ required: false, default: 0 })
+    // special_price = 0
 
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    @ApiProperty({ required: false, default: SPECIAL_PRICE.PRICE })
-    special_price_type = SPECIAL_PRICE.PRICE
+    // @IsOptional()
+    // @IsNumber()
+    // @Transform(({ value }) => Number(value))
+    // @ApiProperty({ required: false, default: SPECIAL_PRICE.PRICE })
+    // special_price_type = SPECIAL_PRICE.PRICE
 
-    @IsNotEmpty()
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    @ApiProperty({ required: false, default: 0 })
-    selling_price = 0
+    // @IsNotEmpty()
+    // @IsNumber()
+    // @Transform(({ value }) => Number(value))
+    // @ApiProperty({ required: false, default: 0 })
+    // selling_price = 0
 
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    @ApiProperty({ required: false, default: 0 })
-    quantity = 0
+    // @IsOptional()
+    // @IsNumber()
+    // @Transform(({ value }) => Number(value))
+    // @ApiProperty({ required: false, default: 0 })
+    // quantity = 0
 
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    @ApiProperty({ required: false, default: INVENTORY_STATUS.OUT_OF_STOCK })
-    in_stock = INVENTORY_STATUS.OUT_OF_STOCK
+    // @IsOptional()
+    // @IsNumber()
+    // @Transform(({ value }) => Number(value))
+    // @ApiProperty({ required: false, default: INVENTORY_STATUS.OUT_OF_STOCK })
+    // in_stock = INVENTORY_STATUS.OUT_OF_STOCK
 
     @IsOptional()
     @IsString()
