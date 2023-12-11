@@ -395,7 +395,7 @@ export class ProductService {
     }
 
     async update(id: number, updateProductDto: UpdateProductDto) {
-        // try {
+        try {
             const {
                 attributes,
                 variants,
@@ -412,26 +412,10 @@ export class ProductService {
             } = updateProductDto
 
             return await this.prisma.$transaction(async (prisma) => {
-                return await prisma.product.update({
+                const product = await prisma.product.update({
                     where: { id },
                     data: {
                         ...productData,
-                        // productVariantPrice: !variants ? {
-                        //     update: {
-                        //         where: {
-                        //             id: undefined,
-                        //             product_id: { equals: id }
-                        //         },
-                        //         data: {
-                        //             price,
-                        //             special_price,
-                        //             selling_price,
-                        //             special_price_type,
-                        //             quantity,
-                        //             in_stock
-                        //         }
-                        //     }
-                        // } : {},
                         productVariant: variants
                             ? {
                                 deleteMany: {},
@@ -504,16 +488,37 @@ export class ProductService {
                               }
                             : {}
                     },
-                    select: { id: true }
+                    select: {
+                        id: true,
+                        productVariantPrice: {
+                            select: { id: true }
+                        }
+                    }
                 })
-            })
-        // } catch (error) {
-        //     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        //         throw new ConflictException()
-        //     }
 
-        //     throw new InternalServerErrorException()
-        // }
+                if (!variants) {
+                    await prisma.productVariantPrice.update({
+                        where: { id: product.productVariantPrice[0].id },
+                        data: {
+                            price,
+                            special_price,
+                            selling_price,
+                            special_price_type,
+                            quantity,
+                            in_stock
+                        }
+                    })
+                }
+
+                return product
+            })
+        } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+                throw new ConflictException()
+            }
+
+            throw new InternalServerErrorException()
+        }
     }
 
     async remove(id: number) {
