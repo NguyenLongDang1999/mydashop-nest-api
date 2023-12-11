@@ -9,7 +9,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { IProductSearch } from './category.interface'
 
 // ** Utils Imports
-import { POPULAR, STATUS } from 'src/utils/enums'
+import { POPULAR, PRODUCT_TYPE, STATUS } from 'src/utils/enums'
 import { getNormalizedList, getProductOrderBy } from 'src/utils'
 
 @Injectable()
@@ -233,21 +233,32 @@ export class CategoryService {
                 image_uri: true,
                 in_stock: true,
                 short_description: true,
+                product_type: true,
                 total_rating: true,
                 productAttributes: true,
+                productVariantPrice: {
+                    select: {
+                        in_stock: true,
+                        price: true,
+                        special_price: true,
+                        special_price_type: true,
+                        selling_price: true
+                    }
+                },
                 productVariant: {
                     take: 1,
                     orderBy: { created_at: 'desc' },
                     where: { is_default: true },
                     select: {
-                        // productVariantPrice: {
-                        //     select: {
-                        //         price: true,
-                        //         special_price: true,
-                        //         special_price_type: true,
-                        //         selling_price: true
-                        //     }
-                        // }
+                        productVariantPrice: {
+                            select: {
+                                in_stock: true,
+                                price: true,
+                                special_price: true,
+                                special_price_type: true,
+                                selling_price: true
+                            }
+                        }
                     }
                 },
                 category: {
@@ -267,8 +278,10 @@ export class CategoryService {
 
         const formattedData = data.map((item) => {
             return {
-                ...item
-                // ...item.productVariant[0]?.productVariantPrice
+                ...item,
+                ...(item.product_type === PRODUCT_TYPE.SINGLE
+                    ? item.productVariantPrice[0]
+                    : item.productVariant[0]?.productVariantPrice)
             }
         })
 

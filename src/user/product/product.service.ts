@@ -5,7 +5,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 // ** Utils Imports
-import { SHOW_PRODUCT, STATUS } from 'src/utils/enums'
+import { PRODUCT_TYPE, SHOW_PRODUCT, STATUS } from 'src/utils/enums'
 
 @Injectable()
 export class ProductService {
@@ -237,12 +237,22 @@ export class ProductService {
                     short_description: true,
                     description: true,
                     in_stock: true,
+                    product_type: true,
                     meta_title: true,
                     meta_description: true,
                     total_rating: true,
                     productImage: {
                         orderBy: { index: 'asc' },
                         select: { image_uri: true }
+                    },
+                    productVariantPrice: {
+                        select: {
+                            in_stock: true,
+                            price: true,
+                            special_price: true,
+                            special_price_type: true,
+                            selling_price: true
+                        }
                     },
                     productVariant: {
                         orderBy: { created_at: 'desc' },
@@ -302,10 +312,13 @@ export class ProductService {
                             image_uri: true
                         }
                     },
-                    upsellProducts: {
+                    mainCrossSellProducts: {
                         take: 12,
+                        orderBy: {
+                            crossSellProduct: { created_at: 'desc' }
+                        },
                         select: {
-                            mainUpSellProduct: {
+                            crossSellProduct: {
                                 select: {
                                     id: true,
                                     sku: true,
@@ -314,6 +327,7 @@ export class ProductService {
                                     image_uri: true,
                                     in_stock: true,
                                     total_rating: true,
+                                    product_type: true,
                                     productAttributes: true,
                                     category: {
                                         select: {
@@ -321,23 +335,43 @@ export class ProductService {
                                             slug: true,
                                             name: true
                                         }
+                                    },
+                                    productVariantPrice: {
+                                        select: {
+                                            in_stock: true,
+                                            price: true,
+                                            special_price: true,
+                                            special_price_type: true,
+                                            selling_price: true
+                                        }
+                                    },
+                                    productVariant: {
+                                        take: 1,
+                                        orderBy: { created_at: 'desc' },
+                                        where: { is_default: true },
+                                        select: {
+                                            productVariantPrice: {
+                                                select: {
+                                                    in_stock: true,
+                                                    price: true,
+                                                    special_price: true,
+                                                    special_price_type: true,
+                                                    selling_price: true
+                                                }
+                                            }
+                                        }
                                     }
-                                    // productPrice: {
-                                    //     select: {
-                                    //         price: true,
-                                    //         selling_price: true,
-                                    //         special_price: true,
-                                    //         special_price_type: true
-                                    //     }
-                                    // }
                                 }
                             }
                         }
                     },
-                    relatedProducts: {
+                    mainRelatedProducts: {
                         take: 12,
+                        orderBy: {
+                            relatedProduct: { created_at: 'desc' }
+                        },
                         select: {
-                            mainRelatedProduct: {
+                            relatedProduct: {
                                 select: {
                                     id: true,
                                     sku: true,
@@ -346,6 +380,7 @@ export class ProductService {
                                     image_uri: true,
                                     in_stock: true,
                                     total_rating: true,
+                                    product_type: true,
                                     productAttributes: true,
                                     category: {
                                         select: {
@@ -353,15 +388,32 @@ export class ProductService {
                                             slug: true,
                                             name: true
                                         }
+                                    },
+                                    productVariantPrice: {
+                                        select: {
+                                            in_stock: true,
+                                            price: true,
+                                            special_price: true,
+                                            special_price_type: true,
+                                            selling_price: true
+                                        }
+                                    },
+                                    productVariant: {
+                                        take: 1,
+                                        orderBy: { created_at: 'desc' },
+                                        where: { is_default: true },
+                                        select: {
+                                            productVariantPrice: {
+                                                select: {
+                                                    in_stock: true,
+                                                    price: true,
+                                                    special_price: true,
+                                                    special_price_type: true,
+                                                    selling_price: true
+                                                }
+                                            }
+                                        }
                                     }
-                                    // productPrice: {
-                                    //     select: {
-                                    //         price: true,
-                                    //         selling_price: true,
-                                    //         special_price: true,
-                                    //         special_price_type: true
-                                    //     }
-                                    // }
                                 }
                             }
                         }
@@ -371,14 +423,23 @@ export class ProductService {
 
             return {
                 ...product,
+                ...(product.product_type === PRODUCT_TYPE.SINGLE ? product.productVariantPrice[0] : undefined),
                 productVariant: product.productVariant.map(variant => ({
                     ...variant,
-                    // ...variant.productVariantPrice,
+                    ...variant.productVariantPrice,
                     productVariantPrice: undefined
                 })),
-                relatedProducts: product.relatedProducts.map((_item) => ({
-                    ..._item.mainRelatedProduct
-                    // ..._item.mainRelatedProduct.productPrice
+                crossSellProducts: product.mainCrossSellProducts.map((_item) => ({
+                    ..._item.crossSellProduct,
+                    ...(_item.crossSellProduct.product_type === PRODUCT_TYPE.SINGLE
+                        ? _item.crossSellProduct.productVariantPrice[0]
+                        : _item.crossSellProduct.productVariant[0]?.productVariantPrice)
+                })),
+                relatedProducts: product.mainRelatedProducts.map((_item) => ({
+                    ..._item.relatedProduct,
+                    ...(_item.relatedProduct.product_type === PRODUCT_TYPE.SINGLE
+                        ? _item.relatedProduct.productVariantPrice[0]
+                        : _item.relatedProduct.productVariant[0]?.productVariantPrice)
                 })),
                 product_attributes: product.productAttributes.map((_item) => ({
                     ..._item,

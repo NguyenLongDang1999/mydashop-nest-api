@@ -395,13 +395,19 @@ export class ProductService {
     }
 
     async update(id: number, updateProductDto: UpdateProductDto) {
-        try {
+        // try {
             const {
                 attributes,
                 variants,
                 cross_sell_products,
                 upsell_products,
                 related_products,
+                price,
+                special_price,
+                selling_price,
+                special_price_type,
+                quantity,
+                in_stock,
                 ...productData
             } = updateProductDto
 
@@ -410,6 +416,22 @@ export class ProductService {
                     where: { id },
                     data: {
                         ...productData,
+                        // productVariantPrice: !variants ? {
+                        //     update: {
+                        //         where: {
+                        //             id: undefined,
+                        //             product_id: { equals: id }
+                        //         },
+                        //         data: {
+                        //             price,
+                        //             special_price,
+                        //             selling_price,
+                        //             special_price_type,
+                        //             quantity,
+                        //             in_stock
+                        //         }
+                        //     }
+                        // } : {},
                         productVariant: variants
                             ? {
                                 deleteMany: {},
@@ -485,13 +507,13 @@ export class ProductService {
                     select: { id: true }
                 })
             })
-        } catch (error) {
-            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
-            }
+        // } catch (error) {
+        //     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        //         throw new ConflictException()
+        //     }
 
-            throw new InternalServerErrorException()
-        }
+        //     throw new InternalServerErrorException()
+        // }
     }
 
     async remove(id: number) {

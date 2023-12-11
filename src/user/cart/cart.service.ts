@@ -6,7 +6,10 @@ import { CreateCartDto } from './dto/create-cart.dto'
 import { UpdateCartDto } from './dto/update-cart.dto'
 
 // ** Prisma Imports
-import { PrismaService } from '../../prisma/prisma.service'
+import { PrismaService } from 'src/prisma/prisma.service'
+
+// ** Utils Imports
+import { PRODUCT_TYPE } from 'src/utils/enums'
 
 @Injectable()
 export class CartService {
@@ -34,21 +37,35 @@ export class CartService {
                                         name: true,
                                         slug: true,
                                         image_uri: true,
+                                        product_type: true,
                                         category: {
                                             select: {
                                                 id: true,
                                                 slug: true,
                                                 name: true
                                             }
+                                        },
+                                        productVariantPrice: {
+                                            select: {
+                                                price: true,
+                                                selling_price: true,
+                                                special_price: true,
+                                                special_price_type: true
+                                            }
+                                        },
+                                        productVariant: {
+                                            orderBy: { created_at: 'desc' },
+                                            select: {
+                                                productVariantPrice: {
+                                                    select: {
+                                                        price: true,
+                                                        selling_price: true,
+                                                        special_price: true,
+                                                        special_price_type: true
+                                                    }
+                                                }
+                                            }
                                         }
-                                        // productPrice: {
-                                        //     select: {
-                                        //         price: true,
-                                        //         selling_price: true,
-                                        //         special_price: true,
-                                        //         special_price_type: true
-                                        //     }
-                                        // }
                                     }
                                 }
                             }
@@ -61,8 +78,10 @@ export class CartService {
                     CartItem: product ? product.CartItem.map(_c => ({
                         ..._c,
                         Product: {
-                            ..._c.Product
-                            // ..._c.Product.productPrice
+                            ..._c.Product,
+                            ...(_c.Product.product_type === PRODUCT_TYPE.SINGLE
+                                ? _c.Product.productVariantPrice[0]
+                                : _c.Product.productVariant[0]?.productVariantPrice)
                         }
                     })) : []
                 }
