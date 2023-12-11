@@ -58,11 +58,19 @@ export class CategoryService {
                         popular: true,
                         image_uri: true,
                         created_at: true,
+                        Product: {
+                            where: { deleted_flg: false },
+                            select: { id: true }
+                        },
                         parent: {
                             select: {
                                 id: true,
                                 name: true,
-                                image_uri: true
+                                image_uri: true,
+                                Product: {
+                                    where: { deleted_flg: false },
+                                    select: { id: true }
+                                }
                             }
                         }
                     }
