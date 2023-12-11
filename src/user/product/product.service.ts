@@ -47,15 +47,15 @@ export class ProductService {
                                     slug: true,
                                     name: true
                                 }
-                            },
-                            productPrice: {
-                                select: {
-                                    price: true,
-                                    selling_price: true,
-                                    special_price: true,
-                                    special_price_type: true
-                                }
                             }
+                            // productPrice: {
+                            //     select: {
+                            //         price: true,
+                            //         selling_price: true,
+                            //         special_price: true,
+                            //         special_price_type: true
+                            //     }
+                            // }
                         }
                     }
                 }
@@ -65,8 +65,8 @@ export class ProductService {
                 return {
                     ...item,
                     Product: item.Product.map((_p) => ({
-                        ..._p,
-                        ..._p.productPrice
+                        ..._p
+                        // ..._p.productPrice
                     }))
                 }
             })
@@ -139,9 +139,9 @@ export class ProductService {
                                         select: {
                                             sku: true,
                                             label: true,
-                                            in_stock: true,
                                             productVariantPrice: {
                                                 select: {
+                                                    in_stock: true,
                                                     price: true,
                                                     special_price: true,
                                                     special_price_type: true,
@@ -200,7 +200,7 @@ export class ProductService {
                     ...item.product,
                     productVariant: item.product.productVariant.map(variant => ({
                         ...variant,
-                        ...variant.productVariantPrice,
+                        // ...variant.productVariantPrice,
                         productVariantPrice: undefined
                     })),
                     product_attributes: item.product.productAttributes.map((_item) => ({
@@ -249,9 +249,9 @@ export class ProductService {
                         select: {
                             sku: true,
                             label: true,
-                            in_stock: true,
                             productVariantPrice: {
                                 select: {
+                                    in_stock: true,
                                     price: true,
                                     special_price: true,
                                     special_price_type: true,
@@ -321,15 +321,15 @@ export class ProductService {
                                             slug: true,
                                             name: true
                                         }
-                                    },
-                                    productPrice: {
-                                        select: {
-                                            price: true,
-                                            selling_price: true,
-                                            special_price: true,
-                                            special_price_type: true
-                                        }
                                     }
+                                    // productPrice: {
+                                    //     select: {
+                                    //         price: true,
+                                    //         selling_price: true,
+                                    //         special_price: true,
+                                    //         special_price_type: true
+                                    //     }
+                                    // }
                                 }
                             }
                         }
@@ -353,15 +353,15 @@ export class ProductService {
                                             slug: true,
                                             name: true
                                         }
-                                    },
-                                    productPrice: {
-                                        select: {
-                                            price: true,
-                                            selling_price: true,
-                                            special_price: true,
-                                            special_price_type: true
-                                        }
                                     }
+                                    // productPrice: {
+                                    //     select: {
+                                    //         price: true,
+                                    //         selling_price: true,
+                                    //         special_price: true,
+                                    //         special_price_type: true
+                                    //     }
+                                    // }
                                 }
                             }
                         }
@@ -373,12 +373,12 @@ export class ProductService {
                 ...product,
                 productVariant: product.productVariant.map(variant => ({
                     ...variant,
-                    ...variant.productVariantPrice,
+                    // ...variant.productVariantPrice,
                     productVariantPrice: undefined
                 })),
                 relatedProducts: product.relatedProducts.map((_item) => ({
-                    ..._item.mainRelatedProduct,
-                    ..._item.mainRelatedProduct.productPrice
+                    ..._item.mainRelatedProduct
+                    // ..._item.mainRelatedProduct.productPrice
                 })),
                 product_attributes: product.productAttributes.map((_item) => ({
                     ..._item,

@@ -40,15 +40,15 @@ export class CartService {
                                                 slug: true,
                                                 name: true
                                             }
-                                        },
-                                        productPrice: {
-                                            select: {
-                                                price: true,
-                                                selling_price: true,
-                                                special_price: true,
-                                                special_price_type: true
-                                            }
                                         }
+                                        // productPrice: {
+                                        //     select: {
+                                        //         price: true,
+                                        //         selling_price: true,
+                                        //         special_price: true,
+                                        //         special_price_type: true
+                                        //     }
+                                        // }
                                     }
                                 }
                             }
@@ -61,8 +61,8 @@ export class CartService {
                     CartItem: product ? product.CartItem.map(_c => ({
                         ..._c,
                         Product: {
-                            ..._c.Product,
-                            ..._c.Product.productPrice
+                            ..._c.Product
+                            // ..._c.Product.productPrice
                         }
                     })) : []
                 }

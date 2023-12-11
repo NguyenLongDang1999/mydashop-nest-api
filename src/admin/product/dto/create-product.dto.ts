@@ -6,7 +6,7 @@ import { IsNotEmpty, IsString, IsNumber, MaxLength, IsOptional, IsArray, ArrayMi
 import { Transform } from 'class-transformer'
 
 // ** Utils Imports
-import { STATUS, POPULAR, INVENTORY_STATUS, SPECIAL_PRICE } from 'src/utils/enums'
+import { STATUS, POPULAR, INVENTORY_STATUS, SPECIAL_PRICE, PRODUCT_TYPE } from 'src/utils/enums'
 
 export class AttributesDto {
     @IsNotEmpty()
@@ -130,41 +130,47 @@ export class CreateProductDto {
     @ApiProperty({ required: false })
     related_products?: number[]
 
-    // @IsOptional()
-    // @IsNumber()
-    // @Transform(({ value }) => Number(value))
-    // @ApiProperty({ required: false, default: 0 })
-    // price = 0
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: PRODUCT_TYPE.SINGLE })
+    product_type = PRODUCT_TYPE.SINGLE
 
-    // @IsOptional()
-    // @IsNumber()
-    // @Transform(({ value }) => Number(value))
-    // @ApiProperty({ required: false, default: 0 })
-    // special_price = 0
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: 0 })
+    price = 0
 
-    // @IsOptional()
-    // @IsNumber()
-    // @Transform(({ value }) => Number(value))
-    // @ApiProperty({ required: false, default: SPECIAL_PRICE.PRICE })
-    // special_price_type = SPECIAL_PRICE.PRICE
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: 0 })
+    special_price = 0
 
-    // @IsNotEmpty()
-    // @IsNumber()
-    // @Transform(({ value }) => Number(value))
-    // @ApiProperty({ required: false, default: 0 })
-    // selling_price = 0
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: SPECIAL_PRICE.PRICE })
+    special_price_type = SPECIAL_PRICE.PRICE
 
-    // @IsOptional()
-    // @IsNumber()
-    // @Transform(({ value }) => Number(value))
-    // @ApiProperty({ required: false, default: 0 })
-    // quantity = 0
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: 0 })
+    selling_price = 0
 
-    // @IsOptional()
-    // @IsNumber()
-    // @Transform(({ value }) => Number(value))
-    // @ApiProperty({ required: false, default: INVENTORY_STATUS.OUT_OF_STOCK })
-    // in_stock = INVENTORY_STATUS.OUT_OF_STOCK
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: 0 })
+    quantity = 0
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: INVENTORY_STATUS.OUT_OF_STOCK })
+    in_stock = INVENTORY_STATUS.OUT_OF_STOCK
 
     @IsOptional()
     @IsString()

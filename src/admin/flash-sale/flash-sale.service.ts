@@ -42,23 +42,23 @@ export class FlashSaleService {
                     }
                 })
 
-                for (const productId of product_id) {
-                    const productPrice = await prisma.productPrice.findFirst({
-                        where: { product_id: productId },
-                        select: { price: true }
-                    })
+                // for (const productId of product_id) {
+                //     const productPrice = await prisma.productPrice.findFirst({
+                //         where: { product_id: productId },
+                //         select: { price: true }
+                //     })
 
-                    if (productPrice) {
-                        await prisma.productPrice.update({
-                            where: { product_id: productId },
-                            data: {
-                                discount: data.discount,
-                                selling_price:
-                                    Number(productPrice.price) - (Number(productPrice.price) / 100) * data.discount
-                            }
-                        })
-                    }
-                }
+                //     if (productPrice) {
+                //         await prisma.productPrice.update({
+                //             where: { product_id: productId },
+                //             data: {
+                //                 discount: data.discount,
+                //                 selling_price:
+                //                     Number(productPrice.price) - (Number(productPrice.price) / 100) * data.discount
+                //             }
+                //         })
+                //     }
+                // }
 
                 return data
             })
@@ -155,23 +155,23 @@ export class FlashSaleService {
                     }
                 })
 
-                for (const productId of product_id) {
-                    const productPrice = await prisma.productPrice.findFirst({
-                        where: { product_id: productId },
-                        select: { price: true }
-                    })
+                // for (const productId of product_id) {
+                //     const productPrice = await prisma.productPrice.findFirst({
+                //         where: { product_id: productId },
+                //         select: { price: true }
+                //     })
 
-                    if (productPrice) {
-                        await prisma.productPrice.update({
-                            where: { product_id: productId },
-                            data: {
-                                discount: data.discount,
-                                selling_price:
-                                    Number(productPrice.price) - (Number(productPrice.price) / 100) * data.discount
-                            }
-                        })
-                    }
-                }
+                //     if (productPrice) {
+                //         await prisma.productPrice.update({
+                //             where: { product_id: productId },
+                //             data: {
+                //                 discount: data.discount,
+                //                 selling_price:
+                //                     Number(productPrice.price) - (Number(productPrice.price) / 100) * data.discount
+                //             }
+                //         })
+                //     }
+                // }
 
                 return data
             })
@@ -188,30 +188,30 @@ export class FlashSaleService {
                     select: { product_id: true }
                 })
 
-                for (const product of data) {
-                    const productPrice = await prisma.productPrice.findFirst({
-                        where: { product_id: product.product_id },
-                        select: {
-                            price: true,
-                            special_price: true,
-                            special_price_type: true
-                        }
-                    })
+                // for (const product of data) {
+                //     const productPrice = await prisma.productPrice.findFirst({
+                //         where: { product_id: product.product_id },
+                //         select: {
+                //             price: true,
+                //             special_price: true,
+                //             special_price_type: true
+                //         }
+                //     })
 
-                    if (productPrice) {
-                        await prisma.productPrice.update({
-                            where: { product_id: product.product_id },
-                            data: {
-                                discount: null,
-                                selling_price: this.getSellingPrice(
-                                    productPrice.special_price_type,
-                                    Number(productPrice.price),
-                                    Number(productPrice.special_price),
-                                )
-                            }
-                        })
-                    }
-                }
+                //     if (productPrice) {
+                //         await prisma.productPrice.update({
+                //             where: { product_id: product.product_id },
+                //             data: {
+                //                 discount: null,
+                //                 selling_price: this.getSellingPrice(
+                //                     productPrice.special_price_type,
+                //                     Number(productPrice.price),
+                //                     Number(productPrice.special_price),
+                //                 )
+                //             }
+                //         })
+                //     }
+                // }
 
                 await this.prisma.flashSale.delete({
                     where: { id }

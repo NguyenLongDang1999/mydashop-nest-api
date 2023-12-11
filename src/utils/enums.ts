@@ -20,6 +20,11 @@ export enum POPULAR {
     INACTIVE = 20,
 }
 
+export enum PRODUCT_TYPE {
+    SINGLE = 10,
+    VARIANT = 20
+}
+
 export enum INVENTORY_STATUS {
     IN_STOCK = 10,
     OUT_OF_STOCK = 20,

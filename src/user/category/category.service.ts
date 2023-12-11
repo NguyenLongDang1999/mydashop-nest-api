@@ -240,14 +240,14 @@ export class CategoryService {
                     orderBy: { created_at: 'desc' },
                     where: { is_default: true },
                     select: {
-                        productVariantPrice: {
-                            select: {
-                                price: true,
-                                special_price: true,
-                                special_price_type: true,
-                                selling_price: true
-                            }
-                        }
+                        // productVariantPrice: {
+                        //     select: {
+                        //         price: true,
+                        //         special_price: true,
+                        //         special_price_type: true,
+                        //         selling_price: true
+                        //     }
+                        // }
                     }
                 },
                 category: {
@@ -267,8 +267,8 @@ export class CategoryService {
 
         const formattedData = data.map((item) => {
             return {
-                ...item,
-                ...item.productVariant[0]?.productVariantPrice
+                ...item
+                // ...item.productVariant[0]?.productVariantPrice
             }
         })
 
