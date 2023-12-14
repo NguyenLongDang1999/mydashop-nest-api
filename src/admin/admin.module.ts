@@ -9,7 +9,7 @@ import { AttributeModule } from './attribute/attribute.module'
 import { ProductModule } from './product/product.module'
 import { AuthModule } from './auth/auth.module'
 import { SliderModule } from './slider/slider.module'
-import { FlashSaleModule } from './flash-sale/flash-sale.module'
+import { FlashDealsModule } from './flash-deals/flash-deals.module'
 
 @Module({
     imports: [
@@ -19,7 +19,7 @@ import { FlashSaleModule } from './flash-sale/flash-sale.module'
         ProductModule,
         AuthModule,
         SliderModule,
-        FlashSaleModule,
+        FlashDealsModule,
         RouterModule.register([
             {
                 path: 'admin',
@@ -42,7 +42,7 @@ import { FlashSaleModule } from './flash-sale/flash-sale.module'
                     },
                     {
                         path: 'flash-sale',
-                        module: FlashSaleModule
+                        module: FlashDealsModule
                     },
                     {
                         path: 'product',

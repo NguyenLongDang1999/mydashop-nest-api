@@ -33,7 +33,7 @@ import { AUTH } from 'src/utils/enums'
 export class CartController {
     constructor(private readonly cartService: CartService) {}
 
-    @Get()
+    @Get('data-list')
     @ApiOkResponse()
     getDataList(@Req() req: Request) {
         const sessionId = req.cookies['session_id']

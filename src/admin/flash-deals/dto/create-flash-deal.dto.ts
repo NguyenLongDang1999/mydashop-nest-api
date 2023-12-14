@@ -5,7 +5,7 @@ import { Type } from 'class-transformer'
 // ** Validate Imports
 import { IsNotEmpty, IsString, IsNumber, MaxLength, IsDate, IsArray, ArrayMinSize } from 'class-validator'
 
-export class CreateFlashSaleDto {
+export class CreateFlashDealDto {
     @IsNotEmpty()
     @IsString()
     @MaxLength(60)

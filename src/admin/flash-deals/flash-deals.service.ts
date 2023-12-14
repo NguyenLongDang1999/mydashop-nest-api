@@ -2,43 +2,42 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
 
 // ** DTO Imports
-import { CreateFlashSaleDto } from './dto/create-flash-sale.dto'
-import { UpdateFlashSaleDto } from './dto/update-flash-sale.dto'
+import { CreateFlashDealDto } from './dto/create-flash-deal.dto'
+import { UpdateFlashDealDto } from './dto/update-flash-deal.dto'
 
 // ** Prisma Imports
 import { Prisma } from '@prisma/client'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 // ** Types Imports
-import { IFlashSaleSearch } from './flash-sale.interface'
+import { IFlashDealsSearch } from './flash-deals.interface'
 
 // ** Utils Imports
 import { SPECIAL_PRICE } from 'src/utils/enums'
 
 @Injectable()
-export class FlashSaleService {
+export class FlashDealsService {
     constructor(private prisma: PrismaService) {}
 
-    async create(createFlashSaleDto: CreateFlashSaleDto) {
+    async create(createFlashDealDto: CreateFlashDealDto) {
         try {
-            const { product_id, ...productData } = createFlashSaleDto
+            const { product_id, ...productData } = createFlashDealDto
 
             return await this.prisma.$transaction(async (prisma) => {
-                const data = await prisma.flashSale.create({
+                const data = await prisma.flashDeals.create({
                     data: {
-                        ...productData,
-                        FlashSaleProduct: {
-                            createMany: {
-                                data: product_id.map((productItem) => ({
-                                    product_id: productItem
-                                })),
-                                skipDuplicates: true
-                            }
-                        }
+                        ...productData
+                        // flashDealsProduct: {
+                        //     createMany: {
+                        //         data: product_id.map((productItem) => ({
+                        //             product_id: productItem
+                        //         })),
+                        //         skipDuplicates: true
+                        //     }
+                        // }
                     },
                     select: {
-                        id: true,
-                        discount: true
+                        id: true
                     }
                 })
 
@@ -67,21 +66,21 @@ export class FlashSaleService {
         }
     }
 
-    async getTableList(query: IFlashSaleSearch) {
+    async getTableList(query: IFlashDealsSearch) {
         try {
             const { campaign_name, product_id, pageSize, page } = query
             const take = Number(pageSize) || undefined
             const skip = Number(page) || undefined
 
-            const search: Prisma.FlashSaleWhereInput = {
+            const search: Prisma.FlashDealsWhereInput = {
                 campaign_name: { contains: campaign_name || undefined, mode: 'insensitive' },
-                FlashSaleProduct: {
+                flashDealsProduct: {
                     every: { product_id: product_id || undefined }
                 }
             }
 
             const [data, count] = await Promise.all([
-                this.prisma.flashSale.findMany({
+                this.prisma.flashDeals.findMany({
                     take,
                     skip,
                     orderBy: { created_at: 'desc' },
@@ -90,11 +89,10 @@ export class FlashSaleService {
                         id: true,
                         campaign_name: true,
                         start_date: true,
-                        end_date: true,
-                        discount: true
+                        end_date: true
                     }
                 }),
-                this.prisma.flashSale.count({ where: search })
+                this.prisma.flashDeals.count({ where: search })
             ])
 
             return { data, aggregations: count }
@@ -105,15 +103,14 @@ export class FlashSaleService {
 
     async getDetail(id: number) {
         try {
-            const data = await this.prisma.flashSale.findFirstOrThrow({
+            const data = await this.prisma.flashDeals.findFirstOrThrow({
                 where: { id },
                 select: {
                     id: true,
                     campaign_name: true,
-                    discount: true,
                     start_date: true,
                     end_date: true,
-                    FlashSaleProduct: {
+                    flashDealsProduct: {
                         select: {
                             product_id: true
                         }
@@ -123,35 +120,34 @@ export class FlashSaleService {
 
             return {
                 ...data,
-                product_id: data.FlashSaleProduct.map((_p) => _p.product_id)
+                product_id: data.flashDealsProduct.map((_p) => _p.product_id)
             }
         } catch (error) {
             throw new InternalServerErrorException()
         }
     }
 
-    async update(id: number, updateFlashSaleDto: UpdateFlashSaleDto) {
+    async update(id: number, updateFlashDealDto: UpdateFlashDealDto) {
         try {
-            const { product_id, ...productData } = updateFlashSaleDto
+            const { product_id, ...productData } = updateFlashDealDto
 
             return await this.prisma.$transaction(async (prisma) => {
-                const data = await prisma.flashSale.update({
+                const data = await prisma.flashDeals.update({
                     data: {
                         ...productData,
-                        FlashSaleProduct: {
-                            deleteMany: {},
-                            createMany: {
-                                data: product_id.map((productItem) => ({
-                                    product_id: productItem
-                                })),
-                                skipDuplicates: true
-                            }
+                        flashDealsProduct: {
+                            deleteMany: {}
+                            // createMany: {
+                            //     data: product_id.map((productItem) => ({
+                            //         product_id: productItem
+                            //     })),
+                            //     skipDuplicates: true
+                            // }
                         }
                     },
                     where: { id },
                     select: {
-                        id: true,
-                        discount: true
+                        id: true
                     }
                 })
 
@@ -183,8 +179,8 @@ export class FlashSaleService {
     async remove(id: number) {
         try {
             return await this.prisma.$transaction(async (prisma) => {
-                const data = await prisma.flashSaleProduct.findMany({
-                    where: { flash_sale_id: id },
+                const data = await prisma.flashDealsProduct.findMany({
+                    where: { flash_deal_id: id },
                     select: { product_id: true }
                 })
 
@@ -213,7 +209,7 @@ export class FlashSaleService {
                 //     }
                 // }
 
-                await this.prisma.flashSale.delete({
+                await this.prisma.flashDeals.delete({
                     where: { id }
                 })
             })

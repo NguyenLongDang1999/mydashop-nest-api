@@ -2,17 +2,17 @@
 import { Module } from '@nestjs/common'
 
 // ** Service Imports
-import { FlashSaleService } from './flash-sale.service'
+import { FlashDealsService } from './flash-deals.service'
 
 // ** Controller Imports
-import { FlashSaleController } from './flash-sale.controller'
+import { FlashDealsController } from './flash-deals.controller'
 
 // ** Module Imports
 import { PrismaModule } from 'src/prisma/prisma.module'
 
 @Module({
     imports: [PrismaModule],
-    controllers: [FlashSaleController],
-    providers: [FlashSaleService]
+    controllers: [FlashDealsController],
+    providers: [FlashDealsService]
 })
-export class FlashSaleModule {}
+export class FlashDealsModule {}

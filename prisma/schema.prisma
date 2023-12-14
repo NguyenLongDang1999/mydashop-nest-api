@@ -130,12 +130,12 @@ model Product {
   mainRelatedProducts      ProductRelated[]      @relation("MainRelatedProduct")
   mainUpsellProducts       ProductUpSell[]       @relation("MainUpSellProduct")
   mainCrossSellProducts    ProductCrossSell[]    @relation("MainCrossSellProduct")
-  flashSaleProduct         FlashSaleProduct[]
   productImage             ProductImage[]
   productComments          ProductComments[]
   CartItem                 CartItem[]
   productVariant           ProductVariant[]
   productVariantPrice      ProductVariantPrice[]
+  FlashDealsProduct        FlashDealsProduct[]
 
   @@index([status, popular, brand_id, category_id])
 }
@@ -239,24 +239,26 @@ model ProductCrossSell {
   @@unique([cross_sell_product_id, product_id])
 }
 
-model FlashSale {
-  id               Int                @id @default(autoincrement())
-  campaign_name    String             @db.VarChar
-  start_date       DateTime
-  end_date         DateTime
-  discount         Int                @db.SmallInt
-  created_at       DateTime           @default(now())
-  updated_at       DateTime           @updatedAt
-  FlashSaleProduct FlashSaleProduct[]
+model FlashDeals {
+  id                Int                 @id @default(autoincrement())
+  campaign_name     String              @db.VarChar
+  start_date        DateTime
+  end_date          DateTime
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  flashDealsProduct FlashDealsProduct[]
 }
 
-model FlashSaleProduct {
-  flash_sale_id Int
-  product_id    Int
-  flashSale     FlashSale @relation(fields: [flash_sale_id], references: [id], onDelete: Cascade)
-  product       Product   @relation(fields: [product_id], references: [id], onDelete: Cascade)
+model FlashDealsProduct {
+  flash_deal_id   Int
+  product_id      Int
+  discount_type   Int        @db.SmallInt
+  discount_amount Decimal    @default(0) @db.Decimal(18, 0)
+  selling_price   Decimal    @default(0) @db.Decimal(18, 0)
+  flashDeals      FlashDeals @relation(fields: [flash_deal_id], references: [id], onDelete: Cascade)
+  product         Product    @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
-  @@unique([flash_sale_id, product_id])
+  @@unique([flash_deal_id, product_id])
 }
 
 model Slider {
