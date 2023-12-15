@@ -316,11 +316,11 @@ export class ProductService {
                             image_uri: true
                         }
                     },
-                    // flashSaleProduct: {
-                    //     select: {
-                    //         flash_sale_id: true
-                    //     }
-                    // },
+                    FlashDealsProduct: {
+                        select: {
+                            flash_deal_id: true
+                        }
+                    },
                     productAttributes: {
                         select: {
                             attribute: true,
@@ -488,8 +488,7 @@ export class ProductService {
                               }
                             : {}
                     },
-                    select: {
-                        id: true,
+                    include: {
                         productVariantPrice: {
                             select: { id: true }
                         }

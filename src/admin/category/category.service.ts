@@ -157,8 +157,7 @@ export class CategoryService {
         try {
             return await this.prisma.category.update({
                 data: updateCategoryDto,
-                where: { id },
-                select: { id: true }
+                where: { id }
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
