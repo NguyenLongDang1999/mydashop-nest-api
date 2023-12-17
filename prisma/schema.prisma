@@ -254,7 +254,6 @@ model FlashDealsProduct {
   product_id      Int
   discount_type   Int        @db.SmallInt
   discount_amount Decimal    @default(0) @db.Decimal(18, 0)
-  selling_price   Decimal    @default(0) @db.Decimal(18, 0)
   flashDeals      FlashDeals @relation(fields: [flash_deal_id], references: [id], onDelete: Cascade)
   product         Product    @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
