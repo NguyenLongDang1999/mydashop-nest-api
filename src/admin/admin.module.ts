@@ -41,7 +41,7 @@ import { FlashDealsModule } from './flash-deals/flash-deals.module'
                         module: AttributeModule
                     },
                     {
-                        path: 'flash-sale',
+                        path: 'flash-deals',
                         module: FlashDealsModule
                     },
                     {

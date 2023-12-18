@@ -250,8 +250,7 @@ export class ProductService {
                             in_stock: true,
                             price: true,
                             special_price: true,
-                            special_price_type: true,
-                            selling_price: true
+                            special_price_type: true
                         }
                     },
                     productVariant: {
@@ -264,8 +263,7 @@ export class ProductService {
                                     in_stock: true,
                                     price: true,
                                     special_price: true,
-                                    special_price_type: true,
-                                    selling_price: true
+                                    special_price_type: true
                                 }
                             }
                         }
@@ -341,8 +339,7 @@ export class ProductService {
                                             in_stock: true,
                                             price: true,
                                             special_price: true,
-                                            special_price_type: true,
-                                            selling_price: true
+                                            special_price_type: true
                                         }
                                     },
                                     productVariant: {
@@ -355,8 +352,7 @@ export class ProductService {
                                                     in_stock: true,
                                                     price: true,
                                                     special_price: true,
-                                                    special_price_type: true,
-                                                    selling_price: true
+                                                    special_price_type: true
                                                 }
                                             }
                                         }
@@ -394,8 +390,7 @@ export class ProductService {
                                             in_stock: true,
                                             price: true,
                                             special_price: true,
-                                            special_price_type: true,
-                                            selling_price: true
+                                            special_price_type: true
                                         }
                                     },
                                     productVariant: {
@@ -408,8 +403,7 @@ export class ProductService {
                                                     in_stock: true,
                                                     price: true,
                                                     special_price: true,
-                                                    special_price_type: true,
-                                                    selling_price: true
+                                                    special_price_type: true
                                                 }
                                             }
                                         }

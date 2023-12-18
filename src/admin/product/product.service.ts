@@ -30,7 +30,6 @@ export class ProductService {
                 related_products,
                 price,
                 special_price,
-                selling_price,
                 special_price_type,
                 quantity,
                 in_stock,
@@ -45,7 +44,6 @@ export class ProductService {
                             create: !variants ? {
                                 price,
                                 special_price,
-                                selling_price,
                                 special_price_type,
                                 quantity,
                                 in_stock
@@ -64,7 +62,6 @@ export class ProductService {
                                             in_stock: variantItem.in_stock,
                                             price: variantItem.price,
                                             special_price: variantItem.special_price,
-                                            selling_price: variantItem.selling_price,
                                             special_price_type: variantItem.special_price_type
                                         }
                                     }
@@ -221,9 +218,7 @@ export class ProductService {
                             select: {
                                 price: true,
                                 special_price: true,
-                                special_price_type: true,
-                                selling_price: true,
-                                discount: true
+                                special_price_type: true
                             }
                         },
                         productVariant: {
@@ -235,9 +230,7 @@ export class ProductService {
                                     select: {
                                         price: true,
                                         special_price: true,
-                                        special_price_type: true,
-                                        selling_price: true,
-                                        discount: true
+                                        special_price_type: true
                                     }
                                 }
                             }
@@ -284,8 +277,6 @@ export class ProductService {
                             in_stock: true,
                             quantity: true,
                             price: true,
-                            discount: true,
-                            selling_price: true,
                             special_price: true,
                             special_price_type: true
                         }
@@ -301,8 +292,6 @@ export class ProductService {
                                     in_stock: true,
                                     quantity: true,
                                     price: true,
-                                    discount: true,
-                                    selling_price: true,
                                     special_price: true,
                                     special_price_type: true
                                 }
@@ -404,7 +393,6 @@ export class ProductService {
                 related_products,
                 price,
                 special_price,
-                selling_price,
                 special_price_type,
                 quantity,
                 in_stock,
@@ -431,7 +419,6 @@ export class ProductService {
                                                 in_stock: variantItem.in_stock,
                                                 price: variantItem.price,
                                                 special_price: variantItem.special_price,
-                                                selling_price: variantItem.selling_price,
                                                 special_price_type: variantItem.special_price_type
                                             }
                                         }
@@ -501,7 +488,6 @@ export class ProductService {
                         data: {
                             price,
                             special_price,
-                            selling_price,
                             special_price_type,
                             quantity,
                             in_stock

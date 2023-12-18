@@ -56,12 +56,6 @@ export class VariantsDto {
     @ApiProperty({ required: false, default: SPECIAL_PRICE.PRICE })
     special_price_type = SPECIAL_PRICE.PRICE
 
-    @IsNotEmpty()
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    @ApiProperty({ required: false, default: 0 })
-    selling_price = 0
-
     @IsOptional()
     @IsNumber()
     @Transform(({ value }) => Number(value))
@@ -153,12 +147,6 @@ export class CreateProductDto {
     @Transform(({ value }) => Number(value))
     @ApiProperty({ required: false, default: SPECIAL_PRICE.PRICE })
     special_price_type = SPECIAL_PRICE.PRICE
-
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => Number(value))
-    @ApiProperty({ required: false, default: 0 })
-    selling_price = 0
 
     @IsOptional()
     @IsNumber()

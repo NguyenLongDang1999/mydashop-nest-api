@@ -13,7 +13,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { IFlashDealsSearch } from './flash-deals.interface'
 
 // ** Utils Imports
-import { SPECIAL_PRICE } from 'src/utils/enums'
+import { SPECIAL_PRICE, PRODUCT_TYPE } from 'src/utils/enums'
 
 @Injectable()
 export class FlashDealsService {
@@ -21,43 +21,40 @@ export class FlashDealsService {
 
     async create(createFlashDealDto: CreateFlashDealDto) {
         try {
-            const { product_id, ...productData } = createFlashDealDto
+            const { flashDealsProduct, ...productData } = createFlashDealDto
 
             return await this.prisma.$transaction(async (prisma) => {
                 const data = await prisma.flashDeals.create({
                     data: {
-                        ...productData
-                        // flashDealsProduct: {
-                        //     createMany: {
-                        //         data: product_id.map((productItem) => ({
-                        //             product_id: productItem
-                        //         })),
-                        //         skipDuplicates: true
-                        //     }
-                        // }
+                        ...productData,
+                        flashDealsProduct: {
+                            createMany: {
+                                data: flashDealsProduct.map((productItem) => ({
+                                    product_id: productItem.id,
+                                    discount_type: productItem.discount_type,
+                                    discount_amount: productItem.discount_amount
+                                })),
+                                skipDuplicates: true
+                            }
+                        }
                     },
                     select: {
-                        id: true
+                        id: true,
+                        flashDealsProduct: true
                     }
                 })
 
-                // for (const productId of product_id) {
-                //     const productPrice = await prisma.productPrice.findFirst({
-                //         where: { product_id: productId },
-                //         select: { price: true }
-                //     })
-
-                //     if (productPrice) {
-                //         await prisma.productPrice.update({
-                //             where: { product_id: productId },
-                //             data: {
-                //                 discount: data.discount,
-                //                 selling_price:
-                //                     Number(productPrice.price) - (Number(productPrice.price) / 100) * data.discount
-                //             }
-                //         })
-                //     }
-                // }
+                for (const productItem of flashDealsProduct) {
+                    await prisma.productVariantPrice.updateMany({
+                        where: { product_id: productItem.id },
+                        data: {
+                            discount_start_date: createFlashDealDto.start_date,
+                            discount_end_date: createFlashDealDto.end_date,
+                            discount_type: productItem.discount_type,
+                            discount_amount: productItem.discount_amount
+                        }
+                    })
+                }
 
                 return data
             })
@@ -112,7 +109,38 @@ export class FlashDealsService {
                     end_date: true,
                     flashDealsProduct: {
                         select: {
-                            product_id: true
+                            product_id: true,
+                            discount_type: true,
+                            discount_amount: true,
+                            product: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    image_uri: true,
+                                    product_type: true,
+                                    productVariantPrice: {
+                                        select: {
+                                            price: true,
+                                            special_price: true,
+                                            special_price_type: true
+                                        }
+                                    },
+                                    productVariant: {
+                                        take: 1,
+                                        orderBy: { created_at: 'desc' },
+                                        where: { is_default: true },
+                                        select: {
+                                            productVariantPrice: {
+                                                select: {
+                                                    price: true,
+                                                    special_price: true,
+                                                    special_price_type: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -120,7 +148,20 @@ export class FlashDealsService {
 
             return {
                 ...data,
-                product_id: data.flashDealsProduct.map((_p) => _p.product_id)
+                product_id: data.flashDealsProduct.map(_p => ({
+                    ..._p,
+                    ..._p.product,
+                    ...(_p.product.product_type === PRODUCT_TYPE.SINGLE
+                        ? _p.product.productVariantPrice[0]
+                        : _p.product.productVariant[0]?.productVariantPrice)
+                })),
+                flashDealsProduct: data.flashDealsProduct.map(_p => ({
+                    ..._p,
+                    ..._p.product,
+                    ...(_p.product.product_type === PRODUCT_TYPE.SINGLE
+                        ? _p.product.productVariantPrice[0]
+                        : _p.product.productVariant[0]?.productVariantPrice)
+                }))
             }
         } catch (error) {
             throw new InternalServerErrorException()
@@ -129,45 +170,42 @@ export class FlashDealsService {
 
     async update(id: number, updateFlashDealDto: UpdateFlashDealDto) {
         try {
-            const { product_id, ...productData } = updateFlashDealDto
+            const { flashDealsProduct, ...productData } = updateFlashDealDto
 
             return await this.prisma.$transaction(async (prisma) => {
                 const data = await prisma.flashDeals.update({
                     data: {
                         ...productData,
                         flashDealsProduct: {
-                            deleteMany: {}
-                            // createMany: {
-                            //     data: product_id.map((productItem) => ({
-                            //         product_id: productItem
-                            //     })),
-                            //     skipDuplicates: true
-                            // }
+                            deleteMany: {},
+                            createMany: {
+                                data: flashDealsProduct.map((productItem) => ({
+                                    product_id: productItem.id,
+                                    discount_type: productItem.discount_type,
+                                    discount_amount: productItem.discount_amount
+                                })),
+                                skipDuplicates: true
+                            }
                         }
                     },
                     where: { id },
                     select: {
-                        id: true
+                        id: true,
+                        flashDealsProduct: true
                     }
                 })
 
-                // for (const productId of product_id) {
-                //     const productPrice = await prisma.productPrice.findFirst({
-                //         where: { product_id: productId },
-                //         select: { price: true }
-                //     })
-
-                //     if (productPrice) {
-                //         await prisma.productPrice.update({
-                //             where: { product_id: productId },
-                //             data: {
-                //                 discount: data.discount,
-                //                 selling_price:
-                //                     Number(productPrice.price) - (Number(productPrice.price) / 100) * data.discount
-                //             }
-                //         })
-                //     }
-                // }
+                for (const productItem of flashDealsProduct) {
+                    await prisma.productVariantPrice.updateMany({
+                        where: { product_id: productItem.id },
+                        data: {
+                            discount_start_date: updateFlashDealDto.start_date,
+                            discount_end_date: updateFlashDealDto.end_date,
+                            discount_type: productItem.discount_type,
+                            discount_amount: productItem.discount_amount
+                        }
+                    })
+                }
 
                 return data
             })
@@ -216,19 +254,5 @@ export class FlashDealsService {
         } catch (error) {
             throw new InternalServerErrorException()
         }
-    }
-
-    getSellingPrice(specialPriceType: number, price: number, specialPrice: number) {
-        let discount = 0
-
-        if (specialPriceType === SPECIAL_PRICE.PERCENT) {
-            discount = (price / 100) * specialPrice
-        }
-
-        if (specialPriceType === SPECIAL_PRICE.PRICE) {
-            discount = specialPrice
-        }
-
-        return price - discount
     }
 }

@@ -48,7 +48,6 @@ export class CartService {
                                         productVariantPrice: {
                                             select: {
                                                 price: true,
-                                                selling_price: true,
                                                 special_price: true,
                                                 special_price_type: true
                                             }
@@ -59,7 +58,6 @@ export class CartService {
                                                 productVariantPrice: {
                                                     select: {
                                                         price: true,
-                                                        selling_price: true,
                                                         special_price: true,
                                                         special_price_type: true
                                                     }

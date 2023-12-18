@@ -16,7 +16,7 @@ import { IFlashDealsSearch } from './flash-deals.interface'
 import { AccessTokenGuard } from '../common/guards/accessToken.guard'
 
 @Controller('/')
-@ApiTags('Flash Sale')
+@ApiTags('Flash Deals')
 @UseGuards(AccessTokenGuard)
 export class FlashDealsController {
     constructor(private readonly FlashDealsService: FlashDealsService) {}
