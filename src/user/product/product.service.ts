@@ -5,7 +5,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 // ** Utils Imports
-import { PRODUCT_TYPE, SHOW_PRODUCT, STATUS } from 'src/utils/enums'
+import { POPULAR, PRODUCT_TYPE, SHOW_PRODUCT, STATUS } from 'src/utils/enums'
 
 @Injectable()
 export class ProductService {
@@ -108,113 +108,135 @@ export class ProductService {
 
     async getListProductFlashSale() {
         try {
-            // const data = await this.prisma.flashSale.findFirstOrThrow({
-            //     orderBy: { created_at: 'desc' },
-            //     where: {
-            //         start_date: { lte: new Date() },
-            //         end_date: { gte: new Date() }
-            //     },
-            //     select: {
-            //         campaign_name: true,
-            //         FlashSaleProduct: {
-            //             where: {
-            //                 product: {
-            //                     deleted_flg: false,
-            //                     status: STATUS.ACTIVE
-            //                 }
-            //             },
-            //             select: {
-            //                 product: {
-            //                     select: {
-            //                         id: true,
-            //                         sku: true,
-            //                         slug: true,
-            //                         name: true,
-            //                         image_uri: true,
-            //                         short_description: true,
-            //                         description: true,
-            //                         total_rating: true,
-            //                         productVariant: {
-            //                             orderBy: { created_at: 'desc' },
-            //                             select: {
-            //                                 sku: true,
-            //                                 label: true,
-            //                                 productVariantPrice: {
-            //                                     select: {
-            //                                         in_stock: true,
-            //                                         price: true,
-            //                                         special_price: true,
-            //                                         special_price_type: true,
-            //                                         selling_price: true
-            //                                     }
-            //                                 }
-            //                             }
-            //                         },
-            //                         productAttributes: {
-            //                             select: {
-            //                                 attribute: {
-            //                                     select: {
-            //                                         id: true,
-            //                                         name: true
-            //                                     }
-            //                                 },
-            //                                 productAttributeValues: {
-            //                                     select: {
-            //                                         attribute_value_id: true,
-            //                                         attributeValues: true
-            //                                     }
-            //                                 }
-            //                             }
-            //                         },
-            //                         category: {
-            //                             select: {
-            //                                 id: true,
-            //                                 slug: true,
-            //                                 name: true,
-            //                                 parent: {
-            //                                     select: {
-            //                                         id: true,
-            //                                         slug: true,
-            //                                         name: true
-            //                                     }
-            //                                 }
-            //                             }
-            //                         },
-            //                         brand: {
-            //                             select: {
-            //                                 id: true,
-            //                                 name: true,
-            //                                 image_uri: true
-            //                             }
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-            // })
+            const data = await this.prisma.flashDeals.findFirstOrThrow({
+                orderBy: { created_at: 'desc' },
+                where: {
+                    start_date: { lte: new Date() },
+                    end_date: { gte: new Date() },
+                    status: STATUS.ACTIVE,
+                    popular: POPULAR.ACTIVE
+                },
+                select: {
+                    campaign_name: true,
+                    start_date: true,
+                    end_date: true,
+                    flashDealsProduct: {
+                        where: {
+                            product: {
+                                deleted_flg: false,
+                                status: STATUS.ACTIVE
+                            }
+                        },
+                        select: {
+                            product: {
+                                select: {
+                                    id: true,
+                                    sku: true,
+                                    slug: true,
+                                    name: true,
+                                    image_uri: true,
+                                    product_type: true,
+                                    short_description: true,
+                                    description: true,
+                                    total_rating: true,
+                                    productVariantPrice: {
+                                        select: {
+                                            in_stock: true,
+                                            price: true,
+                                            special_price: true,
+                                            special_price_type: true
+                                        }
+                                    },
+                                    productVariant: {
+                                        orderBy: { created_at: 'desc' },
+                                        select: {
+                                            sku: true,
+                                            label: true,
+                                            productVariantPrice: {
+                                                select: {
+                                                    in_stock: true,
+                                                    price: true,
+                                                    special_price: true,
+                                                    special_price_type: true
+                                                }
+                                            }
+                                        }
+                                    },
+                                    productAttributes: {
+                                        select: {
+                                            attribute: {
+                                                select: {
+                                                    id: true,
+                                                    name: true
+                                                }
+                                            },
+                                            productAttributeValues: {
+                                                select: {
+                                                    attribute_value_id: true,
+                                                    attributeValues: {
+                                                        select: {
+                                                            id: true,
+                                                            value: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    category: {
+                                        select: {
+                                            id: true,
+                                            slug: true,
+                                            name: true,
+                                            parent: {
+                                                select: {
+                                                    id: true,
+                                                    slug: true,
+                                                    name: true
+                                                }
+                                            }
+                                        }
+                                    },
+                                    brand: {
+                                        select: {
+                                            id: true,
+                                            name: true,
+                                            image_uri: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
 
-            // const formattedData = data.FlashSaleProduct.map((item) => {
-            //     return {
-            //         campaign_name: data.campaign_name,
-            //         ...item.product,
-            //         productVariant: item.product.productVariant.map(variant => ({
-            //             ...variant,
-            //             // ...variant.productVariantPrice,
-            //             productVariantPrice: undefined
-            //         })),
-            //         product_attributes: item.product.productAttributes.map((_item) => ({
-            //             ..._item,
-            //             attribute: _item.attribute,
-            //             product_attribute_values: _item.productAttributeValues.map((_values) => ({
-            //                 ..._values,
-            //                 attribute_values: _values.attributeValues
-            //             }))
-            //         }))
-            //     }
-            // })
+            const formattedData = data.flashDealsProduct.map((item) => {
+                return {
+                    campaign_name: data.campaign_name,
+                    start_date: data.start_date,
+                    end_date: data.end_date,
+                    ...item.product,
+                    ...(item.product.product_type === PRODUCT_TYPE.SINGLE ? item.product.productVariantPrice[0] : undefined),
+                    productVariant: item.product.productVariant.map(variant => ({
+                        ...variant,
+                        ...variant.productVariantPrice,
+                        productVariantPrice: undefined
+                    })),
+                    product_attributes: item.product.productAttributes.map((_item) => ({
+                        ..._item,
+                        attribute: _item.attribute,
+                        productAttributeValues: undefined,
+                        product_attribute_values: _item.productAttributeValues.map((_values) => ({
+                            ..._values,
+                            attributeValues: undefined,
+                            attribute_values: _values.attributeValues
+                        }))
+                    }))
+                }
+            })
 
-            // return { ...data, FlashSaleProduct: formattedData }
+            return { ...data, flashDealsProduct: formattedData }
         } catch (error) {
             throw new InternalServerErrorException()
         }

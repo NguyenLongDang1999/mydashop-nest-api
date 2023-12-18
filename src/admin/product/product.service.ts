@@ -218,7 +218,11 @@ export class ProductService {
                             select: {
                                 price: true,
                                 special_price: true,
-                                special_price_type: true
+                                special_price_type: true,
+                                discount_start_date: true,
+                                discount_end_date: true,
+                                discount_type: true,
+                                discount_amount: true
                             }
                         },
                         productVariant: {
@@ -230,7 +234,11 @@ export class ProductService {
                                     select: {
                                         price: true,
                                         special_price: true,
-                                        special_price_type: true
+                                        special_price_type: true,
+                                        discount_start_date: true,
+                                        discount_end_date: true,
+                                        discount_type: true,
+                                        discount_amount: true
                                     }
                                 }
                             }

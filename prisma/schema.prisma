@@ -246,6 +246,8 @@ model FlashDeals {
   campaign_name     String              @db.VarChar
   start_date        DateTime
   end_date          DateTime
+  status            Int?                @default(20) @db.SmallInt
+  popular           Int?                @default(20) @db.SmallInt
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
   flashDealsProduct FlashDealsProduct[]
