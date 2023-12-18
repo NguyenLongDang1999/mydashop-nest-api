@@ -13,7 +13,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { IFlashDealsSearch } from './flash-deals.interface'
 
 // ** Utils Imports
-import { SPECIAL_PRICE, PRODUCT_TYPE } from 'src/utils/enums'
+import { PRODUCT_TYPE } from 'src/utils/enums'
 
 @Injectable()
 export class FlashDealsService {
@@ -86,7 +86,9 @@ export class FlashDealsService {
                         id: true,
                         campaign_name: true,
                         start_date: true,
-                        end_date: true
+                        end_date: true,
+                        status: true,
+                        popular: true
                     }
                 }),
                 this.prisma.flashDeals.count({ where: search })
@@ -107,6 +109,8 @@ export class FlashDealsService {
                     campaign_name: true,
                     start_date: true,
                     end_date: true,
+                    status: true,
+                    popular: true,
                     flashDealsProduct: {
                         select: {
                             product_id: true,

@@ -3,10 +3,10 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Transform, Type } from 'class-transformer'
 
 // ** Validate Imports
-import { IsNotEmpty, IsString, IsNumber, MaxLength, IsDate, IsArray, ArrayMinSize } from 'class-validator'
+import { IsNotEmpty, IsString, IsNumber, MaxLength, IsDate, IsArray, IsOptional } from 'class-validator'
 
 // ** Utils Imports
-import { SPECIAL_PRICE } from 'src/utils/enums'
+import { POPULAR, SPECIAL_PRICE, STATUS } from 'src/utils/enums'
 
 export class flashDealsProductDto {
     @IsNotEmpty()
@@ -34,6 +34,18 @@ export class CreateFlashDealDto {
     @MaxLength(60)
     @ApiProperty()
     campaign_name: string
+
+    @IsNumber()
+    @IsOptional()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: STATUS.INACTIVE })
+    status = STATUS.INACTIVE
+
+    @IsNumber()
+    @IsOptional()
+    @Transform(({ value }) => Number(value))
+    @ApiProperty({ required: false, default: POPULAR.INACTIVE })
+    popular = POPULAR.INACTIVE
 
     @IsNotEmpty()
     @IsDate()
