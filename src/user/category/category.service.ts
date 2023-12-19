@@ -231,7 +231,6 @@ export class CategoryService {
                 name: true,
                 slug: true,
                 image_uri: true,
-                in_stock: true,
                 short_description: true,
                 product_type: true,
                 total_rating: true,

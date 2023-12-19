@@ -113,8 +113,6 @@ model Product {
   status                   Int?                  @default(20) @db.SmallInt
   popular                  Int?                  @default(20) @db.SmallInt
   product_type             Int?                  @default(10) @db.SmallInt
-  quantity                 Int?                  @db.SmallInt
-  in_stock                 Int?                  @default(20) @db.SmallInt
   meta_title               String?               @db.VarChar
   meta_description         String?               @db.VarChar
   created_at               DateTime              @default(now())
@@ -292,6 +290,7 @@ model Users {
   updated_at      DateTime          @updatedAt
   deleted_flg     Boolean           @default(false)
   ProductComments ProductComments[]
+  CouponUsages    CouponUsages[]
 }
 
 model Admins {
@@ -335,4 +334,26 @@ model CartItem {
   Product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
   @@unique([cart_id, product_id, attributes])
+}
+
+model Coupons {
+  id                  Int            @id @default(autoincrement())
+  code                String
+  min_buy             Decimal        @default(0) @db.Decimal(18, 0)
+  discount_type       Int            @db.SmallInt
+  discount_amount     Decimal        @default(0) @db.Decimal(18, 0)
+  discount_start_date DateTime
+  discount_end_date   DateTime
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       @updatedAt
+  CouponUsages        CouponUsages[]
+}
+
+model CouponUsages {
+  user_id   Int
+  coupon_id Int
+  users     Users   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  coupons   Coupons @relation(fields: [coupon_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, coupon_id])
 }

@@ -10,6 +10,7 @@ import { ProductModule } from './product/product.module'
 import { AuthModule } from './auth/auth.module'
 import { SliderModule } from './slider/slider.module'
 import { FlashDealsModule } from './flash-deals/flash-deals.module'
+import { CouponModule } from './coupon/coupon.module'
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { FlashDealsModule } from './flash-deals/flash-deals.module'
         AuthModule,
         SliderModule,
         FlashDealsModule,
+        CouponModule,
         RouterModule.register([
             {
                 path: 'admin',
@@ -51,6 +53,10 @@ import { FlashDealsModule } from './flash-deals/flash-deals.module'
                     {
                         path: 'slider',
                         module: SliderModule
+                    },
+                    {
+                        path: 'coupons',
+                        module: CouponModule
                     }
                 ]
             }
