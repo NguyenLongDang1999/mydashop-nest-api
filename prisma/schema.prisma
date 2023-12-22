@@ -357,3 +357,11 @@ model CouponUsages {
 
   @@unique([user_id, coupon_id])
 }
+
+model WebsiteSetup {
+  id         Int      @id @default(autoincrement())
+  slug       String   @unique @db.VarChar
+  value      String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
