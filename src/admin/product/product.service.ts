@@ -40,6 +40,7 @@ export class ProductService {
                 return await prisma.product.create({
                     data: {
                         ...productData,
+                        productImage: {},
                         productVariantPrice: {
                             create: !variants ? {
                                 price,
@@ -122,39 +123,6 @@ export class ProductService {
                 throw new ConflictException()
             }
 
-            throw new InternalServerErrorException()
-        }
-    }
-
-    async createProductUpload(id: number, uploadProductDto: UploadProductDto) {
-        try {
-            return await this.prisma.$transaction(async (prisma) => {
-                return await prisma.productImage.create({
-                    data: {
-                        product_id: id,
-                        index: uploadProductDto.index,
-                        image_uri: uploadProductDto.image_uri as string
-                    },
-                    select: { id: true }
-                })
-            })
-        } catch (error) {
-            throw new InternalServerErrorException()
-        }
-    }
-
-    async updateProductUpload(id: number, uploadProductDto: UploadProductDto) {
-        try {
-            return await this.prisma.$transaction(async (prisma) => {
-                return await prisma.productImage.update({
-                    where: { id },
-                    data: {
-                        image_uri: uploadProductDto.image_uri as string
-                    },
-                    select: { id: true }
-                })
-            })
-        } catch (error) {
             throw new InternalServerErrorException()
         }
     }
@@ -412,6 +380,7 @@ export class ProductService {
                 special_price_type,
                 quantity,
                 in_stock,
+                productImage,
                 ...productData
             } = updateProductDto
 
@@ -489,6 +458,18 @@ export class ProductService {
                                       skipDuplicates: true
                                   }
                               }
+                            : {},
+                        productImage: productImage
+                            ? {
+                                deleteMany: {},
+                                createMany: {
+                                    data: productImage.map((imageItem, index) => ({
+                                        index,
+                                        image_uri: imageItem.image_uri || ''
+                                    })),
+                                    skipDuplicates: true
+                                }
+                            }
                             : {}
                     },
                     include: {

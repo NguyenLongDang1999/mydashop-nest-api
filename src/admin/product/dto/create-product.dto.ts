@@ -21,6 +21,12 @@ export class AttributesDto {
     attribute_value_id: number[]
 }
 
+export class ProductImageDto {
+    @IsOptional()
+    @ApiProperty({ required: false })
+    image_uri: string
+}
+
 export class VariantsDto {
     @IsNotEmpty()
     @IsString()
@@ -125,6 +131,11 @@ export class CreateProductDto {
     related_products?: number[]
 
     @IsOptional()
+    @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value) : undefined))
+    @ApiProperty({ required: false })
+    productImage?: ProductImageDto[]
+
+    @IsOptional()
     @IsNumber()
     @Transform(({ value }) => Number(value))
     @ApiProperty({ required: false, default: PRODUCT_TYPE.SINGLE })
@@ -161,7 +172,6 @@ export class CreateProductDto {
     in_stock = INVENTORY_STATUS.OUT_OF_STOCK
 
     @IsOptional()
-    @IsString()
     @ApiProperty({ required: false })
     technical_specifications?: string
 

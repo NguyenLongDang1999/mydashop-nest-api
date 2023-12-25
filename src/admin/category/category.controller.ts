@@ -28,13 +28,11 @@ import { AccessTokenGuard } from '../common/guards/accessToken.guard'
 @ApiTags('Category')
 @UseGuards(AccessTokenGuard)
 export class CategoryController {
-    constructor(
-        private readonly categoryService: CategoryService,
-    ) {}
+    constructor(private readonly categoryService: CategoryService) {}
 
     @Post()
     @ApiCreatedResponse()
-    async create(@Body() createCategoryDto: CreateCategoryDto) {
+    create(@Body() createCategoryDto: CreateCategoryDto) {
         return this.categoryService.create(createCategoryDto)
     }
 
@@ -61,7 +59,7 @@ export class CategoryController {
 
     @Patch(':id')
     @ApiNoContentResponse()
-    async update(
+    update(
         @Param('id') id: string,
         @Body() updateCategoryDto: UpdateCategoryDto,
     ) {
