@@ -146,6 +146,10 @@ export class ProductService {
                                             special_price_type: true
                                         }
                                     },
+                                    productImage: {
+                                        orderBy: { index: 'asc' },
+                                        select: { image_uri: true }
+                                    },
                                     productVariant: {
                                         orderBy: { created_at: 'desc' },
                                         select: {
@@ -231,7 +235,8 @@ export class ProductService {
                             attributeValues: undefined,
                             attribute_values: _values.attributeValues
                         }))
-                    }))
+                    })),
+                    productImage: item.product.productImage.filter(_image => _image.image_uri)
                 }
             })
 
@@ -462,7 +467,8 @@ export class ProductService {
                         attributeValues: undefined,
                         attribute_values: _values.attributeValues
                     }))
-                }))
+                })),
+                productImage: product.productImage.filter(_image => _image.image_uri)
             }
         } catch (error) {
             throw new InternalServerErrorException()

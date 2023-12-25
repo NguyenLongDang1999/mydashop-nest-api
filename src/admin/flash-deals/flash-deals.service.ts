@@ -177,6 +177,23 @@ export class FlashDealsService {
             const { flashDealsProduct, ...productData } = updateFlashDealDto
 
             return await this.prisma.$transaction(async (prisma) => {
+                const oldFlashSale = await prisma.flashDeals.findFirstOrThrow({
+                    where: { id },
+                    select: { flashDealsProduct: true }
+                })
+
+                for (const productItem of oldFlashSale.flashDealsProduct) {
+                    await prisma.productVariantPrice.updateMany({
+                        where: { product_id: productItem.product_id },
+                        data: {
+                            discount_start_date: null,
+                            discount_end_date: null,
+                            discount_type: null,
+                            discount_amount: null
+                        }
+                    })
+                }
+
                 const data = await prisma.flashDeals.update({
                     data: {
                         ...productData,
@@ -221,37 +238,24 @@ export class FlashDealsService {
     async remove(id: number) {
         try {
             return await this.prisma.$transaction(async (prisma) => {
-                const data = await prisma.flashDealsProduct.findMany({
-                    where: { flash_deal_id: id },
-                    select: { product_id: true }
+                const oldFlashSale = await prisma.flashDeals.findFirstOrThrow({
+                    where: { id },
+                    select: { flashDealsProduct: true }
                 })
 
-                // for (const product of data) {
-                //     const productPrice = await prisma.productPrice.findFirst({
-                //         where: { product_id: product.product_id },
-                //         select: {
-                //             price: true,
-                //             special_price: true,
-                //             special_price_type: true
-                //         }
-                //     })
+                for (const productItem of oldFlashSale.flashDealsProduct) {
+                    await prisma.productVariantPrice.updateMany({
+                        where: { product_id: productItem.product_id },
+                        data: {
+                            discount_start_date: null,
+                            discount_end_date: null,
+                            discount_type: null,
+                            discount_amount: null
+                        }
+                    })
+                }
 
-                //     if (productPrice) {
-                //         await prisma.productPrice.update({
-                //             where: { product_id: product.product_id },
-                //             data: {
-                //                 discount: null,
-                //                 selling_price: this.getSellingPrice(
-                //                     productPrice.special_price_type,
-                //                     Number(productPrice.price),
-                //                     Number(productPrice.special_price),
-                //                 )
-                //             }
-                //         })
-                //     }
-                // }
-
-                await this.prisma.flashDeals.delete({
+                await prisma.flashDeals.delete({
                     where: { id }
                 })
             })
