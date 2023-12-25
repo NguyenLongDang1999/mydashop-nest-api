@@ -9,10 +9,9 @@ import { SliderController } from './slider.controller'
 
 // ** Module Imports
 import { PrismaModule } from 'src/prisma/prisma.module'
-import { BunnyModule } from 'src/bunny/bunny.module'
 
 @Module({
-    imports: [PrismaModule, BunnyModule],
+    imports: [PrismaModule],
     controllers: [SliderController],
     providers: [SliderService]
 })

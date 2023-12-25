@@ -9,10 +9,9 @@ import { WebsiteSetupController } from './website-setup.controller'
 
 // ** Module Imports
 import { PrismaModule } from 'src/prisma/prisma.module'
-import { BunnyModule } from 'src/bunny/bunny.module'
 
 @Module({
-    imports: [PrismaModule, BunnyModule],
+    imports: [PrismaModule],
     controllers: [WebsiteSetupController],
     providers: [WebsiteSetupService]
 })
