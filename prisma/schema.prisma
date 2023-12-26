@@ -262,20 +262,6 @@ model FlashDealsProduct {
   @@unique([flash_deal_id, product_id])
 }
 
-model Slider {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar
-  url         String   @unique @db.VarChar
-  image_uri   String?  @db.VarChar
-  description String?  @db.VarChar
-  status      Int?     @default(2) @db.SmallInt
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  deleted_flg Boolean  @default(false)
-
-  @@index([status])
-}
-
 model Users {
   id              Int               @id @default(autoincrement())
   name            String            @db.VarChar

@@ -2,7 +2,6 @@ export enum PATH {
     CATEGORY = 'category',
     BRAND = 'brand',
     PRODUCT = 'product',
-    SLIDER = 'slider',
 }
 
 export enum STATUS {

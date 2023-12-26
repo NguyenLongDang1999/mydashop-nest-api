@@ -17,8 +17,7 @@ import { WebsiteSetupService } from './website-setup.service'
 // ** DTO Imports
 import { CreateWebsiteSetupDto } from './dto/create-website-setup.dto'
 import { UpdateWebsiteSetupDto } from './dto/update-website-setup.dto'
-
-// ** Types Imports
+import { BulkWebsiteSetupDto } from './dto/bulk-website-setup.dto'
 
 // ** Guard Imports
 import { AccessTokenGuard } from '../common/guards/accessToken.guard'
@@ -35,6 +34,12 @@ export class WebsiteSetupController {
         return this.websiteSetupService.getWebsiteSetup(params.slug)
     }
 
+    @Get('system')
+    @ApiOkResponse()
+    getDataListSystem() {
+        return this.websiteSetupService.getDataListSystem()
+    }
+
     @Patch(':id')
     @ApiNoContentResponse()
     update(
@@ -42,6 +47,12 @@ export class WebsiteSetupController {
         @Body() updateWebsiteSetupDto: UpdateWebsiteSetupDto,
     ) {
         return this.websiteSetupService.update(+id, updateWebsiteSetupDto)
+    }
+
+    @Post()
+    @ApiNoContentResponse()
+    upsert(@Body() bulkWebsiteSetupDto: BulkWebsiteSetupDto) {
+        return this.websiteSetupService.upsert(bulkWebsiteSetupDto)
     }
 }
 

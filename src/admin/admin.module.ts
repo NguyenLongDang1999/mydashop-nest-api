@@ -8,7 +8,6 @@ import { BrandModule } from './brand/brand.module'
 import { AttributeModule } from './attribute/attribute.module'
 import { ProductModule } from './product/product.module'
 import { AuthModule } from './auth/auth.module'
-import { SliderModule } from './slider/slider.module'
 import { FlashDealsModule } from './flash-deals/flash-deals.module'
 import { CouponModule } from './coupon/coupon.module'
 import { WebsiteSetupModule } from './website-setup/website-setup.module'
@@ -20,7 +19,6 @@ import { WebsiteSetupModule } from './website-setup/website-setup.module'
         AttributeModule,
         ProductModule,
         AuthModule,
-        SliderModule,
         FlashDealsModule,
         CouponModule,
         WebsiteSetupModule,
@@ -51,10 +49,6 @@ import { WebsiteSetupModule } from './website-setup/website-setup.module'
                     {
                         path: 'product',
                         module: ProductModule
-                    },
-                    {
-                        path: 'slider',
-                        module: SliderModule
                     },
                     {
                         path: 'coupons',
