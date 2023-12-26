@@ -238,22 +238,33 @@ export class CategoryService {
                 productVariantPrice: {
                     select: {
                         in_stock: true,
+                        quantity: true,
                         price: true,
                         special_price: true,
-                        special_price_type: true
+                        special_price_type: true,
+                        discount_start_date: true,
+                        discount_end_date: true,
+                        discount_type: true,
+                        discount_amount: true
                     }
                 },
                 productVariant: {
-                    take: 1,
-                    orderBy: { created_at: 'desc' },
-                    where: { is_default: true },
                     select: {
+                        id: true,
+                        is_default: true,
+                        label: true,
+                        sku: true,
                         productVariantPrice: {
                             select: {
                                 in_stock: true,
+                                quantity: true,
                                 price: true,
                                 special_price: true,
-                                special_price_type: true
+                                special_price_type: true,
+                                discount_start_date: true,
+                                discount_end_date: true,
+                                discount_type: true,
+                                discount_amount: true
                             }
                         }
                     }
@@ -276,9 +287,11 @@ export class CategoryService {
         const formattedData = data.map((item) => {
             return {
                 ...item,
-                ...(item.product_type === PRODUCT_TYPE.SINGLE
-                    ? item.productVariantPrice[0]
-                    : item.productVariant[0]?.productVariantPrice)
+                ...item.productVariantPrice[0],
+                    variants: item.productVariant.map(_p => ({
+                        ..._p,
+                        ..._p.productVariantPrice
+                    }))
             }
         })
 

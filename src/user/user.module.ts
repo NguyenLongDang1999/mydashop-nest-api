@@ -10,6 +10,7 @@ import { ProductModule } from './product/product.module'
 import { AuthModule } from './auth/auth.module'
 import { ProductCommentModule } from './product-comment/product-comment.module'
 import { CartModule } from './cart/cart.module'
+import { WebsiteSetupModule } from './website-setup/website-setup.module'
 
 @Module({
     imports: [
@@ -20,6 +21,7 @@ import { CartModule } from './cart/cart.module'
         AuthModule,
         ProductCommentModule,
         CartModule,
+        WebsiteSetupModule,
         RouterModule.register([
             {
                 path: 'user',
@@ -51,6 +53,10 @@ import { CartModule } from './cart/cart.module'
                     {
                         path: 'cart',
                         module: CartModule
+                    },
+                    {
+                        path: 'website-setup',
+                        module: WebsiteSetupModule
                     }
                 ]
             }

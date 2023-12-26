@@ -46,15 +46,41 @@ export class ProductService {
                                     slug: true,
                                     name: true
                                 }
+                            },
+                            productVariantPrice: {
+                                select: {
+                                    in_stock: true,
+                                    quantity: true,
+                                    price: true,
+                                    special_price: true,
+                                    special_price_type: true,
+                                    discount_start_date: true,
+                                    discount_end_date: true,
+                                    discount_type: true,
+                                    discount_amount: true
+                                }
+                            },
+                            productVariant: {
+                                select: {
+                                    id: true,
+                                    is_default: true,
+                                    label: true,
+                                    sku: true,
+                                    productVariantPrice: {
+                                        select: {
+                                            in_stock: true,
+                                            quantity: true,
+                                            price: true,
+                                            special_price: true,
+                                            special_price_type: true,
+                                            discount_start_date: true,
+                                            discount_end_date: true,
+                                            discount_type: true,
+                                            discount_amount: true
+                                        }
+                                    }
+                                }
                             }
-                            // productPrice: {
-                            //     select: {
-                            //         price: true,
-                            //         selling_price: true,
-                            //         special_price: true,
-                            //         special_price_type: true
-                            //     }
-                            // }
                         }
                     }
                 }
@@ -64,8 +90,91 @@ export class ProductService {
                 return {
                     ...item,
                     Product: item.Product.map((_p) => ({
-                        ..._p
-                        // ..._p.productPrice
+                        ..._p,
+                        ..._p.productVariantPrice[0],
+                        variants: _p.productVariant.map(_p => ({
+                            ..._p,
+                            ..._p.productVariantPrice
+                        }))
+                    }))
+                }
+            })
+
+            return formattedData
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async getListProductPopular() {
+        try {
+            const data = await this.prisma.product.findMany({
+                take: 12,
+                orderBy: { created_at: 'desc' },
+                where: {
+                    deleted_flg: false,
+                    status: STATUS.ACTIVE,
+                    popular: POPULAR.ACTIVE
+                },
+                select: {
+                    id: true,
+                    sku: true,
+                    name: true,
+                    slug: true,
+                    image_uri: true,
+                    total_rating: true,
+                    productAttributes: true,
+                    category: {
+                        select: {
+                            id: true,
+                            slug: true,
+                            name: true
+                        }
+                    },
+                    productVariantPrice: {
+                        select: {
+                            in_stock: true,
+                            quantity: true,
+                            price: true,
+                            special_price: true,
+                            special_price_type: true,
+                            discount_start_date: true,
+                            discount_end_date: true,
+                            discount_type: true,
+                            discount_amount: true
+                        }
+                    },
+                    productVariant: {
+                        select: {
+                            id: true,
+                            is_default: true,
+                            label: true,
+                            sku: true,
+                            productVariantPrice: {
+                                select: {
+                                    in_stock: true,
+                                    quantity: true,
+                                    price: true,
+                                    special_price: true,
+                                    special_price_type: true,
+                                    discount_start_date: true,
+                                    discount_end_date: true,
+                                    discount_type: true,
+                                    discount_amount: true
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+
+            const formattedData = data.map((item) => {
+                return {
+                    ...item,
+                    ...item.productVariantPrice[0],
+                    variants: item.productVariant.map(_p => ({
+                        ..._p,
+                        ..._p.productVariantPrice
                     }))
                 }
             })
@@ -275,7 +384,11 @@ export class ProductService {
                             in_stock: true,
                             price: true,
                             special_price: true,
-                            special_price_type: true
+                            special_price_type: true,
+                            discount_start_date: true,
+                            discount_end_date: true,
+                            discount_type: true,
+                            discount_amount: true
                         }
                     },
                     productVariant: {
@@ -288,7 +401,11 @@ export class ProductService {
                                     in_stock: true,
                                     price: true,
                                     special_price: true,
-                                    special_price_type: true
+                                    special_price_type: true,
+                                    discount_start_date: true,
+                                    discount_end_date: true,
+                                    discount_type: true,
+                                    discount_amount: true
                                 }
                             }
                         }

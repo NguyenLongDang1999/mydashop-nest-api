@@ -85,9 +85,11 @@ export class CartService {
                         ..._c,
                         Product: {
                             ..._c.Product,
-                            ...(_c.Product.product_type === PRODUCT_TYPE.SINGLE
-                                ? _c.Product.productVariantPrice[0]
-                                : _c.Product.productVariant[0]?.productVariantPrice)
+                            ..._c.Product.productVariantPrice[0],
+                            variants: _c.Product.productVariant.map(_p => ({
+                                ..._p,
+                                ..._p.productVariantPrice
+                            }))
                         }
                     })) : []
                 }

@@ -16,6 +16,12 @@ export class ProductController {
         return this.productService.getListProductHome()
     }
 
+    @Get('data-list-popular')
+    @ApiOkResponse()
+    getListProductPopular() {
+        return this.productService.getListProductPopular()
+    }
+
     @Get('data-list-search')
     @ApiOkResponse()
     getDataListSearch(@Query() params: { q: string }) {
