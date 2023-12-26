@@ -2,7 +2,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 // ** Validate Imports
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 export class CreateWebsiteSetupDto {
     @IsNotEmpty()
@@ -10,8 +10,7 @@ export class CreateWebsiteSetupDto {
     @ApiProperty()
     slug: string
 
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty()
-    value: string
+    @IsOptional()
+    @ApiProperty({ required: false })
+    value?: string
 }

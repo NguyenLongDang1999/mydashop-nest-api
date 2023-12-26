@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
-import { CreateWebsiteSetupDto } from './dto/create-website-setup.dto';
-import { UpdateWebsiteSetupDto } from './dto/update-website-setup.dto';
+// ** NestJS Imports
+import { Injectable, InternalServerErrorException } from '@nestjs/common'
+
+// ** DTO Imports
+import { CreateWebsiteSetupDto } from './dto/create-website-setup.dto'
+import { UpdateWebsiteSetupDto } from './dto/update-website-setup.dto'
+
+// ** Prisma Imports
+import { Prisma } from '@prisma/client'
+import { PrismaService } from 'src/prisma/prisma.service'
 
 @Injectable()
 export class WebsiteSetupService {
-  create(createWebsiteSetupDto: CreateWebsiteSetupDto) {
-    return 'This action adds a new websiteSetup';
-  }
+    constructor(private prisma: PrismaService) {}
 
-  findAll() {
-    return `This action returns all websiteSetup`;
-  }
+    async getWebsiteSetup(slug: string) {
+        try {
+            return await this.prisma.websiteSetup.findFirst({
+                where: { slug },
+                select: {
+                    id: true,
+                    value: true
+                }
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} websiteSetup`;
-  }
-
-  update(id: number, updateWebsiteSetupDto: UpdateWebsiteSetupDto) {
-    return `This action updates a #${id} websiteSetup`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} websiteSetup`;
-  }
+    async update(id: number, updateWebsiteSetupDto: UpdateWebsiteSetupDto) {
+        try {
+            return await this.prisma.websiteSetup.update({
+                where: {
+                    slug: updateWebsiteSetupDto.slug
+                },
+                data: {
+                    value: updateWebsiteSetupDto.value
+                },
+                select: { id: true }
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
 }
