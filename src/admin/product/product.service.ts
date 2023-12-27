@@ -3,7 +3,6 @@ import { Injectable, ConflictException, InternalServerErrorException } from '@ne
 
 // ** DTO Imports
 import { CreateProductDto } from './dto/create-product.dto'
-import { UploadProductDto } from './dto/upload-product.dto'
 import { UpdateProductDto } from './dto/update-product.dto'
 
 // ** Prisma Imports
