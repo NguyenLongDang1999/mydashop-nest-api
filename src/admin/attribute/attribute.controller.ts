@@ -8,6 +8,7 @@ import { AttributeService } from './attribute.service'
 // ** DTO Imports
 import { CreateAttributeDto } from './dto/create-attribute.dto'
 import { UpdateAttributeDto } from './dto/update-attribute.dto'
+import { UpdateAttributeValuesDto } from './dto/update-attribute-values.dto'
 
 // ** Types Imports
 import { IAttributeSearch } from './attribute.interface'
@@ -58,6 +59,12 @@ export class AttributeController {
     @ApiNoContentResponse()
     async update(@Param('id') id: string, @Body() updateAttributeDto: UpdateAttributeDto) {
         return this.attributeService.update(+id, updateAttributeDto)
+    }
+
+    @Patch('attribute-values/:id')
+    @ApiNoContentResponse()
+    async updateAttributeValues(@Param('id') id: string, @Body() updateAttributeValuesDto: UpdateAttributeValuesDto) {
+        return this.attributeService.updateAttributeValues(+id, updateAttributeValuesDto)
     }
 
     @Patch('remove/:id')

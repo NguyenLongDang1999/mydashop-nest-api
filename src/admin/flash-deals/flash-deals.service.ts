@@ -40,7 +40,18 @@ export class FlashDealsService {
                     },
                     select: {
                         id: true,
-                        flashDealsProduct: true
+                        flashDealsProduct: {
+                            select: {
+                                discount_type: true,
+                                discount_amount: true,
+                                product: {
+                                    select: {
+                                        id: true,
+                                        productVariant: true
+                                    }
+                                }
+                            }
+                        }
                     }
                 })
 
@@ -54,6 +65,33 @@ export class FlashDealsService {
                             discount_amount: productItem.discount_amount
                         }
                     })
+                }
+
+                for (const productItem of data.flashDealsProduct) {
+                    if (productItem.product.productVariant) {
+                        for (const variantItem of productItem.product.productVariant) {
+                            await prisma.product.update({
+                                where: { id: productItem.product.id },
+                                data: {
+                                    productVariant: {
+                                        update: {
+                                            where: { id: variantItem.id },
+                                            data: {
+                                                productVariantPrice: {
+                                                    update: {
+                                                        discount_start_date: createFlashDealDto.start_date,
+                                                        discount_end_date: createFlashDealDto.end_date,
+                                                        discount_type: productItem.discount_type,
+                                                        discount_amount: productItem.discount_amount
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            })
+                        }
+                    }
                 }
 
                 return data
@@ -238,24 +276,54 @@ export class FlashDealsService {
     async remove(id: number) {
         try {
             return await this.prisma.$transaction(async (prisma) => {
-                const oldFlashSale = await prisma.flashDeals.findFirstOrThrow({
+                const data = await prisma.flashDeals.findFirstOrThrow({
                     where: { id },
-                    select: { flashDealsProduct: true }
+                    select: {
+                        flashDealsProduct: {
+                            select: {
+                                product: {
+                                    select: {
+                                        id: true,
+                                        productVariant: true
+                                    }
+                                }
+                            }
+                        }
+                    }
                 })
 
-                for (const productItem of oldFlashSale.flashDealsProduct) {
-                    await prisma.productVariantPrice.updateMany({
-                        where: { product_id: productItem.product_id },
-                        data: {
-                            discount_start_date: null,
-                            discount_end_date: null,
-                            discount_type: null,
-                            discount_amount: null
-                        }
-                    })
+                const updatePromises = []
+
+                for (const productItem of data.flashDealsProduct) {
+                    for (const variantItem of productItem.product.productVariant) {
+                        const updatePromise = await prisma.product.update({
+                            where: { id: productItem.product.id },
+                            data: {
+                                productVariant: {
+                                    update: {
+                                        where: { id: variantItem.id },
+                                        data: {
+                                            productVariantPrice: {
+                                                update: {
+                                                    discount_start_date: null,
+                                                    discount_end_date: null,
+                                                    discount_type: null,
+                                                    discount_amount: null
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        })
+
+                        updatePromises.push(updatePromise)
+                    }
                 }
 
-                await prisma.flashDeals.delete({
+                await Promise.all(updatePromises)
+
+                return await prisma.flashDeals.delete({
                     where: { id }
                 })
             })

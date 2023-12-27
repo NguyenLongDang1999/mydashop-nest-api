@@ -4,6 +4,7 @@ import { Injectable, ConflictException, InternalServerErrorException } from '@ne
 // ** DTO Imports
 import { CreateAttributeDto } from './dto/create-attribute.dto'
 import { UpdateAttributeDto } from './dto/update-attribute.dto'
+import { UpdateAttributeValuesDto } from './dto/update-attribute-values.dto'
 
 // ** Prisma Imports
 import { Prisma } from '@prisma/client'
@@ -166,6 +167,7 @@ export class AttributeService {
                         select: { category_id: true }
                     },
                     attributeValues: {
+                        orderBy: { id: 'asc' },
                         select: {
                             id: true,
                             value: true
@@ -188,7 +190,7 @@ export class AttributeService {
 
     async update(id: number, updateAttributeDto: UpdateAttributeDto) {
         try {
-            const { category_id, attribute_value_id, ...attributeData } = updateAttributeDto
+            const { category_id, ...attributeData } = updateAttributeDto
 
             return await this.prisma.$transaction(async (prisma) => {
                 return await prisma.attribute.update({
@@ -203,15 +205,6 @@ export class AttributeService {
                                 })),
                                 skipDuplicates: true
                             }
-                        },
-                        attributeValues: {
-                            deleteMany: {},
-                            createMany: {
-                                data: attribute_value_id.map((attributeValueItem) => ({
-                                    value: attributeValueItem
-                                })),
-                                skipDuplicates: true
-                            }
                         }
                     }
                 })
@@ -221,6 +214,21 @@ export class AttributeService {
                 throw new ConflictException()
             }
 
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async updateAttributeValues(id: number, updateAttributeValuesDto: UpdateAttributeValuesDto) {
+        try {
+            const { value } = updateAttributeValuesDto
+
+            return await this.prisma.$transaction(async (prisma) => {
+                return await prisma.attributeValues.update({
+                    where: { id },
+                    data: { value }
+                })
+            })
+        } catch (error) {
             throw new InternalServerErrorException()
         }
     }
