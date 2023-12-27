@@ -238,7 +238,6 @@ export class CategoryService {
                 productVariantPrice: {
                     select: {
                         in_stock: true,
-                        quantity: true,
                         price: true,
                         special_price: true,
                         special_price_type: true,
@@ -249,15 +248,13 @@ export class CategoryService {
                     }
                 },
                 productVariant: {
+                    take: 1,
+                    orderBy: { created_at: 'desc' },
+                    where: { is_default: true },
                     select: {
-                        id: true,
-                        is_default: true,
-                        label: true,
-                        sku: true,
                         productVariantPrice: {
                             select: {
                                 in_stock: true,
-                                quantity: true,
                                 price: true,
                                 special_price: true,
                                 special_price_type: true,
@@ -287,11 +284,9 @@ export class CategoryService {
         const formattedData = data.map((item) => {
             return {
                 ...item,
-                ...item.productVariantPrice[0],
-                    variants: item.productVariant.map(_p => ({
-                        ..._p,
-                        ..._p.productVariantPrice
-                    }))
+                ...(item.product_type === PRODUCT_TYPE.SINGLE
+                    ? item.productVariantPrice[0]
+                    : item.productVariant[0]?.productVariantPrice)
             }
         })
 

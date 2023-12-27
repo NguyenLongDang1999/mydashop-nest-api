@@ -39,6 +39,7 @@ export class ProductService {
                             slug: true,
                             image_uri: true,
                             total_rating: true,
+                            product_type: true,
                             productAttributes: true,
                             category: {
                                 select: {
@@ -50,7 +51,6 @@ export class ProductService {
                             productVariantPrice: {
                                 select: {
                                     in_stock: true,
-                                    quantity: true,
                                     price: true,
                                     special_price: true,
                                     special_price_type: true,
@@ -61,15 +61,13 @@ export class ProductService {
                                 }
                             },
                             productVariant: {
+                                take: 1,
+                                orderBy: { created_at: 'desc' },
+                                where: { is_default: true },
                                 select: {
-                                    id: true,
-                                    is_default: true,
-                                    label: true,
-                                    sku: true,
                                     productVariantPrice: {
                                         select: {
                                             in_stock: true,
-                                            quantity: true,
                                             price: true,
                                             special_price: true,
                                             special_price_type: true,
@@ -91,11 +89,9 @@ export class ProductService {
                     ...item,
                     Product: item.Product.map((_p) => ({
                         ..._p,
-                        ..._p.productVariantPrice[0],
-                        variants: _p.productVariant.map(_p => ({
-                            ..._p,
-                            ..._p.productVariantPrice
-                        }))
+                        ...(_p.product_type === PRODUCT_TYPE.SINGLE
+                            ? _p.productVariantPrice[0]
+                            : _p.productVariant[0]?.productVariantPrice)
                     }))
                 }
             })
@@ -123,6 +119,7 @@ export class ProductService {
                     slug: true,
                     image_uri: true,
                     total_rating: true,
+                    product_type: true,
                     productAttributes: true,
                     category: {
                         select: {
@@ -134,7 +131,6 @@ export class ProductService {
                     productVariantPrice: {
                         select: {
                             in_stock: true,
-                            quantity: true,
                             price: true,
                             special_price: true,
                             special_price_type: true,
@@ -145,15 +141,13 @@ export class ProductService {
                         }
                     },
                     productVariant: {
+                        take: 1,
+                        orderBy: { created_at: 'desc' },
+                        where: { is_default: true },
                         select: {
-                            id: true,
-                            is_default: true,
-                            label: true,
-                            sku: true,
                             productVariantPrice: {
                                 select: {
                                     in_stock: true,
-                                    quantity: true,
                                     price: true,
                                     special_price: true,
                                     special_price_type: true,
@@ -171,11 +165,9 @@ export class ProductService {
             const formattedData = data.map((item) => {
                 return {
                     ...item,
-                    ...item.productVariantPrice[0],
-                    variants: item.productVariant.map(_p => ({
-                        ..._p,
-                        ..._p.productVariantPrice
-                    }))
+                    ...(item.product_type === PRODUCT_TYPE.SINGLE
+                        ? item.productVariantPrice[0]
+                        : item.productVariant[0]?.productVariantPrice)
                 }
             })
 
@@ -264,9 +256,7 @@ export class ProductService {
                                         }
                                     },
                                     productVariant: {
-                                        take: 1,
                                         orderBy: { created_at: 'desc' },
-                                        where: { is_default: true },
                                         select: {
                                             sku: true,
                                             label: true,
@@ -338,14 +328,10 @@ export class ProductService {
                     campaign_name: data.campaign_name,
                     start_date: data.start_date,
                     end_date: data.end_date,
-                    // ...item.product,
-                    // ...item.product.productVariantPrice[0],
-                    // variants: item.product.productVariant.map(_p => ({
-                    //     ..._p,
-                    //     ..._p.productVariantPrice
-                    // })),
                     ...item.product,
-                    ...(item.product.product_type === PRODUCT_TYPE.SINGLE ? item.product.productVariantPrice[0] : undefined),
+                    ...(item.product.product_type === PRODUCT_TYPE.SINGLE
+                        ? item.product.productVariantPrice[0]
+                        : item.product.productVariant[0]?.productVariantPrice),
                     productVariant: item.product.productVariant.map(variant => ({
                         ...variant,
                         ...variant.productVariantPrice,
@@ -504,10 +490,10 @@ export class ProductService {
                                         }
                                     },
                                     productVariant: {
+                                        take: 1,
                                         orderBy: { created_at: 'desc' },
+                                        where: { is_default: true },
                                         select: {
-                                            sku: true,
-                                            label: true,
                                             productVariantPrice: {
                                                 select: {
                                                     in_stock: true,
@@ -562,10 +548,10 @@ export class ProductService {
                                         }
                                     },
                                     productVariant: {
+                                        take: 1,
                                         orderBy: { created_at: 'desc' },
+                                        where: { is_default: true },
                                         select: {
-                                            sku: true,
-                                            label: true,
                                             productVariantPrice: {
                                                 select: {
                                                     in_stock: true,
@@ -589,24 +575,25 @@ export class ProductService {
 
             return {
                 ...product,
-                ...product.productVariantPrice[0],
-                variants: product.productVariant.map(_p => ({
-                    ..._p,
-                    ..._p.productVariantPrice
+                ...(product.product_type === PRODUCT_TYPE.SINGLE
+                    ? product.productVariantPrice[0]
+                    : product.productVariant[0]?.productVariantPrice),
+                productVariant: product.productVariant.map(variant => ({
+                    ...variant,
+                    ...variant.productVariantPrice,
+                    productVariantPrice: undefined
                 })),
                 crossSellProducts: product.mainCrossSellProducts.map((_item) => ({
-                    ..._item.crossSellProduct.productVariantPrice[0],
-                    variants: _item.crossSellProduct.productVariant.map(_p => ({
-                        ..._p,
-                        ..._p.productVariantPrice
-                    }))
+                    ..._item.crossSellProduct,
+                    ...(_item.crossSellProduct.product_type === PRODUCT_TYPE.SINGLE
+                        ? _item.crossSellProduct.productVariantPrice[0]
+                        : _item.crossSellProduct.productVariant[0]?.productVariantPrice)
                 })),
                 relatedProducts: product.mainRelatedProducts.map((_item) => ({
-                    ..._item.relatedProduct.productVariantPrice[0],
-                    variants: _item.relatedProduct.productVariant.map(_p => ({
-                        ..._p,
-                        ..._p.productVariantPrice
-                    }))
+                    ..._item.relatedProduct,
+                    ...(_item.relatedProduct.product_type === PRODUCT_TYPE.SINGLE
+                        ? _item.relatedProduct.productVariantPrice[0]
+                        : _item.relatedProduct.productVariant[0]?.productVariantPrice)
                 })),
                 product_attributes: product.productAttributes.map((_item) => ({
                     ..._item,
