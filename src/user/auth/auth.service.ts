@@ -13,6 +13,7 @@ import { ConfigService } from '@nestjs/config'
 // ** DTO Imports
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
+import { UpdateProfileDto } from './dto/update-profile.dto'
 
 // ** Argon2 Imports
 import argon2 from 'argon2'
@@ -160,6 +161,25 @@ export class AuthService {
             await this.updateRefreshToken(user.id, tokens.refreshToken)
 
             return tokens
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async updateProfile(data: UpdateProfileDto, id: number) {
+        try {
+            return await this.prisma.users.update({
+                where: { id },
+                data,
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                    phone: true,
+                    address: true,
+                    image_uri: true
+                }
+            })
         } catch (error) {
             throw new InternalServerErrorException()
         }

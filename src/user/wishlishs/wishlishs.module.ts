@@ -2,17 +2,17 @@
 import { Module } from '@nestjs/common'
 
 // ** Service Imports
-import { SliderService } from './slider.service'
+import { WishlishsService } from './wishlishs.service'
 
 // ** Controller Imports
-import { SliderController } from './slider.controller'
+import { WishlishsController } from './wishlishs.controller'
 
 // ** Module Imports
 import { PrismaModule } from 'src/prisma/prisma.module'
 
 @Module({
     imports: [PrismaModule],
-    controllers: [SliderController],
-    providers: [SliderService]
+    controllers: [WishlishsController],
+    providers: [WishlishsService]
 })
-export class SliderModule {}
+export class WishlishsModule {}
