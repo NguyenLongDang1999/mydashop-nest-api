@@ -9,11 +9,6 @@ export enum STATUS {
     INACTIVE = 20,
 }
 
-export enum SHOW_PRODUCT {
-    SHOW = 10,
-    NOT_SHOW = 20,
-}
-
 export enum POPULAR {
     ACTIVE = 10,
     INACTIVE = 20,

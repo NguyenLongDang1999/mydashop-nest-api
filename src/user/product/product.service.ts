@@ -5,7 +5,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 // ** Utils Imports
-import { POPULAR, PRODUCT_TYPE, SHOW_PRODUCT, STATUS } from 'src/utils/enums'
+import { POPULAR, PRODUCT_TYPE, STATUS } from 'src/utils/enums'
 
 @Injectable()
 export class ProductService {
@@ -18,8 +18,7 @@ export class ProductService {
                 orderBy: { created_at: 'desc' },
                 where: {
                     deleted_flg: false,
-                    status: STATUS.ACTIVE,
-                    show_product: SHOW_PRODUCT.SHOW
+                    status: STATUS.ACTIVE
                 },
                 select: {
                     id: true,

@@ -18,7 +18,6 @@ model Category {
   image_uri          String?             @db.VarChar
   description        String?             @db.VarChar
   parent_id          Int?
-  show_product       Int?                @default(20) @db.SmallInt
   status             Int?                @default(20) @db.SmallInt
   popular            Int?                @default(20) @db.SmallInt
   meta_title         String?             @db.VarChar
