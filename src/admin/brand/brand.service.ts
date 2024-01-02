@@ -103,6 +103,21 @@ export class BrandService {
         }
     }
 
+    async getDataList() {
+        try {
+            return await this.prisma.brand.findMany({
+                orderBy: { created_at: 'desc' },
+                where: { deleted_flg: false },
+                select: {
+                    id: true,
+                    name: true
+                }
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
     async getDataListCategory(id: number) {
         try {
             const data = await this.prisma.categoryBrand.findMany({

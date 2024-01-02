@@ -45,6 +45,12 @@ export class BrandController {
         })
     }
 
+    @Get('data-list')
+    @ApiOkResponse()
+    getDataList() {
+        return this.brandService.getDataList()
+    }
+
     @Get('data-list-category/:id')
     @ApiOkResponse()
     getDataListCategory(@Param('id') id: string) {
