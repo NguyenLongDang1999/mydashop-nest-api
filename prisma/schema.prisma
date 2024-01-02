@@ -374,3 +374,15 @@ model Wishlists {
 
   @@unique([user_id, product_id])
 }
+
+model Pages {
+  id               Int      @id @default(autoincrement())
+  name             String   @db.VarChar
+  slug             String   @unique @db.VarChar
+  content          String
+  status           Int?     @default(20) @db.SmallInt
+  meta_title       String?  @db.VarChar
+  meta_description String?  @db.VarChar
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+}
