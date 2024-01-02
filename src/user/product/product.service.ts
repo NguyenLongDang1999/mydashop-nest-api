@@ -208,7 +208,7 @@ export class ProductService {
 
     async getListProductFlashSale() {
         try {
-            const data = await this.prisma.flashDeals.findFirstOrThrow({
+            const data = await this.prisma.flashDeals.findFirst({
                 orderBy: { created_at: 'desc' },
                 where: {
                     start_date: { lte: new Date() },
@@ -323,7 +323,7 @@ export class ProductService {
                 }
             })
 
-            const formattedData = data.flashDealsProduct.map((item) => {
+            const formattedData = data ? data.flashDealsProduct.map((item) => {
                 return {
                     campaign_name: data.campaign_name,
                     start_date: data.start_date,
@@ -349,7 +349,7 @@ export class ProductService {
                     })),
                     productImage: item.product.productImage.filter(_image => _image.image_uri)
                 }
-            })
+            }) : []
 
             return { ...data, flashDealsProduct: formattedData }
         } catch (error) {
