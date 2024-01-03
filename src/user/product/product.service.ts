@@ -13,12 +13,20 @@ export class ProductService {
 
     async getListProductHome() {
         try {
+            const system = await this.prisma.websiteSetup.findFirst({
+                where: { slug: 'home_categories' },
+                select: { value: true }
+            })
+
             const data = await this.prisma.category.findMany({
                 take: 3,
                 orderBy: { created_at: 'desc' },
                 where: {
                     deleted_flg: false,
-                    status: STATUS.ACTIVE
+                    status: STATUS.ACTIVE,
+                    id: {
+                        in: system.value ? JSON.parse(system.value) : []
+                    }
                 },
                 select: {
                     id: true,

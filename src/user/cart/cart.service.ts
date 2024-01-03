@@ -59,6 +59,7 @@ export class CartService {
                                         productVariant: {
                                             orderBy: { created_at: 'desc' },
                                             select: {
+                                                label: true,
                                                 productVariantPrice: {
                                                     select: {
                                                         price: true,
@@ -81,17 +82,36 @@ export class CartService {
 
                 return {
                     ...product,
-                    CartItem: product ? product.CartItem.map(_c => ({
-                        ..._c,
-                        Product: {
-                            ..._c.Product,
-                            ..._c.Product.productVariantPrice[0],
-                            variants: _c.Product.productVariant.map(_p => ({
-                                ..._p,
-                                ..._p.productVariantPrice
-                            }))
+                    CartItem: product ? product.CartItem.map(_c => {
+                        if (_c.attributes) {
+                            const attributes = JSON.parse(_c.attributes)
+
+                            for (const variant of _c.Product.productVariant) {
+                                const labelParts = variant.label.split('-').map(item => item.trim()).sort()
+                                const valueFind = attributes.map(item2 => item2.attribute_value).sort()
+
+                                if (this.arraysAreEqual(labelParts, valueFind)) {
+                                    return {
+                                        ..._c,
+                                        Product: {
+                                            ..._c.Product,
+                                            ...variant.productVariantPrice
+                                        }
+                                    }
+                                }
+                            }
                         }
-                    })) : []
+
+                        return {
+                            ..._c,
+                            Product: {
+                                ..._c.Product,
+                                ...(_c.Product.product_type === PRODUCT_TYPE.SINGLE
+                                    ? _c.Product.productVariantPrice[0]
+                                    : _c.Product.productVariant[0]?.productVariantPrice)
+                            }
+                        }
+                    }) : []
                 }
             }
 
@@ -99,6 +119,14 @@ export class CartService {
         } catch (error) {
             throw new InternalServerErrorException()
         }
+    }
+
+    arraysAreEqual(productVariant: string[], valuesData: string[]) {
+        if (productVariant.length !== valuesData.length) {
+            return false
+        }
+
+        return productVariant.every((value, index) => value === valuesData[index])
     }
 
     async create(createCartDto: CreateCartDto, session_id: string) {
