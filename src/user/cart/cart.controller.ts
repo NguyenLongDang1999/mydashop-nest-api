@@ -15,6 +15,7 @@ import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from
 // ** DTO Imports
 import { CreateCartDto } from './dto/create-cart.dto'
 import { UpdateCartDto } from './dto/update-cart.dto'
+import { ApplyCouponDto } from './dto/apply-coupon-dto'
 
 // ** Service Imports
 import { CartService } from './cart.service'
@@ -61,6 +62,15 @@ export class CartController {
                 maxAge: AUTH._30_DAYS
             })
             .json(carts)
+    }
+
+    @Patch(':id')
+    @ApiNoContentResponse()
+    applyCoupon(
+        @Req() req: Request,
+        @Body() applyCouponDto: ApplyCouponDto
+    ) {
+        return this.cartService.applyCoupon(applyCouponDto, req.cookies['session_id'])
     }
 
     @Patch(':id')

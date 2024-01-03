@@ -4,6 +4,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common'
 // ** DTO Imports
 import { CreateCartDto } from './dto/create-cart.dto'
 import { UpdateCartDto } from './dto/update-cart.dto'
+import { ApplyCouponDto } from './dto/apply-coupon-dto'
 
 // ** Prisma Imports
 import { PrismaService } from 'src/prisma/prisma.service'
@@ -158,6 +159,24 @@ export class CartService {
                     },
                     select: { id: true }
                 })
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async applyCoupon(applyCouponDto: ApplyCouponDto, session_id: string) {
+        try {
+            return await this.prisma.$transaction(async (prisma) => {
+                const coupon = prisma.coupons.findFirst({
+                    where: { code: applyCouponDto.coupon_code }
+                })
+
+                if (coupon) {
+
+                } else {
+                    // invalid coupon
+                }
             })
         } catch (error) {
             throw new InternalServerErrorException()

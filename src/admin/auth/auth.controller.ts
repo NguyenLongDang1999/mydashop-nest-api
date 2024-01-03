@@ -76,7 +76,7 @@ export class AuthController {
                     sameSite: process.env.NODE_ENV === 'production',
                     secure: process.env.NODE_ENV === 'production'
                 })
-                .send()
+                .json({ message: 'Success' })
 
             return this.authService.logout(req.user['sub'])
         } catch (error) {
