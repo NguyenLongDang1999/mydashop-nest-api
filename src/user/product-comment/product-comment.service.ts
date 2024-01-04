@@ -32,6 +32,8 @@ export class ProductCommentService {
                     data: { total_rating }
                 })
             }
+
+            return productStats
         } catch (error) {
             throw new InternalServerErrorException()
         }
