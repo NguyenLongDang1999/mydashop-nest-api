@@ -56,7 +56,7 @@ export class AuthController {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: AUTH._7_DAYS
             })
-            .cookie('ELRT', response.refreshToken, {
+            .cookie('refreshToken', response.refreshToken, {
                 httpOnly: process.env.NODE_ENV === 'production',
                 sameSite: process.env.NODE_ENV === 'production',
                 secure: process.env.NODE_ENV === 'production',
@@ -83,7 +83,7 @@ export class AuthController {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: AUTH._7_DAYS
             })
-            .cookie('ELRT', response.refreshToken, {
+            .cookie('refreshToken', response.refreshToken, {
                 httpOnly: process.env.NODE_ENV === 'production',
                 sameSite: process.env.NODE_ENV === 'production',
                 secure: process.env.NODE_ENV === 'production',
@@ -106,7 +106,7 @@ export class AuthController {
                     sameSite: process.env.NODE_ENV === 'production',
                     secure: process.env.NODE_ENV === 'production'
                 })
-                .clearCookie('ELRT', {
+                .clearCookie('refreshToken', {
                     sameSite: process.env.NODE_ENV === 'production',
                     secure: process.env.NODE_ENV === 'production'
                 })
@@ -123,7 +123,7 @@ export class AuthController {
     @UseGuards(RefreshTokenGuard)
     async refreshTokens(@Res() res: Response, @Req() req: Request) {
         try {
-            const response = await this.authService.refreshTokens(req.user['sub'], req.cookies['ELRT'])
+            const response = await this.authService.refreshTokens(req.user['sub'], req.cookies['refreshToken'])
 
             return (res as Response<any, Record<string, any>>)
                 .cookie('accessToken', response.accessToken, {
@@ -132,7 +132,7 @@ export class AuthController {
                     secure: process.env.NODE_ENV === 'production',
                     maxAge: AUTH._1_HOURS
                 })
-                .cookie('ELRT', response.refreshToken, {
+                .cookie('refreshToken', response.refreshToken, {
                     httpOnly: process.env.NODE_ENV === 'production',
                     sameSite: process.env.NODE_ENV === 'production',
                     secure: process.env.NODE_ENV === 'production',
@@ -161,6 +161,6 @@ export class AuthController {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: AUTH._7_DAYS
             })
-            .json({ message: 'Success' })
+            .json(response)
     }
 }

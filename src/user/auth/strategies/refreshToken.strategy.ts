@@ -9,7 +9,7 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
                 (request: Request) => {
-                    const data = request?.cookies['ELRT']
+                    const data = request?.cookies['refreshToken']
                     return data || null
                 }
             ]),

@@ -10,19 +10,21 @@ import { ApplyCouponDto } from './dto/apply-coupon-dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 // ** Utils Imports
-import { PRODUCT_TYPE } from 'src/utils/enums'
+import { PRODUCT_TYPE, SPECIAL_PRICE } from 'src/utils/enums'
 
 @Injectable()
 export class CartService {
     constructor(private prisma: PrismaService) {}
 
-    async getDataList(session_id: string) {
+    async getDataList(user_id: number) {
         try {
-            if (session_id) {
+            if (user_id) {
                 const product = await this.prisma.carts.findFirst({
-                    where: { session_id },
+                    where: { user_id },
                     select: {
                         id: true,
+                        discount: true,
+                        coupon_code: true,
                         CartItem: {
                             orderBy: {
                                 created_at: 'desc'
@@ -130,19 +132,19 @@ export class CartService {
         return productVariant.every((value, index) => value === valuesData[index])
     }
 
-    async create(createCartDto: CreateCartDto, session_id: string) {
+    async create(createCartDto: CreateCartDto, user_id: number) {
         try {
             const { product_id, quantity, attributes } = createCartDto
 
             return await this.prisma.$transaction(async (prisma) => {
                 const carts = await prisma.carts.upsert({
-                    where: { session_id },
+                    where: { user_id },
                     update: {},
-                    create: { session_id },
+                    create: { user_id },
                     select: { id: true }
                 })
 
-                return prisma.cartItem.upsert({
+                return await prisma.cartItem.upsert({
                     where: {
                         cart_id_product_id_attributes: {
                             cart_id: carts.id,
@@ -165,17 +167,54 @@ export class CartService {
         }
     }
 
-    async applyCoupon(applyCouponDto: ApplyCouponDto, session_id: string) {
+    async applyCoupon(applyCouponDto: ApplyCouponDto, user_id: number) {
         try {
             return await this.prisma.$transaction(async (prisma) => {
-                const coupon = prisma.coupons.findFirst({
+                const coupon = await prisma.coupons.findFirst({
                     where: { code: applyCouponDto.coupon_code }
                 })
 
                 if (coupon) {
+                    if (new Date() >= new Date(coupon.discount_start_date) && new Date() <= new Date(coupon.discount_end_date)) {
+                        const couponUsage = await prisma.couponUsages.findFirst({
+                            where: { coupon_id: coupon.id, user_id }
+                        })
 
+                        if (!couponUsage) {
+                            if (applyCouponDto.cart_total >= Number(coupon.min_buy)) {
+                                let discount = 0
+
+                                if (coupon.discount_type === SPECIAL_PRICE.PERCENT) {
+                                    discount = (applyCouponDto.cart_total / 100) * Number(coupon.discount_amount)
+                                }
+
+                                if (coupon.discount_type === SPECIAL_PRICE.PRICE) {
+                                    discount = Number(coupon.discount_amount)
+                                }
+
+                                const price_total = applyCouponDto.cart_total - discount
+
+                                if (price_total > 0) {
+                                    return await prisma.carts.update({
+                                        where: { user_id },
+                                        data: {
+                                            discount: coupon.discount_amount,
+                                            coupon_code: coupon.code,
+                                            coupon_applied: 10
+                                        }
+                                    })
+                                } else {
+                                    console.log('Coupon not applicable!')
+                                }
+                            }
+                        } else {
+                            console.log('You already used this coupon!')
+                        }
+                    } else {
+                        console.log('Coupon Expire!')
+                    }
                 } else {
-                    // invalid coupon
+                    console.log('Invalid Coupon!')
                 }
             })
         } catch (error) {
@@ -183,15 +222,30 @@ export class CartService {
         }
     }
 
-    async update(updateCartDto: UpdateCartDto, session_id: string) {
+    async removeCoupon(user_id: number) {
+        try {
+            return this.prisma.carts.update({
+                where: { user_id },
+                data: {
+                    discount: 0,
+                    coupon_code: null,
+                    coupon_applied: 20
+                }
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async update(updateCartDto: UpdateCartDto, user_id: number) {
         try {
             const { product_id, quantity, attributes } = updateCartDto
 
             return await this.prisma.$transaction(async (prisma) => {
                 const carts = await prisma.carts.upsert({
-                    where: { session_id },
+                    where: { user_id },
                     update: {},
-                    create: { session_id },
+                    create: { user_id },
                     select: { id: true }
                 })
 

@@ -234,7 +234,6 @@ export class CategoryService {
                 short_description: true,
                 product_type: true,
                 total_rating: true,
-                productAttributes: true,
                 productVariantPrice: {
                     select: {
                         in_stock: true,

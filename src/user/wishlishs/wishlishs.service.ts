@@ -55,7 +55,6 @@ export class WishlishsService {
                             image_uri: true,
                             total_rating: true,
                             product_type: true,
-                            productAttributes: true,
                             category: {
                                 select: {
                                     id: true,
@@ -145,7 +144,6 @@ export class WishlishsService {
                                 image_uri: true,
                                 total_rating: true,
                                 product_type: true,
-                                productAttributes: true,
                                 category: {
                                     select: {
                                         id: true,

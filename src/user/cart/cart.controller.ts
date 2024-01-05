@@ -8,7 +8,8 @@ import {
     Delete,
     Param,
     Patch,
-    Res
+    Res,
+    UseGuards
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -20,14 +21,17 @@ import { ApplyCouponDto } from './dto/apply-coupon-dto'
 // ** Service Imports
 import { CartService } from './cart.service'
 
+// ** Guard Imports
+import { AccessTokenGuard } from '../common/guards/accessToken.guard'
+
 // ** ExpressJS Imports
 import { Request, Response } from 'express'
 
 // ** Utils Imports
-import { generateUUIDv4 } from 'src/utils'
 import { AUTH } from 'src/utils/enums'
 
 @Controller('/')
+@UseGuards(AccessTokenGuard)
 @ApiTags('User Cart')
 export class CartController {
     constructor(private readonly cartService: CartService) {}
@@ -35,10 +39,8 @@ export class CartController {
     @Get('data-list')
     @ApiOkResponse()
     getDataList(@Req() req: Request) {
-        const sessionId = req.cookies['session_id']
-
-        if (sessionId) {
-            return this.cartService.getDataList(sessionId)
+        if (req.user['sub']) {
+            return this.cartService.getDataList(req.user['sub'])
         }
 
         return []
@@ -48,38 +50,33 @@ export class CartController {
     @ApiCreatedResponse()
     create(
         @Req() req: Request,
-        @Res() res: Response,
         @Body() createCartDto: CreateCartDto
     ) {
-        const uuidv4 = req.cookies['session_id'] || generateUUIDv4()
-        const carts = this.cartService.create(createCartDto, uuidv4)
-
-        return (res as Response<any, Record<string, any>>)
-            .cookie('session_id', uuidv4, {
-                httpOnly: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production',
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: AUTH._30_DAYS
-            })
-            .json(carts)
+        return this.cartService.create(createCartDto, req.user['sub'])
     }
 
-    @Patch(':id')
+    @Post('apply-coupon')
     @ApiNoContentResponse()
     applyCoupon(
         @Req() req: Request,
         @Body() applyCouponDto: ApplyCouponDto
     ) {
-        return this.cartService.applyCoupon(applyCouponDto, req.cookies['session_id'])
+        return this.cartService.applyCoupon(applyCouponDto, req.user['sub'])
     }
 
-    @Patch(':id')
+    @Patch('remove-coupon')
+    @ApiNoContentResponse()
+    removeCoupon(@Req() req: Request) {
+        return this.cartService.removeCoupon(req.user['sub'])
+    }
+
+    @Patch()
     @ApiNoContentResponse()
     update(
         @Req() req: Request,
         @Body() updateCartDto: UpdateCartDto
     ) {
-        return this.cartService.update(updateCartDto, req.cookies['session_id'])
+        return this.cartService.update(updateCartDto, req.user['sub'])
     }
 
     @Delete(':id')

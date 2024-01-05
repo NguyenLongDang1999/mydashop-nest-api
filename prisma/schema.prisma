@@ -310,27 +310,26 @@ model Admins {
 }
 
 model Carts {
-  id         Int        @id @default(autoincrement())
-  user_id    Int?       @unique
-  session_id String     @unique @db.VarChar
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  CartItem   CartItem[]
+  id             Int        @id @default(autoincrement())
+  user_id        Int        @unique
+  discount       Decimal?   @default(0) @db.Decimal(18, 0)
+  coupon_code    String?
+  coupon_applied Int?       @default(20) @db.SmallInt
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
+  CartItem       CartItem[]
 }
 
 model CartItem {
-  id             Int      @id @default(autoincrement())
-  cart_id        Int
-  product_id     Int
-  attributes     String?
-  discount       Decimal? @default(0) @db.Decimal(18, 0)
-  coupon_code    String?
-  coupon_applied Int?     @default(20) @db.SmallInt
-  quantity       Int      @db.SmallInt
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
-  Carts          Carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade)
-  Product        Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  id         Int      @id @default(autoincrement())
+  cart_id    Int
+  product_id Int
+  attributes String?
+  quantity   Int      @db.SmallInt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Carts      Carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade)
+  Product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
 
   @@unique([cart_id, product_id, attributes])
 }
