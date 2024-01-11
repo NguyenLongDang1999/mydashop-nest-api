@@ -5,13 +5,10 @@ import {
     Post,
     Body,
     Res,
-    NotFoundException,
-    BadRequestException,
     InternalServerErrorException,
     Req,
     ForbiddenException,
-    UseGuards,
-    Patch
+    UseGuards
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -44,25 +41,16 @@ export class AuthController {
         const response = await this.authService.signIn(data)
 
         return (res as Response<any, Record<string, any>>)
-            .cookie('accessToken', response.accessToken, {
-                httpOnly: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production',
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: AUTH._1_HOURS
-            })
-            .cookie('userData', JSON.stringify(response.user), {
-                httpOnly: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production',
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: AUTH._7_DAYS
-            })
             .cookie('refreshToken', response.refreshToken, {
                 httpOnly: process.env.NODE_ENV === 'production',
                 sameSite: process.env.NODE_ENV === 'production',
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: AUTH._7_DAYS
             })
-            .json({ message: 'Success' })
+            .json({
+                user: response.user,
+                accessToken: response.accessToken
+            })
     }
 
     @Post('sign-up')
@@ -71,18 +59,6 @@ export class AuthController {
         const response = await this.authService.signUp(data)
 
         return (res as Response<any, Record<string, any>>)
-            .cookie('accessToken', response.accessToken, {
-                httpOnly: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production',
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: AUTH._1_HOURS
-            })
-            .cookie('userData', response.user, {
-                httpOnly: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production',
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: AUTH._7_DAYS
-            })
             .cookie('refreshToken', response.refreshToken, {
                 httpOnly: process.env.NODE_ENV === 'production',
                 sameSite: process.env.NODE_ENV === 'production',
@@ -98,14 +74,6 @@ export class AuthController {
     signOut(@Res() res: Response, @Req() req: Request) {
         try {
             ;(res as Response<any, Record<string, any>>)
-                .clearCookie('accessToken', {
-                    sameSite: process.env.NODE_ENV === 'production',
-                    secure: process.env.NODE_ENV === 'production'
-                })
-                .clearCookie('userData', {
-                    sameSite: process.env.NODE_ENV === 'production',
-                    secure: process.env.NODE_ENV === 'production'
-                })
                 .clearCookie('refreshToken', {
                     sameSite: process.env.NODE_ENV === 'production',
                     secure: process.env.NODE_ENV === 'production'
@@ -126,19 +94,13 @@ export class AuthController {
             const response = await this.authService.refreshTokens(req.user['sub'], req.cookies['refreshToken'])
 
             return (res as Response<any, Record<string, any>>)
-                .cookie('accessToken', response.accessToken, {
-                    httpOnly: process.env.NODE_ENV === 'production',
-                    sameSite: process.env.NODE_ENV === 'production',
-                    secure: process.env.NODE_ENV === 'production',
-                    maxAge: AUTH._1_HOURS
-                })
                 .cookie('refreshToken', response.refreshToken, {
                     httpOnly: process.env.NODE_ENV === 'production',
                     sameSite: process.env.NODE_ENV === 'production',
                     secure: process.env.NODE_ENV === 'production',
                     maxAge: AUTH._7_DAYS
                 })
-                .json({ message: 'Success' })
+                .json({ accessToken: response.accessToken })
         } catch (error) {
             if (error instanceof ForbiddenException) {
                 throw new ForbiddenException(error.message)
@@ -151,16 +113,7 @@ export class AuthController {
     @Post('update/profile')
     @UseGuards(AccessTokenGuard)
     @ApiNoContentResponse()
-    async updateProfile(@Res() res: Response, @Req() req: Request, @Body() data: UpdateProfileDto) {
-        const response = await this.authService.updateProfile(data, req.user['sub'])
-
-        return (res as Response<any, Record<string, any>>)
-            .cookie('userData', JSON.stringify(response), {
-                httpOnly: process.env.NODE_ENV === 'production',
-                sameSite: process.env.NODE_ENV === 'production',
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: AUTH._7_DAYS
-            })
-            .json(response)
+    async updateProfile(@Req() req: Request, @Body() data: UpdateProfileDto) {
+        return this.authService.updateProfile(data, req.user['sub'])
     }
 }

@@ -14,8 +14,8 @@ export class UpdateProfileDto {
     @IsOptional()
     @IsString()
     @MaxLength(20)
-    @ApiProperty()
-    phone: string
+    @ApiProperty({ required: false })
+    phone?: string
 
     @IsNotEmpty()
     @IsString()

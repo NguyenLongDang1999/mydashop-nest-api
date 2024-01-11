@@ -39,10 +39,13 @@ export class ProductCommentService {
         }
     }
 
-    async create(createProductCommentDto: CreateProductCommentDto) {
+    async create(createProductCommentDto: CreateProductCommentDto, user_id: number) {
         try {
             await this.prisma.productComments.create({
-                data: createProductCommentDto,
+                data: {
+                    ...createProductCommentDto,
+                    user_id
+                },
                 select: { id: true }
             })
 

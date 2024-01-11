@@ -41,6 +41,7 @@ export class AuthService {
                 name: true,
                 email: true,
                 phone: true,
+                address: true,
                 password: true,
                 image_uri: true
             }
@@ -166,11 +167,11 @@ export class AuthService {
         }
     }
 
-    async updateProfile(data: UpdateProfileDto, id: number) {
+    async updateProfile(updateProfileDto: UpdateProfileDto, id: number) {
         try {
             return await this.prisma.users.update({
                 where: { id },
-                data,
+                data: updateProfileDto,
                 select: {
                     id: true,
                     name: true,

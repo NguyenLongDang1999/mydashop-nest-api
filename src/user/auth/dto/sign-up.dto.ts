@@ -7,20 +7,17 @@ import { IsNotEmpty, IsString, MaxLength, MinLength, IsEmail, IsOptional } from 
 export class SignUpDto {
     @IsNotEmpty()
     @IsString()
-    @MaxLength(60)
     @ApiProperty()
     name: string
 
     @IsOptional()
     @IsString()
-    @MaxLength(20)
     @ApiProperty()
     phone: string
 
     @IsNotEmpty()
     @IsString()
     @IsEmail()
-    @MaxLength(60)
     @ApiProperty()
     email: string
 

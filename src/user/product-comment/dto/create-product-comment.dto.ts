@@ -10,11 +10,6 @@ export class CreateProductCommentDto {
     @IsNotEmpty()
     @IsNumber()
     @ApiProperty()
-    user_id: number
-
-    @IsNotEmpty()
-    @IsNumber()
-    @ApiProperty()
     rating: number
 
     @IsNotEmpty()

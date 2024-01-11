@@ -11,6 +11,7 @@ import { ProductCommentModule } from './product-comment/product-comment.module'
 import { CartModule } from './cart/cart.module'
 import { WebsiteSetupModule } from './website-setup/website-setup.module'
 import { WishlishsModule } from './wishlishs/wishlishs.module'
+import { OrdersModule } from './orders/orders.module'
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import { WishlishsModule } from './wishlishs/wishlishs.module'
         CartModule,
         WishlishsModule,
         WebsiteSetupModule,
+        OrdersModule,
         RouterModule.register([
             {
                 path: 'user',
@@ -57,6 +59,10 @@ import { WishlishsModule } from './wishlishs/wishlishs.module'
                     {
                         path: 'website-setup',
                         module: WebsiteSetupModule
+                    },
+                    {
+                        path: 'orders',
+                        module: OrdersModule
                     }
                 ]
             }

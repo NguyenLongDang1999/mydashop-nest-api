@@ -6,12 +6,16 @@ import {
     UseGuards,
     Get,
     Param,
-    Query
+    Query,
+    Req
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 // ** Service Imports
 import { ProductCommentService } from './product-comment.service'
+
+// ** ExpressJS Imports
+import { Request } from 'express'
 
 // ** Guard Imports
 import { AccessTokenGuard } from '../common/guards/accessToken.guard'
@@ -30,8 +34,8 @@ export class ProductCommentController {
     @Post()
     @UseGuards(AccessTokenGuard)
     @ApiCreatedResponse()
-    async create(@Body() createProductCommentDto: CreateProductCommentDto) {
-        return this.productCommentService.create(createProductCommentDto)
+    async create(@Body() createProductCommentDto: CreateProductCommentDto, @Req() req: Request) {
+        return this.productCommentService.create(createProductCommentDto, req.user['sub'])
     }
 
     @Get(':id')
