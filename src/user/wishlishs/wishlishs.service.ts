@@ -116,12 +116,13 @@ export class WishlishsService {
         }
     }
 
-    async getTableList(query: Pagination) {
+    async getTableList(query: Pagination, user_id: number) {
         try {
             const take = Number(query.pageSize) || undefined
             const skip = Number(query.page) || undefined
 
             const search: Prisma.WishlistsWhereInput = {
+                user_id,
                 product: {
                     deleted_flg: false
                 }

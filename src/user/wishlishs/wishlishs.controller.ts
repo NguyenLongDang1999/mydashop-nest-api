@@ -48,11 +48,11 @@ export class WishlishsController {
 
     @Get()
     @ApiOkResponse()
-    getTableList(@Query() params: Pagination) {
+    getTableList(@Query() params: Pagination, @Req() req: Request) {
         return this.wishlishsService.getTableList({
             ...params,
             page: (params.page - 1) * params.pageSize
-        })
+        }, req.user['sub'])
     }
 
     @Delete(':id')
