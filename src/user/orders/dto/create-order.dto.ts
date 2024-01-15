@@ -5,6 +5,28 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, IsNumber, IsOptional, IsEmail } from 'class-validator'
 import { Transform } from 'class-transformer'
 
+export class ProductDetailsDto {
+    @IsNotEmpty()
+    @IsNumber()
+    @ApiProperty()
+    id: number
+
+    @IsNotEmpty()
+    @IsNumber()
+    @ApiProperty()
+    quantity: number
+
+    @IsNotEmpty()
+    @IsNumber()
+    @ApiProperty()
+    price: number
+
+    @IsOptional()
+    @IsString()
+    @ApiProperty({ required: false })
+    variation?: string
+}
+
 export class CreateOrderDto {
     @IsNotEmpty()
     @IsString()
@@ -22,6 +44,11 @@ export class CreateOrderDto {
     @ApiProperty()
     email: string
 
+    @IsNotEmpty()
+    @IsNumber()
+    @ApiProperty()
+    cart_id: number
+
     @IsOptional()
     @IsString()
     @ApiProperty({ required: false })
@@ -37,9 +64,8 @@ export class CreateOrderDto {
     @ApiProperty({ required: false })
     note?: string
 
-    // @IsOptional()
-    // @IsNumber()
-    // @Transform(({ value }) => Number(value))
-    // @ApiProperty({ required: false, default: 0 })
-    // price = 0
+    @IsNotEmpty()
+    @Transform(({ value }) => (value && typeof value === 'string' ? JSON.parse(value) : undefined))
+    @ApiProperty()
+    product_details: ProductDetailsDto[]
 }

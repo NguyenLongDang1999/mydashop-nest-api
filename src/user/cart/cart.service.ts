@@ -206,6 +206,8 @@ export class CartService {
                                 } else {
                                     console.log('Coupon not applicable!')
                                 }
+                            } else {
+                                console.log('Coupon Price!')
                             }
                         } else {
                             console.log('You already used this coupon!')
