@@ -65,7 +65,10 @@ export class AuthController {
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: AUTH._7_DAYS
             })
-            .json({ message: 'Success' })
+            .json({
+                user: response.user,
+                accessToken: response.accessToken
+            })
     }
 
     @Get('sign-out')
