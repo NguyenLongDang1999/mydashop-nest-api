@@ -218,16 +218,29 @@ export class AttributeService {
         }
     }
 
-    async updateAttributeValues(id: number, updateAttributeValuesDto: UpdateAttributeValuesDto) {
+    async updateAttributeValues(updateAttributeValuesDto: UpdateAttributeValuesDto) {
         try {
-            const { value } = updateAttributeValuesDto
+            const { id, value, attribute_id } = updateAttributeValuesDto
 
-            return await this.prisma.$transaction(async (prisma) => {
-                return await prisma.attributeValues.update({
-                    where: { id },
-                    data: { value }
+            if (value) {
+                if (id) {
+                    return await this.prisma.attributeValues.update({
+                        where: { id },
+                        data: { value }
+                    })
+                }
+
+                return await this.prisma.attributeValues.create({
+                    data: {
+                        value,
+                        attribute_id
+                    }
                 })
-            })
+            } else {
+                return await this.prisma.attributeValues.delete({
+                    where: { id }
+                })
+            }
         } catch (error) {
             throw new InternalServerErrorException()
         }

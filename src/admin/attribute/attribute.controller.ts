@@ -57,14 +57,14 @@ export class AttributeController {
 
     @Patch(':id')
     @ApiNoContentResponse()
-    async update(@Param('id') id: string, @Body() updateAttributeDto: UpdateAttributeDto) {
+    update(@Param('id') id: string, @Body() updateAttributeDto: UpdateAttributeDto) {
         return this.attributeService.update(+id, updateAttributeDto)
     }
 
-    @Patch('attribute-values/:id')
+    @Post('attribute-values')
     @ApiNoContentResponse()
-    async updateAttributeValues(@Param('id') id: string, @Body() updateAttributeValuesDto: UpdateAttributeValuesDto) {
-        return this.attributeService.updateAttributeValues(+id, updateAttributeValuesDto)
+    updateAttributeValues(@Body() updateAttributeValuesDto: UpdateAttributeValuesDto) {
+        return this.attributeService.updateAttributeValues(updateAttributeValuesDto)
     }
 
     @Patch('remove/:id')

@@ -2,11 +2,21 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 // ** Validate Imports
-import { IsNotEmpty, IsString } from 'class-validator'
+import { IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class UpdateAttributeValuesDto {
-    @IsNotEmpty()
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({ required: false })
+    id?: number
+
+    @IsOptional()
+    @IsNumber()
+    @ApiProperty({ required: false })
+    attribute_id?: number
+
+    @IsOptional()
     @IsString()
-    @ApiProperty()
-    value: string
+    @ApiProperty({ required: false })
+    value?: string
 }
