@@ -13,6 +13,9 @@ import { PrismaService } from 'src/prisma/prisma.service'
 // ** Types Imports
 import { IAttributeSearch } from './attribute.interface'
 
+// ** Utils Imports
+import { MESSAGE_ERROR } from 'src/utils/enums'
+
 @Injectable()
 export class AttributeService {
     constructor(private prisma: PrismaService) {}
@@ -47,7 +50,7 @@ export class AttributeService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()
@@ -211,7 +214,7 @@ export class AttributeService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()

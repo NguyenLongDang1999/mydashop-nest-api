@@ -10,6 +10,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 
 // ** Utils Imports
 import { generateOrderCode } from 'src/utils'
+import { MESSAGE_ERROR } from 'src/utils/enums'
 
 @Injectable()
 export class OrdersService {
@@ -52,7 +53,7 @@ export class OrdersService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()

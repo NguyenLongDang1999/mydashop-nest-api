@@ -22,6 +22,9 @@ import argon2 from 'argon2'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from 'src/prisma/prisma.service'
 
+// ** Utils Imports
+import { MESSAGE_ERROR } from 'src/utils/enums'
+
 @Injectable()
 export class AuthService {
     constructor(
@@ -84,7 +87,7 @@ export class AuthService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()

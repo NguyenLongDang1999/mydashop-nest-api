@@ -34,3 +34,7 @@ export enum AUTH {
     _7_DAYS = 7 * 24 * 60 * 60 * 1000,
     _30_DAYS = 30 * 24 * 60 * 60 * 1000,
 }
+
+export enum MESSAGE_ERROR {
+    CONFLICT = 'conflict'
+}

@@ -12,6 +12,9 @@ import { PrismaService } from 'src/prisma/prisma.service'
 // ** Types Imports
 import { ICategorySearch } from './category.interface'
 
+// ** Utils Imports
+import { MESSAGE_ERROR } from 'src/utils/enums'
+
 @Injectable()
 export class CategoryService {
     constructor(private prisma: PrismaService) {}
@@ -24,7 +27,7 @@ export class CategoryService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()
@@ -160,7 +163,7 @@ export class CategoryService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()

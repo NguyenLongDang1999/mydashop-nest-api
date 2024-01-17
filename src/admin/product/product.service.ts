@@ -15,6 +15,9 @@ import { IProductSearch } from './product.interface'
 // ** Utils Imports
 import { PRODUCT_TYPE } from 'src/utils/enums'
 
+// ** Utils Imports
+import { MESSAGE_ERROR } from 'src/utils/enums'
+
 @Injectable()
 export class ProductService {
     constructor(private prisma: PrismaService) {}
@@ -119,7 +122,7 @@ export class ProductService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()
@@ -495,7 +498,7 @@ export class ProductService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()

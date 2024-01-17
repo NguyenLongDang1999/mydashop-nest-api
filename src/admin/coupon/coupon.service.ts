@@ -12,6 +12,9 @@ import { PrismaService } from 'src/prisma/prisma.service'
 // ** Types Imports
 import { ICouponSearch } from './coupon.interface'
 
+// ** Utils Imports
+import { MESSAGE_ERROR } from 'src/utils/enums'
+
 @Injectable()
 export class CouponService {
     constructor(private prisma: PrismaService) {}
@@ -26,7 +29,7 @@ export class CouponService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()
@@ -77,7 +80,7 @@ export class CouponService {
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-                throw new ConflictException()
+                throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
             throw new InternalServerErrorException()
