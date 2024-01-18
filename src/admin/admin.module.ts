@@ -12,18 +12,22 @@ import { FlashDealsModule } from './flash-deals/flash-deals.module'
 import { CouponModule } from './coupon/coupon.module'
 import { WebsiteSetupModule } from './website-setup/website-setup.module'
 import { PagesModule } from './pages/pages.module'
+import { OrdersModule } from './orders/orders.module'
+import { AttributeValuesModule } from './attribute-values/attribute-values.module'
 
 @Module({
     imports: [
         CategoryModule,
         BrandModule,
         AttributeModule,
+        AttributeValuesModule,
         ProductModule,
         AuthModule,
         FlashDealsModule,
         CouponModule,
         WebsiteSetupModule,
         PagesModule,
+        OrdersModule,
         RouterModule.register([
             {
                 path: 'admin',
@@ -63,6 +67,14 @@ import { PagesModule } from './pages/pages.module'
                     {
                         path: 'pages',
                         module: PagesModule
+                    },
+                    {
+                        path: 'orders',
+                        module: OrdersModule
+                    },
+                    {
+                        path: 'attribute-values',
+                        module: AttributeValuesModule
                     }
                 ]
             }

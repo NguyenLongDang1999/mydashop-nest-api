@@ -8,7 +8,6 @@ import { AttributeService } from './attribute.service'
 // ** DTO Imports
 import { CreateAttributeDto } from './dto/create-attribute.dto'
 import { UpdateAttributeDto } from './dto/update-attribute.dto'
-import { UpdateAttributeValuesDto } from './dto/update-attribute-values.dto'
 
 // ** Types Imports
 import { IAttributeSearch } from './attribute.interface'
@@ -24,7 +23,7 @@ export class AttributeController {
 
     @Post()
     @ApiCreatedResponse()
-    async create(@Body() createAttributeDto: CreateAttributeDto) {
+    create(@Body() createAttributeDto: CreateAttributeDto) {
         return this.attributeService.create(createAttributeDto)
     }
 
@@ -35,6 +34,12 @@ export class AttributeController {
             ...params,
             page: (params.page - 1) * params.pageSize
         })
+    }
+
+    @Get('data-list')
+    @ApiOkResponse()
+    getDataList() {
+        return this.attributeService.getDataList()
     }
 
     @Get('data-list-category/:id')
@@ -59,12 +64,6 @@ export class AttributeController {
     @ApiNoContentResponse()
     update(@Param('id') id: string, @Body() updateAttributeDto: UpdateAttributeDto) {
         return this.attributeService.update(+id, updateAttributeDto)
-    }
-
-    @Post('attribute-values')
-    @ApiNoContentResponse()
-    updateAttributeValues(@Body() updateAttributeValuesDto: UpdateAttributeValuesDto) {
-        return this.attributeService.updateAttributeValues(updateAttributeValuesDto)
     }
 
     @Patch('remove/:id')

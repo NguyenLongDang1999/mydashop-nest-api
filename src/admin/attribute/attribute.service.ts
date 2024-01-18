@@ -4,7 +4,6 @@ import { Injectable, ConflictException, InternalServerErrorException } from '@ne
 // ** DTO Imports
 import { CreateAttributeDto } from './dto/create-attribute.dto'
 import { UpdateAttributeDto } from './dto/update-attribute.dto'
-import { UpdateAttributeValuesDto } from './dto/update-attribute-values.dto'
 
 // ** Prisma Imports
 import { Prisma } from '@prisma/client'
@@ -105,6 +104,21 @@ export class AttributeService {
             })
 
             return { data: formattedData, aggregations: count }
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
+    async getDataList() {
+        try {
+            return await this.prisma.attribute.findMany({
+                orderBy: { created_at: 'desc' },
+                where: { deleted_flg: false },
+                select: {
+                    id: true,
+                    name: true
+                }
+            })
         } catch (error) {
             throw new InternalServerErrorException()
         }
@@ -217,34 +231,6 @@ export class AttributeService {
                 throw new ConflictException(MESSAGE_ERROR.CONFLICT)
             }
 
-            throw new InternalServerErrorException()
-        }
-    }
-
-    async updateAttributeValues(updateAttributeValuesDto: UpdateAttributeValuesDto) {
-        try {
-            const { id, value, attribute_id } = updateAttributeValuesDto
-
-            if (value) {
-                if (id) {
-                    return await this.prisma.attributeValues.update({
-                        where: { id },
-                        data: { value }
-                    })
-                }
-
-                return await this.prisma.attributeValues.create({
-                    data: {
-                        value,
-                        attribute_id
-                    }
-                })
-            } else {
-                return await this.prisma.attributeValues.delete({
-                    where: { id }
-                })
-            }
-        } catch (error) {
             throw new InternalServerErrorException()
         }
     }
