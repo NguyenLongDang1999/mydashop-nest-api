@@ -176,7 +176,6 @@ export class CreateProductDto {
     technical_specifications?: string
 
     @IsOptional()
-    @MaxLength(160)
     @ApiProperty({ required: false })
     short_description?: string
 

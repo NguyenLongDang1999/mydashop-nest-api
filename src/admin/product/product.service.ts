@@ -13,10 +13,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { IProductSearch } from './product.interface'
 
 // ** Utils Imports
-import { PRODUCT_TYPE } from 'src/utils/enums'
-
-// ** Utils Imports
-import { MESSAGE_ERROR } from 'src/utils/enums'
+import { MESSAGE_ERROR, PRODUCT_TYPE } from 'src/utils/enums'
 
 @Injectable()
 export class ProductService {
@@ -383,6 +380,7 @@ export class ProductService {
                 quantity,
                 in_stock,
                 productImage,
+                product_type,
                 ...productData
             } = updateProductDto
 
@@ -481,7 +479,7 @@ export class ProductService {
                     }
                 })
 
-                if (!variants) {
+                if (product_type === PRODUCT_TYPE.SINGLE && price) {
                     await prisma.productVariantPrice.update({
                         where: { id: product.productVariantPrice[0].id },
                         data: {

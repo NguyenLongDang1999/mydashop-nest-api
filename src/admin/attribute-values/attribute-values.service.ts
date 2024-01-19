@@ -44,7 +44,14 @@ export class AttributeValuesService {
                 this.prisma.attributeValues.findMany({
                     take,
                     skip,
-                    orderBy: { created_at: 'desc' },
+                    orderBy: [
+                        {
+                            id: 'asc'
+                        },
+                        {
+                            created_at: 'desc'
+                        }
+                    ],
                     where: search,
                     select: {
                         id: true,
