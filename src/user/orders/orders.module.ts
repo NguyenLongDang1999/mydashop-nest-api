@@ -1,5 +1,7 @@
 // ** NestJS Imports
 import { Module } from '@nestjs/common'
+import { MailerModule } from '@nestjs-modules/mailer'
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'
 
 // ** Service Imports
 import { OrdersService } from './orders.service'
@@ -11,7 +13,31 @@ import { OrdersController } from './orders.controller'
 import { PrismaModule } from 'src/prisma/prisma.module'
 
 @Module({
-    imports: [PrismaModule],
+    imports: [
+        PrismaModule,
+        MailerModule.forRoot({
+            transport: {
+                host: process.env.SMTP_HOST || 'localhost',
+                port: parseInt(process.env.SMTP_PORT, 10) || 1025,
+                secure: process.env.SMTP_SECURE === 'true',
+                ignoreTLS: process.env.SMTP_SECURE !== 'false',
+                auth: {
+                    user: process.env.SMTP_AUTH_USER,
+                    pass: process.env.SMTP_AUTH_PASS
+                }
+            },
+            defaults: {
+                from: process.env.SMTP_AUTH_USER
+            },
+            template: {
+                dir: process.cwd() + '/template/',
+                adapter: new HandlebarsAdapter(),
+                options: {
+                    strict: true
+                }
+            }
+        })
+    ],
     controllers: [OrdersController],
     providers: [OrdersService]
 })

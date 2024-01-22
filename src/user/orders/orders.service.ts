@@ -1,4 +1,5 @@
 // ** NestJS Imports
+import { MailerService } from '@nestjs-modules/mailer'
 import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common'
 
 // ** DTO Imports
@@ -14,7 +15,10 @@ import { MESSAGE_ERROR } from 'src/utils/enums'
 
 @Injectable()
 export class OrdersService {
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        private readonly mailerService: MailerService
+    ) {}
 
     async create(createOrderDto: CreateOrderDto, user_id: number) {
         try {
@@ -48,8 +52,18 @@ export class OrdersService {
                 })
             })
 
-            return await this.prisma.carts.deleteMany({
+            await this.prisma.carts.deleteMany({
                 where: { id: cart_id }
+            })
+
+            return await this.mailerService.sendMail({
+                to: createOrderDto.email,
+                subject: 'Testing Nest Mailermodule with template ✔',
+                template: './index.hbs',
+                context: {
+                    code: 'cf1a3f828287',
+                    username: 'john doe'
+                }
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
