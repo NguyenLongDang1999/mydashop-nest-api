@@ -5,4 +5,5 @@ export interface IProductSearch extends Pagination {
     sort?: number
     attribute?: number[]
     brand?: number[]
+    rating?: number[]
 }

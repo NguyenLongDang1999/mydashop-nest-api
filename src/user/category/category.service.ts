@@ -217,6 +217,11 @@ export class CategoryService {
                         }
                     }
                 }
+            }),
+            ...(query.rating && query.rating.length > 0 && {
+                OR: getNormalizedList(query.rating).map((rate) => ({
+                    total_rating: Number(rate) === 5 ? Number(rate) : { gte: Number(rate), lte: Number(rate) + 1 }
+                }))
             })
         }
 
