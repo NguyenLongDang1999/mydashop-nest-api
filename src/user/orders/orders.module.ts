@@ -29,8 +29,9 @@ import { PrismaModule } from 'src/prisma/prisma.module'
             defaults: {
                 from: process.env.SMTP_AUTH_USER
             },
+            preview: true,
             template: {
-                dir: process.cwd() + '/template/',
+                dir: process.cwd() + '/templates/',
                 adapter: new HandlebarsAdapter(),
                 options: {
                     strict: true

@@ -59,6 +59,11 @@ export class CreateOrderDto {
     @ApiProperty({ required: false })
     coupon_discount?: number
 
+    @IsNotEmpty()
+    @IsNumber()
+    @ApiProperty()
+    grand_total: number
+
     @IsOptional()
     @IsString()
     @ApiProperty({ required: false })

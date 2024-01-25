@@ -59,10 +59,12 @@ export class OrdersService {
             return await this.mailerService.sendMail({
                 to: createOrderDto.email,
                 subject: 'Testing Nest Mailermodule with template ✔',
-                template: './index.hbs',
+                template: './index',
                 context: {
-                    code: 'cf1a3f828287',
-                    username: 'john doe'
+                    code,
+                    name: createOrderDto.name,
+                    productData: product_details,
+                    grand_total: createOrderDto.grand_total
                 }
             })
         } catch (error) {
