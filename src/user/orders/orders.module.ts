@@ -1,5 +1,6 @@
 // ** NestJS Imports
 import { Module } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { MailerModule } from '@nestjs-modules/mailer'
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'
 
@@ -15,28 +16,30 @@ import { PrismaModule } from 'src/prisma/prisma.module'
 @Module({
     imports: [
         PrismaModule,
-        MailerModule.forRoot({
-            transport: {
-                host: process.env.SMTP_HOST || 'localhost',
-                port: parseInt(process.env.SMTP_PORT, 10) || 1025,
-                secure: process.env.SMTP_SECURE === 'true',
-                ignoreTLS: process.env.SMTP_SECURE !== 'false',
-                auth: {
-                    user: process.env.SMTP_AUTH_USER,
-                    pass: process.env.SMTP_AUTH_PASS
+        MailerModule.forRootAsync({
+            useFactory: async (config: ConfigService) => ({
+                transport: {
+                    host: config.get('SMTP_HOST'),
+                    port: config.get('SMTP_PORT'),
+                    secure: true,
+                    auth: {
+                        user: config.get('SMTP_AUTH_USER'),
+                        pass: config.get('SMTP_AUTH_PASS')
+                    }
+                },
+                defaults: {
+                    from: `"No Reply" <${config.get('SMTP_AUTH_USER')}>`
+                },
+                preview: true,
+                template: {
+                    dir: __dirname,
+                    adapter: new HandlebarsAdapter(),
+                    options: {
+                        strict: true
+                    }
                 }
-            },
-            defaults: {
-                from: process.env.SMTP_AUTH_USER
-            },
-            preview: true,
-            template: {
-                dir: process.cwd() + '/templates/',
-                adapter: new HandlebarsAdapter(),
-                options: {
-                    strict: true
-                }
-            }
+            }),
+            inject: [ConfigService]
         })
     ],
     controllers: [OrdersController],

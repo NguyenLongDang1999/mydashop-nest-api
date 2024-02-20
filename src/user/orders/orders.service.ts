@@ -12,6 +12,7 @@ import { PrismaService } from 'src/prisma/prisma.service'
 // ** Utils Imports
 import { generateOrderCode } from 'src/utils'
 import { MESSAGE_ERROR } from 'src/utils/enums'
+import { join } from 'path'
 
 @Injectable()
 export class OrdersService {
@@ -59,13 +60,14 @@ export class OrdersService {
             return await this.mailerService.sendMail({
                 to: createOrderDto.email,
                 subject: 'Testing Nest Mailermodule with template ✔',
-                template: './index',
-                context: {
-                    code,
-                    name: createOrderDto.name,
-                    productData: product_details,
-                    grand_total: createOrderDto.grand_total
-                }
+                html: '<p>Hello World</p>'
+                // template: __dirname  + '/thanks-order'
+                // context: {
+                //     code,
+                //     name: createOrderDto.name,
+                //     productData: product_details,
+                //     grand_total: createOrderDto.grand_total
+                // }
             })
         } catch (error) {
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
