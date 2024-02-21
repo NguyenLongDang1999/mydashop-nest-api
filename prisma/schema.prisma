@@ -423,3 +423,13 @@ model OrderDetails {
   orders     Orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
   product    Product  @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
+
+model EmailTemplate {
+  id          Int      @id @default(autoincrement())
+  name        String   
+  slug        String   @unique @db.VarChar
+  subject     String
+  body        String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
