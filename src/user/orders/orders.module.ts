@@ -30,7 +30,6 @@ import { PrismaModule } from 'src/prisma/prisma.module'
                 defaults: {
                     from: `"No Reply" <${config.get('SMTP_AUTH_USER')}>`
                 },
-                preview: true,
                 template: {
                     dir: __dirname,
                     adapter: new HandlebarsAdapter(),
