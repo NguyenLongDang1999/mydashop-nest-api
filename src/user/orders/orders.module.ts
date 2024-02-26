@@ -21,7 +21,7 @@ import { PrismaModule } from 'src/prisma/prisma.module'
                 transport: {
                     host: config.get('SMTP_HOST'),
                     port: config.get('SMTP_PORT'),
-                    secure: true,
+                    secure: false,
                     auth: {
                         user: config.get('SMTP_AUTH_USER'),
                         pass: config.get('SMTP_AUTH_PASS')

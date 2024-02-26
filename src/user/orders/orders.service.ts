@@ -12,7 +12,6 @@ import { PrismaService } from 'src/prisma/prisma.service'
 // ** Utils Imports
 import { generateOrderCode } from 'src/utils'
 import { MESSAGE_ERROR } from 'src/utils/enums'
-import { join } from 'path'
 
 @Injectable()
 export class OrdersService {
@@ -53,15 +52,14 @@ export class OrdersService {
                 })
             })
 
-            await this.prisma.carts.deleteMany({
-                where: { id: cart_id }
-            })
+            // await this.prisma.carts.deleteMany({
+            //     where: { id: cart_id }
+            // })
 
             return await this.mailerService.sendMail({
                 to: createOrderDto.email,
                 subject: 'Testing Nest Mailermodule with template ✔',
-                html: '<p>Hello World</p>'
-                // template: __dirname  + '/thanks-order'
+                template: './thanks-order'
                 // context: {
                 //     code,
                 //     name: createOrderDto.name,
