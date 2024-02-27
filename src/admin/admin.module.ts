@@ -14,6 +14,7 @@ import { WebsiteSetupModule } from './website-setup/website-setup.module'
 import { PagesModule } from './pages/pages.module'
 import { OrdersModule } from './orders/orders.module'
 import { AttributeValuesModule } from './attribute-values/attribute-values.module'
+import { FileManagerModule } from './file-manager/file-manager.module'
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import { AttributeValuesModule } from './attribute-values/attribute-values.modul
         WebsiteSetupModule,
         PagesModule,
         OrdersModule,
+        FileManagerModule,
         RouterModule.register([
             {
                 path: 'admin',
@@ -75,6 +77,10 @@ import { AttributeValuesModule } from './attribute-values/attribute-values.modul
                     {
                         path: 'attribute-values',
                         module: AttributeValuesModule
+                    },
+                    {
+                        path: 'file-manager',
+                        module: FileManagerModule
                     }
                 ]
             }
