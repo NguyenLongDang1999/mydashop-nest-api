@@ -52,9 +52,9 @@ export class OrdersService {
                 })
             })
 
-            // await this.prisma.carts.deleteMany({
-            //     where: { id: cart_id }
-            // })
+            await this.prisma.carts.deleteMany({
+                where: { id: cart_id }
+            })
 
             return await this.mailerService.sendMail({
                 to: createOrderDto.email,
