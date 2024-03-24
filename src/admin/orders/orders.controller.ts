@@ -38,4 +38,10 @@ export class OrdersController {
             page: (params.page - 1) * params.pageSize
         })
     }
+
+    @Get(':id')
+    @ApiOkResponse()
+    getDetail(@Param('id') id: string) {
+        return this.ordersService.getDetail(+id)
+    }
 }

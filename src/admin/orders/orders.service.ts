@@ -60,4 +60,41 @@ export class OrdersService {
             throw new InternalServerErrorException()
         }
     }
+
+    async getDetail(id: number) {
+        try {
+            return await this.prisma.orders.findFirst({
+                where: { id, deleted_flg: false },
+                select: {
+                    code: true,
+                    date: true,
+                    name: true,
+                    email: true,
+                    phone: true,
+                    note: true,
+                    shipping_address: true,
+                    status: true,
+                    grand_total: true,
+                    coupon_discount: true,
+                    OrderDetails: {
+                        select: {
+                            price: true,
+                            quantity: true,
+                            variation: true,
+                            product: {
+                                select: {
+                                    id: true,
+                                    name: true,
+                                    image_uri: true,
+                                    sku: true,
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
 }
