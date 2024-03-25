@@ -45,12 +45,8 @@ export class AttributeValuesService {
                     take,
                     skip,
                     orderBy: [
-                        {
-                            id: 'asc'
-                        },
-                        {
-                            created_at: 'desc'
-                        }
+                        { attribute_id: 'asc' },
+                        { created_at: 'desc' }
                     ],
                     where: search,
                     select: {

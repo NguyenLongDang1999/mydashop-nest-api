@@ -34,54 +34,54 @@ import { FileManagerModule } from './file-manager/file-manager.module'
             {
                 path: 'admin',
                 children: [
-                    {
-                        path: 'auth',
-                        module: AuthModule
-                    },
+                    // {
+                    //     path: 'auth',
+                    //     module: AuthModule
+                    // },
                     {
                         path: 'category',
                         module: CategoryModule
-                    },
-                    {
-                        path: 'brand',
-                        module: BrandModule
-                    },
-                    {
-                        path: 'attribute',
-                        module: AttributeModule
-                    },
-                    {
-                        path: 'flash-deals',
-                        module: FlashDealsModule
-                    },
-                    {
-                        path: 'product',
-                        module: ProductModule
-                    },
-                    {
-                        path: 'coupons',
-                        module: CouponModule
-                    },
-                    {
-                        path: 'website-setup',
-                        module: WebsiteSetupModule
-                    },
-                    {
-                        path: 'pages',
-                        module: PagesModule
-                    },
-                    {
-                        path: 'orders',
-                        module: OrdersModule
-                    },
-                    {
-                        path: 'attribute-values',
-                        module: AttributeValuesModule
-                    },
-                    {
-                        path: 'file-manager',
-                        module: FileManagerModule
                     }
+                    // {
+                    //     path: 'brand',
+                    //     module: BrandModule
+                    // },
+                    // {
+                    //     path: 'attribute',
+                    //     module: AttributeModule
+                    // },
+                    // {
+                    //     path: 'flash-deals',
+                    //     module: FlashDealsModule
+                    // },
+                    // {
+                    //     path: 'product',
+                    //     module: ProductModule
+                    // },
+                    // {
+                    //     path: 'coupons',
+                    //     module: CouponModule
+                    // },
+                    // {
+                    //     path: 'website-setup',
+                    //     module: WebsiteSetupModule
+                    // },
+                    // {
+                    //     path: 'pages',
+                    //     module: PagesModule
+                    // },
+                    // {
+                    //     path: 'orders',
+                    //     module: OrdersModule
+                    // },
+                    // {
+                    //     path: 'attribute-values',
+                    //     module: AttributeValuesModule
+                    // },
+                    // {
+                    //     path: 'file-manager',
+                    //     module: FileManagerModule
+                    // }
                 ]
             }
         ])

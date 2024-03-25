@@ -15,16 +15,16 @@ import { UserModule } from './user/user.module'
     imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         AdminModule,
-        UserModule,
+        // UserModule,
         RouterModule.register([
             {
                 path: 'admin',
                 module: AdminModule
-            },
-            {
-                path: 'user',
-                module: UserModule
             }
+            // {
+            //     path: 'user',
+            //     module: UserModule
+            // }
         ])
     ],
     controllers: [AppController],
